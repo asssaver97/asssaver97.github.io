@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>Markdown教程</title>
+      <link href="/2022/01/12/Markdown%E6%95%99%E7%A8%8B/"/>
+      <url>/2022/01/12/Markdown%E6%95%99%E7%A8%8B/</url>
+      
+        <content type="html"><![CDATA[<h2 id="Markdown标题"><a href="#Markdown标题" class="headerlink" title="Markdown标题"></a>Markdown标题</h2><p>使用 #号 标记：<br>使用 # 号可表示 1-6 级标题，一级标题对应一个 # 号，二级标题对应两个 # 号，以此类推。</p><p># 一级标题<br>## 二级标题<br>### 三级标题<br>#### 四级标题<br>##### 五级标题<br>###### 六级标题</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Markdown </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 教程 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>平均场简介</title>
       <link href="/2022/01/12/%E5%B9%B3%E5%9D%87%E5%9C%BA%E7%AE%80%E4%BB%8B/"/>
       <url>/2022/01/12/%E5%B9%B3%E5%9D%87%E5%9C%BA%E7%AE%80%E4%BB%8B/</url>
@@ -20,7 +45,7 @@
       
         <tags>
             
-            <tag> 基础 </tag>
+            <tag> 简介 </tag>
             
         </tags>
       
@@ -45,7 +70,7 @@
       
         <tags>
             
-            <tag> 基础 </tag>
+            <tag> 教程 </tag>
             
         </tags>
       
