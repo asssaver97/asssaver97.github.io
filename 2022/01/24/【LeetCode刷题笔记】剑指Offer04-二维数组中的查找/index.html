@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"wangtianyang.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="剑指Offer 04. 二维数组中的查找 题解选对查找的起点很重要！！！因为数组从左往右递增、从上往下递增的特性，每当访问一个元素，我们可以排除数组中的部分元素。我们选定右上角作为起点，有以下三种情况：  如果当前元素等于目标值，返回true； 如果当前元素大于目标值，那么它下面的元素都大于目标值，索引往左移一位； 如果当前元素小于目标值，那么它左边的元素都小于目标值，索引往下移一位。  代码12">
+  <meta name="description" content="剑指Offer 04. 二维数组中的查找 题解选对查找的起点很重要！！！因为数组从左往右递增、从上往下递增的特性，每当访问一个元素，我们可以排除数组中的部分元素。我们选定右上角作为起点，有以下三种情况：  如果当前元素等于目标值，返回true； 如果当前元素大于目标值，那么它下面的元素都大于目标值，索引往左移一位； 如果当前元素小于目标值，那么它左边的元素都小于目标值，索引往下移一位。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【LeetCode刷题笔记】剑指Offer04.二维数组中的查找">
 <meta property="og:url" content="http://wangtianyang.com/2022/01/24/%E3%80%90LeetCode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0%E3%80%91%E5%89%91%E6%8C%87Offer04-%E4%BA%8C%E7%BB%B4%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E6%9F%A5%E6%89%BE/index.html">
 <meta property="og:site_name" content="王天阳的个人博客">
-<meta property="og:description" content="剑指Offer 04. 二维数组中的查找 题解选对查找的起点很重要！！！因为数组从左往右递增、从上往下递增的特性，每当访问一个元素，我们可以排除数组中的部分元素。我们选定右上角作为起点，有以下三种情况：  如果当前元素等于目标值，返回true； 如果当前元素大于目标值，那么它下面的元素都大于目标值，索引往左移一位； 如果当前元素小于目标值，那么它左边的元素都小于目标值，索引往下移一位。  代码12">
+<meta property="og:description" content="剑指Offer 04. 二维数组中的查找 题解选对查找的起点很重要！！！因为数组从左往右递增、从上往下递增的特性，每当访问一个元素，我们可以排除数组中的部分元素。我们选定右上角作为起点，有以下三种情况：  如果当前元素等于目标值，返回true； 如果当前元素大于目标值，那么它下面的元素都大于目标值，索引往左移一位； 如果当前元素小于目标值，那么它左边的元素都小于目标值，索引往下移一位。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-01-24T07:53:08.000Z">
-<meta property="article:modified_time" content="2022-01-24T09:06:50.649Z">
+<meta property="article:modified_time" content="2022-01-24T12:02:03.522Z">
 <meta property="article:author" content="王天阳">
 <meta property="article:tag" content="教程">
 <meta name="twitter:card" content="summary">
@@ -224,7 +224,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2022-01-24 15:53:08 / 修改时间：17:06:50" itemprop="dateCreated datePublished" datetime="2022-01-24T15:53:08+08:00">2022-01-24</time>
+              <time title="创建时间：2022-01-24 15:53:08 / 修改时间：20:02:03" itemprop="dateCreated datePublished" datetime="2022-01-24T15:53:08+08:00">2022-01-24</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -280,7 +280,7 @@
 <ul>
 <li>如果当前元素等于目标值，返回<code>true</code>；</li>
 <li>如果当前元素大于目标值，那么它下面的元素都大于目标值，索引往左移一位；</li>
-<li>如果当前元素小于目标值，那么它左边的元素都小于目标值，索引往下移一位。</li>
+<li>如果当前元素小于目标值，那么它左边的元素都小于目标值，索引往下移一位。<span id="more"></span></li>
 </ul>
 <h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">findNumberIn2DArray</span><span class="params">(vector&lt;vector&lt;<span class="keyword">int</span>&gt;&gt;&amp; matrix, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!matrix.<span class="built_in">size</span>()) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> n = matrix.<span class="built_in">size</span>(), m = matrix[<span class="number">0</span>].<span class="built_in">size</span>();</span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">0</span>, j = m - <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (i &gt;= <span class="number">0</span> &amp;&amp; j &gt;= <span class="number">0</span> &amp;&amp; i &lt; n &amp;&amp; j &lt; m) &#123;</span><br><span class="line">            <span class="keyword">if</span> (matrix[i][j] == target) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            <span class="keyword">if</span> (matrix[i][j] &lt; target) i++;</span><br><span class="line">            <span class="keyword">else</span> j--;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
