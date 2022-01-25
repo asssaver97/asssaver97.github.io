@@ -77,7 +77,11 @@
   </style>
 </noscript>
 
-</head>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
@@ -285,11 +289,12 @@
 <h2 id="题解"><a href="#题解" class="headerlink" title="题解"></a>题解</h2><p><strong>子序列和子串并不相同！！！</strong></p>
 <blockquote>
 <p>例：对于字符串“1234567890”，<br>它的<strong>子串</strong>为: [“123”, “123456”, “78”, …]，子串为字符串中<strong>连续</strong>字符组成的串；<br>它的<strong>子序列</strong>为: [“123”, “136”, “125”]，子序列<strong>不要求连续！</strong><br>所以对于本题，在只包含’a’、’b’两种字符的情况下，最多只需要删除两次：即先把’a’删完，再删’b’。因此分为下面两种情况：</p>
-</blockquote>
 <ol>
 <li>如果字符串本身是回文串，则仅需删除一次；</li>
-<li>否则，<code>return 2;</code><span id="more"></span></li>
+<li>否则，<code>return 2;</code><span id="more"></span>
+</li>
 </ol>
+</blockquote>
 <h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">removePalindromeSub</span><span class="params">(string s)</span> </span>&#123;</span><br><span class="line">        string::iterator left = s.<span class="built_in">begin</span>() + s.<span class="built_in">size</span>()/<span class="number">2</span> - <span class="number">1</span>, right = left;</span><br><span class="line">        <span class="keyword">if</span> (s.<span class="built_in">size</span>() % <span class="number">2</span>) &#123;</span><br><span class="line">            right += <span class="number">2</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            right += <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span> (left != s.<span class="built_in">begin</span>() - <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (*left != *right) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="number">2</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            --left;</span><br><span class="line">            ++right;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
     </div>
@@ -391,7 +396,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -448,12 +453,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">33k</span>
+    <span title="站点总字数">34k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">30 分钟</span>
+    <span title="站点阅读时长">31 分钟</span>
 </div>
 
 <!--
@@ -511,6 +516,8 @@
 
 
 
+
+  
 
   
 

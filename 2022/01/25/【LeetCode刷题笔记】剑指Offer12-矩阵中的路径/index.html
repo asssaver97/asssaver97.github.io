@@ -77,7 +77,11 @@
   </style>
 </noscript>
 
-</head>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
@@ -281,17 +285,14 @@
 <li>深度优先搜索(depth-first seach，DFS)在搜索到一个新的节点时，立即对该新节点进行遍历;因此遍历需要用先入后出的栈来实现，也可以通过与栈等价的递归来实现。对于树结构而言，由于总是对新节点调用遍历，因此看起来是向着“深”的方向前进。</li>
 <li>剪枝顾名思义，就是删去一些不重要的节点，来减小计算或搜索的复杂度。</li>
 </ul>
-<ol start="0">
+<ol>
 <li>令i,j表示二维数组board的索引，k表示字符串word的索引，对于已经在路径中的元素，将其置空，即<code>borad[i][j]=&#39;\0&#39;</code>；</li>
 <li>设定初始值：遍历二维数组，并将i、j、k=0传入<code>dfs()</code>函数；</li>
 <li>回溯：如果<code>k==word.size()</code>，即<strong>字符串全部匹配完</strong>，则<code>return true</code>；如果<code>board[i][j]!=word[k]</code>，即<strong>字符不匹配</strong>，则<code>return false</code>；如果<code>board[i][j]==&#39;\0&#39;</code>，即<strong>当前位置已经在路径中</strong>，则<code>return false</code>；如果<strong>索引溢出</strong>，则<code>return false</code>；如果是其他情况，则进入第三步；</li>
 <li>递归：进入这一步，代表<code>board[i][j]==word[k]</code>，那么令<code>borad[i][j]=&#39;\0&#39;</code>，<code>++k</code>，board向上、下、左、右改变索引，将改变后的board、i、j、k传入<code>dfs()</code>函数进行下一次递归。</li>
 </ol>
-<p>之后循环2、3步即可。</p>
-<span id="more"></span>
-
+<p>之后循环2、3步即可。<br><span id="more"></span></p>
 <h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">exist</span><span class="params">(vector&lt;vector&lt;<span class="keyword">char</span>&gt;&gt;&amp; board, string word)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; board.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; board[<span class="number">0</span>].<span class="built_in">size</span>(); ++j) &#123;</span><br><span class="line">                <span class="keyword">if</span> (board[i][j] == word[<span class="number">0</span>] &amp;&amp; <span class="built_in">dfs</span>(board, word, i, j, <span class="number">0</span>)) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">dfs</span><span class="params">(vector&lt;vector&lt;<span class="keyword">char</span>&gt;&gt;&amp; board, string word, <span class="keyword">int</span> i, <span class="keyword">int</span> j, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (k == word.<span class="built_in">size</span>()) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">if</span> (i &lt; <span class="number">0</span> || i == board.<span class="built_in">size</span>() || j &lt; <span class="number">0</span> || j == board[<span class="number">0</span>].<span class="built_in">size</span>() || board[i][j] != word[k]) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        board[i][j] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">        <span class="keyword">bool</span> res = <span class="built_in">dfs</span>(board, word, i+<span class="number">1</span>, j, k+<span class="number">1</span>) || <span class="built_in">dfs</span>(board, word, i<span class="number">-1</span>, j, k+<span class="number">1</span>) || <span class="built_in">dfs</span>(board, word, i, j+<span class="number">1</span>, k+<span class="number">1</span>) || <span class="built_in">dfs</span>(board, word, i, j<span class="number">-1</span>, k+<span class="number">1</span>);</span><br><span class="line">        board[i][j] = word[k];</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
 <p><strong>注意：</strong><code>dfs()</code>参数设置要设定为引用，不然每次递归都要新建数组副本会超时。</p>
 
     </div>
@@ -393,7 +394,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -450,12 +451,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">33k</span>
+    <span title="站点总字数">34k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">30 分钟</span>
+    <span title="站点阅读时长">31 分钟</span>
 </div>
 
 <!--
@@ -513,6 +514,8 @@
 
 
 
+
+  
 
   
 
