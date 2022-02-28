@@ -37,7 +37,7 @@
 <meta property="og:image" content="http://wangtianyang.com/2022/02/20/%E4%BC%A0%E8%BE%93%E5%B1%82%EF%BC%9ATCP%E5%92%8CUDP/TCP快恢复.png">
 <meta property="og:image" content="http://wangtianyang.com/images/虚电路数据包服务区别.png">
 <meta property="article:published_time" content="2022-02-20T01:45:55.000Z">
-<meta property="article:modified_time" content="2022-02-28T11:15:13.564Z">
+<meta property="article:modified_time" content="2022-02-28T11:20:55.427Z">
 <meta property="article:author" content="王天阳">
 <meta property="article:tag" content="八股文">
 <meta name="twitter:card" content="summary">
@@ -244,7 +244,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-02-28 19:15:13" itemprop="dateModified" datetime="2022-02-28T19:15:13+08:00">2022-02-28</time>
+                <time title="修改时间：2022-02-28 19:20:55" itemprop="dateModified" datetime="2022-02-28T19:20:55+08:00">2022-02-28</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -311,17 +311,22 @@
 <li>server端：由于server没有收到ACK确认，因此会重发之前的SYN+ACK（默认重发五次，之后自动关闭连接进入CLOSED状态），Client收到后会重新传ACK给Server。</li>
 <li>client端，有两种情况：<ol>
 <li>在Server进行超时重发的过程中，如果Client向Server发送数据，数据头部的ACK为1，则Server收到数据之后会读取acknowledge number，进入ESTABLISHED状态；</li>
-<li>在Server进入CLOSED状态之后，如果Client向Server发送数据，Server会以RST包应答。<h3 id="如果已经建立了连接，但Client端出现了故障怎么办？"><a href="#如果已经建立了连接，但Client端出现了故障怎么办？" class="headerlink" title="如果已经建立了连接，但Client端出现了故障怎么办？"></a>如果已经建立了连接，但Client端出现了故障怎么办？</h3>Server每收到一次Client的请求后都会重新复位一个计时器，时间通常设置为两个小时，如果两小时内还没收到Client的任何数据，Server就会发送一个探测报文段，之后每隔75秒发送一次。若连续10个探测报文都没有回应，Server就会认为Client端出了故障，接着就关闭连接。<h3 id="初始序列是什么？"><a href="#初始序列是什么？" class="headerlink" title="初始序列是什么？"></a>初始序列是什么？</h3>TCP连接的一方A，随机选择一个32位的序列号（Sequence Number）作为发送数据的初始序列号（Initial Sequence Number，ISN），比如为1000，以该序列号为原点，对要传送的数据进行编号：1001、1002…三次握手时，把这个初始序列号传送给另一方B，以便在传输数据时，B可以确认什么样的数据编号是合法的；同时在进行数据传输时，A还可以确认B收到的每一个字节，如果A收到了B的确认编号（acknowledge number）是2001，就说明编号为1001-2000的数据已经被B成功接受。</li>
+<li>在Server进入CLOSED状态之后，如果Client向Server发送数据，Server会以RST包应答。</li>
 </ol>
 </li>
 </ul>
+<h3 id="如果已经建立了连接，但Client端出现了故障怎么办？"><a href="#如果已经建立了连接，但Client端出现了故障怎么办？" class="headerlink" title="如果已经建立了连接，但Client端出现了故障怎么办？"></a>如果已经建立了连接，但Client端出现了故障怎么办？</h3><p>Server每收到一次Client的请求后都会重新复位一个计时器，时间通常设置为两个小时，如果两小时内还没收到Client的任何数据，Server就会发送一个探测报文段，之后每隔75秒发送一次。若连续10个探测报文都没有回应，Server就会认为Client端出了故障，接着就关闭连接。</p>
+<h3 id="初始序列是什么？"><a href="#初始序列是什么？" class="headerlink" title="初始序列是什么？"></a>初始序列是什么？</h3><p>TCP连接的一方A，随机选择一个32位的序列号（Sequence Number）作为发送数据的初始序列号（Initial Sequence Number，ISN），比如为1000，以该序列号为原点，对要传送的数据进行编号：1001、1002…三次握手时，把这个初始序列号传送给另一方B，以便在传输数据时，B可以确认什么样的数据编号是合法的；同时在进行数据传输时，A还可以确认B收到的每一个字节，如果A收到了B的确认编号（acknowledge number）是2001，就说明编号为1001-2000的数据已经被B成功接受。</p>
 <h2 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a>四次挥手</h2><p><img src="/images/四次挥手.png" alt=""></p>
 <h3 id="什么是四次挥手？"><a href="#什么是四次挥手？" class="headerlink" title="什么是四次挥手？"></a>什么是四次挥手？</h3><ul>
 <li>第一次挥手：Client将FIN置为1，发送一个序列号seq给Server；<strong>进入FIN_WAIT_1状态；</strong></li>
 <li>第二次挥手：Server收到FIN之后，发送一个ACK=1，acknowledge number=收到的序列号+1；<strong>进入CLOSE_WAIT状态；</strong>此时Client已经没有要发送的数据了，但仍可以接受Server发来的数据。</li>
 <li>第三次挥手：Server将FIN置1，发送一个序列号给Client；<strong>进入LAST_ACK状态；</strong></li>
-<li>第四次挥手：Client收到服务器的FIN后，<strong>进入TIME_WAIT状态；</strong>接着将ACK置1，发送一个acknowledge number=序列号+1给服务器；服务器收到后，确认acknowledge number，<strong>变为CLOSED状态，</strong>不再向客户端发送数据。客户端等待2*MSL<sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="MSL(Maximum Segment Lifetime)，指一个片段在网络中最大的存活时间，2MSL就是一个发送和一个回复所需的最大时间。">[1]</span></a></sup>（报文最长寿命）事件后，<strong>也进入CLOSED状态。</strong>完成四次挥手。<h3 id="为什么不能把服务器发送的ACK和FIN合并起来，变成三次挥手（CLOSE-WAIT状态意义是什么）？"><a href="#为什么不能把服务器发送的ACK和FIN合并起来，变成三次挥手（CLOSE-WAIT状态意义是什么）？" class="headerlink" title="为什么不能把服务器发送的ACK和FIN合并起来，变成三次挥手（CLOSE_WAIT状态意义是什么）？"></a>为什么不能把服务器发送的ACK和FIN合并起来，变成三次挥手（CLOSE_WAIT状态意义是什么）？</h3>因为服务器收到客户端断开连接的请求时，可能还有一些数据没有发完，这时先回复ACK，表示接收到了断开连接的请求。等到数据发完之后再发FIN，断开服务器到客户端的数据传送。<h3 id="如果第二次挥手时服务器的ACK没有送达客户端，会怎样？"><a href="#如果第二次挥手时服务器的ACK没有送达客户端，会怎样？" class="headerlink" title="如果第二次挥手时服务器的ACK没有送达客户端，会怎样？"></a>如果第二次挥手时服务器的ACK没有送达客户端，会怎样？</h3>客户端没有收到ACK确认，会重新发送FIN请求。<h3 id="客户端TIME-WAIT状态的意义是什么？"><a href="#客户端TIME-WAIT状态的意义是什么？" class="headerlink" title="客户端TIME_WAIT状态的意义是什么？"></a>客户端TIME_WAIT状态的意义是什么？</h3>第四次挥手时，客户端发送给服务器的ACK有可能丢失，TIME_WAIT状态就是用来重发可能丢失的ACK报文。如果Server没有收到ACK，就会重发FIN，如果Client在2*MSL的时间内收到了FIN，就会重新发送ACK并再次等待2MSL，防止Server没有收到ACK而不断重发FIN。如果直到2MSL，Client都没有再次收到FIN，那么Client推断ACK已经被成功接收，则结束TCP连接。</li>
+<li>第四次挥手：Client收到服务器的FIN后，<strong>进入TIME_WAIT状态；</strong>接着将ACK置1，发送一个acknowledge number=序列号+1给服务器；服务器收到后，确认acknowledge number，<strong>变为CLOSED状态，</strong>不再向客户端发送数据。客户端等待2*MSL<sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="MSL(Maximum Segment Lifetime)，指一个片段在网络中最大的存活时间，2MSL就是一个发送和一个回复所需的最大时间。">[1]</span></a></sup>（报文最长寿命）事件后，<strong>也进入CLOSED状态。</strong>完成四次挥手。</li>
 </ul>
+<h3 id="为什么不能把服务器发送的ACK和FIN合并起来，变成三次挥手（CLOSE-WAIT状态意义是什么）？"><a href="#为什么不能把服务器发送的ACK和FIN合并起来，变成三次挥手（CLOSE-WAIT状态意义是什么）？" class="headerlink" title="为什么不能把服务器发送的ACK和FIN合并起来，变成三次挥手（CLOSE_WAIT状态意义是什么）？"></a>为什么不能把服务器发送的ACK和FIN合并起来，变成三次挥手（CLOSE_WAIT状态意义是什么）？</h3><p>因为服务器收到客户端断开连接的请求时，可能还有一些数据没有发完，这时先回复ACK，表示接收到了断开连接的请求。等到数据发完之后再发FIN，断开服务器到客户端的数据传送。</p>
+<h3 id="如果第二次挥手时服务器的ACK没有送达客户端，会怎样？"><a href="#如果第二次挥手时服务器的ACK没有送达客户端，会怎样？" class="headerlink" title="如果第二次挥手时服务器的ACK没有送达客户端，会怎样？"></a>如果第二次挥手时服务器的ACK没有送达客户端，会怎样？</h3><p>客户端没有收到ACK确认，会重新发送FIN请求。</p>
+<h3 id="客户端TIME-WAIT状态的意义是什么？"><a href="#客户端TIME-WAIT状态的意义是什么？" class="headerlink" title="客户端TIME_WAIT状态的意义是什么？"></a>客户端TIME_WAIT状态的意义是什么？</h3><p>第四次挥手时，客户端发送给服务器的ACK有可能丢失，TIME_WAIT状态就是用来重发可能丢失的ACK报文。如果Server没有收到ACK，就会重发FIN，如果Client在2*MSL的时间内收到了FIN，就会重新发送ACK并再次等待2MSL，防止Server没有收到ACK而不断重发FIN。如果直到2MSL，Client都没有再次收到FIN，那么Client推断ACK已经被成功接收，则结束TCP连接。</p>
 <h2 id="TCP如何实现流量控制？"><a href="#TCP如何实现流量控制？" class="headerlink" title="TCP如何实现流量控制？"></a>TCP如何实现流量控制？</h2><p><img src="/images/TCP窗口字段1.png" alt=""><br>使用滑动窗口协议实现流量控制。防止发送方发送速率太快，接收方缓存区不够导致溢出。接收方会维护一个接收窗口 receiver window（窗口大小单位是字节），接受窗口的大小是根据自己的资源情况动态调整的，在返回ACK时将接受窗口大小放在TCP报文中的窗口字段告知发送方。发送窗口的大小不能超过接受窗口的大小，只有当发送方发送并收到确认之后，才能将发送窗口右移。<br><img src="/images/TCP窗口字段2.png" alt=""><br>发送窗口的上限为接受窗口和拥塞窗口中的较小值。接受窗口表明了接收方的接收能力，拥塞窗口表明了网络的传送能力。</p>
 <h3 id="什么是零窗口（接收窗口为0时会怎样）？"><a href="#什么是零窗口（接收窗口为0时会怎样）？" class="headerlink" title="什么是零窗口（接收窗口为0时会怎样）？"></a>什么是零窗口（接收窗口为0时会怎样）？</h3><p>如果接收方没有能力接收数据，就会将接收窗口设置为0，这时发送方必须暂停发送数据，但是会启动一个持续计时器(persistence timer)，到期后发送一个大小为1字节的探测数据包，以查看接收窗口状态。如果接收方能够接收数据，就会在返回的报文中更新接收窗口大小，恢复数据传送。</p>
 <h2 id="TCP的拥塞控制是怎么实现的？"><a href="#TCP的拥塞控制是怎么实现的？" class="headerlink" title="TCP的拥塞控制是怎么实现的？"></a>TCP的拥塞控制是怎么实现的？</h2><p><img src="/images/TCP拥塞控制1.png" alt=""><br>拥塞控制主要由四个算法组成：<strong>慢启动（Slow Start）、拥塞避免（Congestion voidance）、快重传 （Fast Retransmit）、快恢复（Fast Recovery）</strong></p>
@@ -338,8 +343,9 @@
 <ul>
 <li>窗口：即滑动窗口大小，见<strong>TCP如何实现流量控制？</strong></li>
 <li>带宽：这里带宽是指单位时间内从发送端到接收端所能通过的“最高数据率”，是一种硬件限制。TCP发送端和接收端的数据传输数不可能超过两点间的带宽限制。发送端和接收端之间带宽取所通过线路的带宽最小值（如通过互联网连接）。</li>
-<li>RTT：即Round Trip Time，表示从发送端到接收端的一去一回需要的时间，TCP在数据传输过程中会对RTT进行采样（即对发送的数据包及其ACK的时间差进行测量，并根据测量值更新RTT值），TCP根据得到的RTT值更新RTO值，即Retransmission TimeOut，就是重传间隔，发送端对每个发出的数据包进行计时，如果在RTO时间内没有收到所发出的数据包的对应ACK，则认为数据包丢失，将重传数据。一般RTO值都比采样得到的RTT值要大。<h3 id="带宽时延乘积"><a href="#带宽时延乘积" class="headerlink" title="带宽时延乘积"></a>带宽时延乘积</h3>设滑动窗口大小为$W$， 发送端和接收端的带宽为$B$， RTT为$T_r$。</li>
+<li>RTT：即Round Trip Time，表示从发送端到接收端的一去一回需要的时间，TCP在数据传输过程中会对RTT进行采样（即对发送的数据包及其ACK的时间差进行测量，并根据测量值更新RTT值），TCP根据得到的RTT值更新RTO值，即Retransmission TimeOut，就是重传间隔，发送端对每个发出的数据包进行计时，如果在RTO时间内没有收到所发出的数据包的对应ACK，则认为数据包丢失，将重传数据。一般RTO值都比采样得到的RTT值要大。</li>
 </ul>
+<h3 id="带宽时延乘积"><a href="#带宽时延乘积" class="headerlink" title="带宽时延乘积"></a>带宽时延乘积</h3><p>设滑动窗口大小为$W$， 发送端和接收端的带宽为$B$， RTT为$T_r$。</p>
 <p>前面已经说过了，TCP发送数据时受滑动窗口的限制，当TCP将滑动窗口中的数据都发出后，在收到第一个ACK之前，滑动窗口大小是0，不能再发送数据了，必须等待ACK包使滑动窗口移动。那么在理想情况下，ACK包应该在什么时候到达呢？显然，就是在数据发出后的RTT时间后，ACK包到达。这也就是说，现在在不考虑丢包和拥塞情况下，TCP在一个RTT时间内能发出的最大数据量为$W$，所以不考虑带宽限制下，TCP能一个时刻能达到的最大速度是$V=\frac{W}{T_r}$。</p>
 <p>现在再考虑带宽限制，前面说过当马路上摆满车的时候，就无法再往里放车了，同理，TCP发送端在$\frac{T_r}{2}$时间内，能往通道上放的最大数据量为$\frac{V \ast T_r}{2}$，通过带宽时延乘积得到的容积限制为$\frac{B \ast T_r}{2}$。当$\frac{B \ast T_r}{2}\geq\frac{V \ast T_r}{2}$时，单向通道容积不构成瓶颈，速率的限制主要来源于窗口大小限制。而当$\frac{B\ast T_r}{2}\leq\frac{V\ast T_r}{2}$时，则就受到容积限制，即此时速率限制来源于带宽限制。</p>
 <p>因此，TCP的最大速率为$V=min(\frac{W}{T_r}, B)$。</p>
@@ -360,8 +366,11 @@
 </li>
 <li>TCP有拥塞控制机制，UDP没有。网络出现的拥塞不会使源主机的发送速率降低，这对某些实时应用是很重要的，比如媒体通信，游戏；</li>
 <li>TCP首部开销（20字节）比UDP首部开销（8字节）要大</li>
-<li>UDP 的主机不需要维持复杂的连接状态表<h3 id="什么时候选择TCP，什么时候选UDP？"><a href="#什么时候选择TCP，什么时候选UDP？" class="headerlink" title="什么时候选择TCP，什么时候选UDP？"></a>什么时候选择TCP，什么时候选UDP？</h3>对某些实时性要求比较高的情况，选择UDP，比如游戏，媒体通信，实时视频流（直播），即使出现传输错误也可以容忍；其它大部分情况下，HTTP都是用TCP，因为要求传输的内容可靠，不出现丢失<h3 id="HTTP可以使用UDP吗？"><a href="#HTTP可以使用UDP吗？" class="headerlink" title="HTTP可以使用UDP吗？"></a>HTTP可以使用UDP吗？</h3>HTTP不可以使用UDP，HTTP需要基于可靠的传输协议，而UDP不可靠<br>注：<strong>http 3.0 使用udp实现</strong> <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/HTTP/3">HTTP3维基百科</a><h3 id="面向连接和无连接的区别"><a href="#面向连接和无连接的区别" class="headerlink" title="面向连接和无连接的区别"></a>面向连接和无连接的区别</h3>无连接的网络服务（数据报服务）— 面向连接的网络服务（虚电路服务）<br>数据报服务：每个数据包含目的地址，数据路由相互独立（路径可能变化）；网络尽最大努力交付数据，但不保证不丢失、不保证先后顺序、不保证在时限内交付；网络发生拥塞时，可能会将一些分组丢弃；<br>虚电路（Virtual Circuit，VC）服务：首先建立连接，所有的数据包经过相同的路径，服务质量有较好的保证；<br><img src="/images/虚电路数据包服务区别.png" alt=""></li>
+<li>UDP 的主机不需要维持复杂的连接状态表</li>
 </ol>
+<h3 id="什么时候选择TCP，什么时候选UDP？"><a href="#什么时候选择TCP，什么时候选UDP？" class="headerlink" title="什么时候选择TCP，什么时候选UDP？"></a>什么时候选择TCP，什么时候选UDP？</h3><p>对某些实时性要求比较高的情况，选择UDP，比如游戏，媒体通信，实时视频流（直播），即使出现传输错误也可以容忍；其它大部分情况下，HTTP都是用TCP，因为要求传输的内容可靠，不出现丢失</p>
+<h3 id="HTTP可以使用UDP吗？"><a href="#HTTP可以使用UDP吗？" class="headerlink" title="HTTP可以使用UDP吗？"></a>HTTP可以使用UDP吗？</h3><p>HTTP不可以使用UDP，HTTP需要基于可靠的传输协议，而UDP不可靠<br>注：<strong>http 3.0 使用udp实现</strong> <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/HTTP/3">HTTP3维基百科</a></p>
+<h3 id="面向连接和无连接的区别"><a href="#面向连接和无连接的区别" class="headerlink" title="面向连接和无连接的区别"></a>面向连接和无连接的区别</h3><p>无连接的网络服务（数据报服务）— 面向连接的网络服务（虚电路服务）<br>数据报服务：每个数据包含目的地址，数据路由相互独立（路径可能变化）；网络尽最大努力交付数据，但不保证不丢失、不保证先后顺序、不保证在时限内交付；网络发生拥塞时，可能会将一些分组丢弃；<br>虚电路（Virtual Circuit，VC）服务：首先建立连接，所有的数据包经过相同的路径，服务质量有较好的保证；<br><img src="/images/虚电路数据包服务区别.png" alt=""></p>
 <h2 id="TCP如何保证传输的可靠性"><a href="#TCP如何保证传输的可靠性" class="headerlink" title="TCP如何保证传输的可靠性"></a>TCP如何保证传输的可靠性</h2><ol>
 <li>数据包校验</li>
 <li>对失序数据包重新排序（TCP报文具有序列号）</li>
