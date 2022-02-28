@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"wangtianyang.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="354.俄罗斯套娃信封问题 题解本质是个求二维的最长递增自序列核心在于如何将其降维，方法是排序：先对宽度w进行升序排序，如果w相同，则对高度h进行降序排序。之后对排序好的数组的h纬度进行最长递增子序列算法即可。前置知识点：  sort用法：sort(vec.begin(),vec.end(),myfunc)，其中myfunc为自定义的排序方式，当然参数三也可以省略。 lambda函数用法：[捕获，">
+  <meta name="description" content="题目354.俄罗斯套娃信封问题 给你一个二维整数数组envelopes，其中envelopes[i] &#x3D; [wi, hi]，表示第i个信封的宽度和高度。 当另一个信封的宽度和高度都比这个信封大的时候，这个信封就可以放进另一个信封里，如同俄罗斯套娃一样。 请计算最多能有多少个信封能组成一组“俄罗斯套娃”信封（即可以把一个信封放到另一个信封里面）。 注意：不允许旋转信封。 示例 1：123输入：env">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【LeetCode刷题笔记】354.俄罗斯套娃信封问题">
 <meta property="og:url" content="http://wangtianyang.com/2022/02/21/%E3%80%90LeetCode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0%E3%80%91354-%E4%BF%84%E7%BD%97%E6%96%AF%E5%A5%97%E5%A8%83%E4%BF%A1%E5%B0%81%E9%97%AE%E9%A2%98/index.html">
 <meta property="og:site_name" content="王天阳的个人博客">
-<meta property="og:description" content="354.俄罗斯套娃信封问题 题解本质是个求二维的最长递增自序列核心在于如何将其降维，方法是排序：先对宽度w进行升序排序，如果w相同，则对高度h进行降序排序。之后对排序好的数组的h纬度进行最长递增子序列算法即可。前置知识点：  sort用法：sort(vec.begin(),vec.end(),myfunc)，其中myfunc为自定义的排序方式，当然参数三也可以省略。 lambda函数用法：[捕获，">
+<meta property="og:description" content="题目354.俄罗斯套娃信封问题 给你一个二维整数数组envelopes，其中envelopes[i] &#x3D; [wi, hi]，表示第i个信封的宽度和高度。 当另一个信封的宽度和高度都比这个信封大的时候，这个信封就可以放进另一个信封里，如同俄罗斯套娃一样。 请计算最多能有多少个信封能组成一组“俄罗斯套娃”信封（即可以把一个信封放到另一个信封里面）。 注意：不允许旋转信封。 示例 1：123输入：env">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-02-21T04:41:03.000Z">
-<meta property="article:modified_time" content="2022-02-21T05:10:07.255Z">
+<meta property="article:modified_time" content="2022-02-27T08:01:18.118Z">
 <meta property="article:author" content="王天阳">
 <meta property="article:tag" content="刷题">
 <meta name="twitter:card" content="summary">
@@ -226,10 +226,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-02-21 12:41:03 / 修改时间：13:10:07" itemprop="dateCreated datePublished" datetime="2022-02-21T12:41:03+08:00">2022-02-21</time>
+              <time title="创建时间：2022-02-21 12:41:03" itemprop="dateCreated datePublished" datetime="2022-02-21T12:41:03+08:00">2022-02-21</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-02-27 16:01:18" itemprop="dateModified" datetime="2022-02-27T16:01:18+08:00">2022-02-27</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -260,7 +266,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>839</span>
+              <span>1.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -279,12 +285,23 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/russian-doll-envelopes/"><strong>354.俄罗斯套娃信封问题</strong></a></p>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/russian-doll-envelopes/"><strong>354.俄罗斯套娃信封问题</strong></a></p>
+<p>给你一个二维整数数组<code>envelopes</code>，其中<code>envelopes[i] = [wi, hi]</code>，表示第<code>i</code>个信封的宽度和高度。</p>
+<p>当另一个信封的宽度和高度都比这个信封大的时候，这个信封就可以放进另一个信封里，如同俄罗斯套娃一样。</p>
+<p>请计算<strong>最多能有多少个</strong>信封能组成一组“俄罗斯套娃”信封（即可以把一个信封放到另一个信封里面）。</p>
+<p>注意：不允许旋转信封。</p>
+<p>示例 1：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入：envelopes = [[5,4],[6,4],[6,7],[2,3]]</span><br><span class="line">输出：3</span><br><span class="line">解释：最多信封的个数为 3, 组合为: [2,3] =&gt; [5,4] =&gt; [6,7]。</span><br></pre></td></tr></table></figure><br>示例 2：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：envelopes = [[1,1],[1,1],[1,1]]</span><br><span class="line">输出：1</span><br></pre></td></tr></table></figure></p>
+<p>提示：</p>
+<ul>
+<li><code>1 &lt;= envelopes.length &lt;= 105</code></li>
+<li><code>envelopes[i].length == 2</code></li>
+<li><code>1 &lt;= wi, hi &lt;= 105</code><span id="more"></span>
+</li>
+</ul>
 <h2 id="题解"><a href="#题解" class="headerlink" title="题解"></a>题解</h2><p>本质是个求二维的<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/longest-increasing-subsequence/">最长递增自序列</a><br>核心在于如何将其降维，方法是排序：<br>先对宽度w进行升序排序，如果w相同，则对高度h进行降序排序。之后对排序好的数组的h纬度进行最长递增子序列算法即可。<br>前置知识点：</p>
 <ol>
 <li>sort用法：<code>sort(vec.begin(),vec.end(),myfunc)</code>，其中myfunc为自定义的排序方式，当然参数三也可以省略。</li>
-<li>lambda函数用法：<code>[捕获，可以为空](行参)&#123;函数体&#125;</code><span id="more"></span>
-</li>
+<li>lambda函数用法：<code>[捕获，可以为空](行参)&#123;函数体&#125;</code></li>
 </ol>
 <h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>注意！在用例更新后，单纯的最长递增子序列算法已经不可用，会超时，必须用二分法。(但我觉得二分法不是人能想出来的，脑筋急转弯没意思，所以这里还是贴上正常思路的代码。)<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">maxEnvelopes</span><span class="params">(vector&lt;vector&lt;<span class="keyword">int</span>&gt;&gt;&amp; envelopes)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">sort</span>(envelopes.<span class="built_in">begin</span>(), envelopes.<span class="built_in">end</span>(), </span><br><span class="line">        [](<span class="keyword">const</span> vector&lt;<span class="keyword">int</span>&gt;&amp; x, <span class="keyword">const</span> vector&lt;<span class="keyword">int</span>&gt;&amp; y)&#123;</span><br><span class="line">            <span class="keyword">return</span> x[<span class="number">0</span>]&lt;y[<span class="number">0</span>] || (x[<span class="number">0</span>]==y[<span class="number">0</span>] &amp;&amp; x[<span class="number">1</span>]&gt;y[<span class="number">1</span>]);</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">int</span> n = envelopes.<span class="built_in">size</span>();</span><br><span class="line">        <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">dp</span><span class="params">(n, <span class="number">1</span>)</span></span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; n; ++i) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; i; ++j) &#123;</span><br><span class="line">                <span class="keyword">if</span> (envelopes[i][<span class="number">1</span>] &gt; envelopes[j][<span class="number">1</span>]) &#123;</span><br><span class="line">                    dp[i] = <span class="built_in">max</span>(dp[i], dp[j]+<span class="number">1</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> *<span class="built_in">max_element</span>(dp.<span class="built_in">begin</span>(), dp.<span class="built_in">end</span>());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
 
@@ -371,7 +388,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">题解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">2.</span> <span class="nav-text">代码</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE"><span class="nav-number">1.</span> <span class="nav-text">题目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E8%A7%A3"><span class="nav-number">2.</span> <span class="nav-text">题解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">代码</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -387,7 +404,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-count">31</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -444,12 +461,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">71k</span>
+    <span title="站点总字数">81k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:04</span>
+    <span title="站点阅读时长">1:13</span>
 </div>
 
 <!--

@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"wangtianyang.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="146.LRU缓存 题解双向链表+map+虚拟头尾节点知识点：  LRU，即最近最少使用，当内存满了的时候，自动删除最久没有访问的数据 list也是双向链表！但是搜索元素时需要遍历，时间复杂度太高，所以本题选择自定义双向链表 虚拟头尾可以省去很多边界条件的处理  注意事项：  调换节点顺序时，要注意处理好前后节点新的指向关系，不要遗漏 构建双向链表结构的时候，需要注意在构造函数内，将next和pr">
+  <meta name="description" content="题目146.LRU缓存 请你设计并实现一个满足LRU (最近最少使用) 缓存约束的数据结构。实现LRUCache类：  LRUCache(int capacity)以正整数作为容量capacity初始化LRU 缓存 int get(int key)如果关键字key存在于缓存中，则返回关键字的值，否则返回-1。 void put(int key, int value)如果关键字key已经存在，则变更">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【LeetCode刷题笔记】146.LRU缓存">
 <meta property="og:url" content="http://wangtianyang.com/2022/02/19/%E3%80%90LeetCode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0%E3%80%91146-LRU%E7%BC%93%E5%AD%98/index.html">
 <meta property="og:site_name" content="王天阳的个人博客">
-<meta property="og:description" content="146.LRU缓存 题解双向链表+map+虚拟头尾节点知识点：  LRU，即最近最少使用，当内存满了的时候，自动删除最久没有访问的数据 list也是双向链表！但是搜索元素时需要遍历，时间复杂度太高，所以本题选择自定义双向链表 虚拟头尾可以省去很多边界条件的处理  注意事项：  调换节点顺序时，要注意处理好前后节点新的指向关系，不要遗漏 构建双向链表结构的时候，需要注意在构造函数内，将next和pr">
+<meta property="og:description" content="题目146.LRU缓存 请你设计并实现一个满足LRU (最近最少使用) 缓存约束的数据结构。实现LRUCache类：  LRUCache(int capacity)以正整数作为容量capacity初始化LRU 缓存 int get(int key)如果关键字key存在于缓存中，则返回关键字的值，否则返回-1。 void put(int key, int value)如果关键字key已经存在，则变更">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-02-19T03:54:24.000Z">
-<meta property="article:modified_time" content="2022-02-21T01:41:43.787Z">
+<meta property="article:modified_time" content="2022-02-27T07:57:36.783Z">
 <meta property="article:author" content="王天阳">
 <meta property="article:tag" content="刷题">
 <meta name="twitter:card" content="summary">
@@ -234,7 +234,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-02-21 09:41:43" itemprop="dateModified" datetime="2022-02-21T09:41:43+08:00">2022-02-21</time>
+                <time title="修改时间：2022-02-27 15:57:36" itemprop="dateModified" datetime="2022-02-27T15:57:36+08:00">2022-02-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -266,14 +266,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.8k</span>
+              <span>2.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -285,7 +285,22 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/lru-cache/"><strong>146.LRU缓存</strong></a></p>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/lru-cache/"><strong>146.LRU缓存</strong></a></p>
+<p>请你设计并实现一个满足<strong>LRU (最近最少使用) 缓存</strong>约束的数据结构。<br>实现<code>LRUCache</code>类：</p>
+<ul>
+<li><code>LRUCache(int capacity)</code>以<strong>正整数</strong>作为容量<code>capacity</code>初始化LRU 缓存</li>
+<li><code>int get(int key)</code>如果关键字<code>key</code>存在于缓存中，则返回关键字的值，否则返回<code>-1</code>。</li>
+<li><code>void put(int key, int value)</code>如果关键字<code>key</code>已经存在，则变更其数据值<code>value</code>；如果不存在，则向缓存中插入该组<code>key-value</code>。如果插入操作导致关键字数量超过<code>capacity</code>，则应该<strong>逐出</strong>最久未使用的关键字。<br>函数 get 和 put 必须以 O(1) 的平均时间复杂度运行。</li>
+</ul>
+<p>示例：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">输入</span><br><span class="line">[&quot;LRUCache&quot;, &quot;put&quot;, &quot;put&quot;, &quot;get&quot;, &quot;put&quot;, &quot;get&quot;, &quot;put&quot;, &quot;get&quot;, &quot;get&quot;, &quot;get&quot;]</span><br><span class="line">[[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]</span><br><span class="line">输出</span><br><span class="line">[null, null, null, 1, null, -1, null, -1, 3, 4]</span><br><span class="line"></span><br><span class="line">解释</span><br><span class="line">LRUCache lRUCache = new LRUCache(2);</span><br><span class="line">lRUCache.put(1, 1); // 缓存是 &#123;1=1&#125;</span><br><span class="line">lRUCache.put(2, 2); // 缓存是 &#123;1=1, 2=2&#125;</span><br><span class="line">lRUCache.get(1);    // 返回 1</span><br><span class="line">lRUCache.put(3, 3); // 该操作会使得关键字 2 作废，缓存是 &#123;1=1, 3=3&#125;</span><br><span class="line">lRUCache.get(2);    // 返回 -1 (未找到)</span><br><span class="line">lRUCache.put(4, 4); // 该操作会使得关键字 1 作废，缓存是 &#123;4=4, 3=3&#125;</span><br><span class="line">lRUCache.get(1);    // 返回 -1 (未找到)</span><br><span class="line">lRUCache.get(3);    // 返回 3</span><br><span class="line">lRUCache.get(4);    // 返回 4</span><br></pre></td></tr></table></figure></p>
+<p>提示：</p>
+<ul>
+<li><code>1 &lt;= capacity &lt;= 3000</code></li>
+<li><code>0 &lt;= key &lt;= 10000</code></li>
+<li><code>0 &lt;= value &lt;= 105</code></li>
+<li>最多调用 2 * 105 次<code>get</code>和<code>put</code><span id="more"></span>
+</li>
+</ul>
 <h2 id="题解"><a href="#题解" class="headerlink" title="题解"></a>题解</h2><p><strong>双向链表+map+虚拟头尾节点</strong><br>知识点：</p>
 <ol>
 <li>LRU，即最近最少使用，当内存满了的时候，自动删除最久没有访问的数据</li>
@@ -296,8 +311,7 @@
 <ol>
 <li>调换节点顺序时，要注意处理好前后节点新的指向关系，不要遗漏</li>
 <li>构建双向链表结构的时候，需要注意在构造函数内，将next和pre初始化为nullptr，否则在调用<code>node-&gt;next</code>时会出错</li>
-<li>注意边界条件，比如将最后一个节点调换到最后一个时（原地tp），如果按照寻常逻辑处理，会导致节点的next指针指向自己（这地方我卡了一下午！！！）<span id="more"></span>
-</li>
+<li>注意边界条件，比如将最后一个节点调换到最后一个时（原地tp），如果按照寻常逻辑处理，会导致节点的next指针指向自己（这地方我卡了一下午！！！）</li>
 </ol>
 <h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">LinkedNode</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> key;</span><br><span class="line">    <span class="keyword">int</span> value;</span><br><span class="line">    LinkedNode *next;</span><br><span class="line">    LinkedNode *prev;</span><br><span class="line">    <span class="built_in">LinkedNode</span>(<span class="keyword">int</span> k, <span class="keyword">int</span> v) &#123;</span><br><span class="line">        key=k;</span><br><span class="line">        value=v;</span><br><span class="line">        next=<span class="literal">nullptr</span>;</span><br><span class="line">        prev=<span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">LinkedNode</span>() &#123;</span><br><span class="line">        key=<span class="number">-1</span>;</span><br><span class="line">        value=<span class="number">-1</span>;</span><br><span class="line">        next=<span class="literal">nullptr</span>;</span><br><span class="line">        prev=<span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LRUCache</span> &#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    LinkedNode *head;</span><br><span class="line">    LinkedNode *tail;</span><br><span class="line">    <span class="keyword">int</span> cap;</span><br><span class="line">    <span class="keyword">int</span> size;</span><br><span class="line">    unordered_map&lt;<span class="keyword">int</span>, LinkedNode*&gt; des;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">toTail</span><span class="params">(<span class="keyword">int</span> key)</span> </span>&#123;</span><br><span class="line">        LinkedNode *cur = des[key];</span><br><span class="line">        <span class="keyword">if</span> (cur-&gt;next == tail) <span class="keyword">return</span>;</span><br><span class="line">        tail-&gt;prev-&gt;next = cur;</span><br><span class="line">        cur-&gt;prev-&gt;next = cur-&gt;next;</span><br><span class="line">        cur-&gt;next-&gt;prev = cur-&gt;prev;</span><br><span class="line">        cur-&gt;prev = tail-&gt;prev;</span><br><span class="line">        tail-&gt;prev = cur;</span><br><span class="line">        cur-&gt;next = tail;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">LRUCache</span>(<span class="keyword">int</span> capacity) &#123;</span><br><span class="line">        head=<span class="keyword">new</span> <span class="built_in">LinkedNode</span>();</span><br><span class="line">        tail=<span class="keyword">new</span> <span class="built_in">LinkedNode</span>();</span><br><span class="line">        head-&gt;next=tail;</span><br><span class="line">        tail-&gt;prev=head;</span><br><span class="line">        cap=capacity;</span><br><span class="line">        size=<span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">get</span><span class="params">(<span class="keyword">int</span> key)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (des.<span class="built_in">find</span>(key)!=des.<span class="built_in">end</span>()) &#123;</span><br><span class="line">            <span class="built_in">toTail</span>(key);</span><br><span class="line">            <span class="keyword">return</span> des[key]-&gt;value;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">put</span><span class="params">(<span class="keyword">int</span> key, <span class="keyword">int</span> value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (des.<span class="built_in">find</span>(key)!=des.<span class="built_in">end</span>()) &#123;</span><br><span class="line">            <span class="built_in">toTail</span>(key);</span><br><span class="line">            des[key]-&gt;value=value;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        LinkedNode *cur = <span class="keyword">new</span> <span class="built_in">LinkedNode</span>(key, value);</span><br><span class="line">        tail-&gt;prev-&gt;next = cur;</span><br><span class="line">        cur-&gt;prev = tail-&gt;prev;</span><br><span class="line">        tail-&gt;prev = cur;</span><br><span class="line">        cur-&gt;next = tail;</span><br><span class="line">        des.<span class="built_in">insert</span>(&#123;key, cur&#125;);</span><br><span class="line">        ++size;</span><br><span class="line">        <span class="keyword">if</span> (size &gt; cap) &#123;</span><br><span class="line">            head = head-&gt;next;</span><br><span class="line">            des.<span class="built_in">erase</span>(head-&gt;key);</span><br><span class="line">            --size;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Your LRUCache object will be instantiated and called as such:</span></span><br><span class="line"><span class="comment"> * LRUCache* obj = new LRUCache(capacity);</span></span><br><span class="line"><span class="comment"> * int param_1 = obj-&gt;get(key);</span></span><br><span class="line"><span class="comment"> * obj-&gt;put(key,value);</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
 
@@ -384,7 +398,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">题解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">2.</span> <span class="nav-text">代码</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE"><span class="nav-number">1.</span> <span class="nav-text">题目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E8%A7%A3"><span class="nav-number">2.</span> <span class="nav-text">题解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">代码</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -400,7 +414,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-count">31</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -457,12 +471,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">71k</span>
+    <span title="站点总字数">81k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:04</span>
+    <span title="站点阅读时长">1:13</span>
 </div>
 
 <!--

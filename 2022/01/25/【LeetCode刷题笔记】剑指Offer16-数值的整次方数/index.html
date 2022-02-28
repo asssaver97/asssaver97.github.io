@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"wangtianyang.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="剑指Offer 16. 数值的整次方数 题解快速幂法！！！快速幂法有两种解析角度：二进制角度对于任意十进制数n，有对应二进制$b_m…b_2b_1b_0$…，则：  $n&#x3D;1b_0+2b_1+4b_2+…+2^mb_m$; $x^n&#x3D;x^{(1b_0+2b_1+4b_2+…+2^mb_m)}$;  因此，对于计算$x^n$，我们可以将其转换为两个子问题：  计算$x^1$，$x^2$，$x^4$，">
+  <meta name="description" content="题目剑指Offer 16. 数值的整次方数 实现pow(x, n)，即计算x的n次幂函数。不得使用库函数，同时不需要考虑大数问题。 示例 1：12输入：x &#x3D; 2.00000, n &#x3D; 10输出：1024.00000示例 2：12输入：x &#x3D; 2.10000, n &#x3D; 3输出：9.26100示例 3：123输入：x &#x3D; 2.00000, n &#x3D; -2输出：0.25000解释：2-2 &#x3D; 1&#x2F;22">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【LeetCode刷题笔记】剑指Offer16.数值的整次方数">
 <meta property="og:url" content="http://wangtianyang.com/2022/01/25/%E3%80%90LeetCode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0%E3%80%91%E5%89%91%E6%8C%87Offer16-%E6%95%B0%E5%80%BC%E7%9A%84%E6%95%B4%E6%AC%A1%E6%96%B9%E6%95%B0/index.html">
 <meta property="og:site_name" content="王天阳的个人博客">
-<meta property="og:description" content="剑指Offer 16. 数值的整次方数 题解快速幂法！！！快速幂法有两种解析角度：二进制角度对于任意十进制数n，有对应二进制$b_m…b_2b_1b_0$…，则：  $n&#x3D;1b_0+2b_1+4b_2+…+2^mb_m$; $x^n&#x3D;x^{(1b_0+2b_1+4b_2+…+2^mb_m)}$;  因此，对于计算$x^n$，我们可以将其转换为两个子问题：  计算$x^1$，$x^2$，$x^4$，">
+<meta property="og:description" content="题目剑指Offer 16. 数值的整次方数 实现pow(x, n)，即计算x的n次幂函数。不得使用库函数，同时不需要考虑大数问题。 示例 1：12输入：x &#x3D; 2.00000, n &#x3D; 10输出：1024.00000示例 2：12输入：x &#x3D; 2.10000, n &#x3D; 3输出：9.26100示例 3：123输入：x &#x3D; 2.00000, n &#x3D; -2输出：0.25000解释：2-2 &#x3D; 1&#x2F;22">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-01-25T12:54:56.000Z">
-<meta property="article:modified_time" content="2022-02-21T01:43:44.074Z">
+<meta property="article:modified_time" content="2022-02-27T08:21:24.237Z">
 <meta property="article:author" content="王天阳">
 <meta property="article:tag" content="刷题">
 <meta name="twitter:card" content="summary">
@@ -234,7 +234,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-02-21 09:43:44" itemprop="dateModified" datetime="2022-02-21T09:43:44+08:00">2022-02-21</time>
+                <time title="修改时间：2022-02-27 16:21:24" itemprop="dateModified" datetime="2022-02-27T16:21:24+08:00">2022-02-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -266,7 +266,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>726</span>
+              <span>954</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -285,7 +285,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/shu-zhi-de-zheng-shu-ci-fang-lcof/"><strong>剑指Offer 16. 数值的整次方数</strong></a></p>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/shu-zhi-de-zheng-shu-ci-fang-lcof/"><strong>剑指Offer 16. 数值的整次方数</strong></a></p>
+<p>实现<code>pow(x, n)</code>，即计算<code>x</code>的<code>n</code>次幂函数。不得使用库函数，同时不需要考虑大数问题。</p>
+<p>示例 1：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：x = 2.00000, n = 10</span><br><span class="line">输出：1024.00000</span><br></pre></td></tr></table></figure><br>示例 2：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：x = 2.10000, n = 3</span><br><span class="line">输出：9.26100</span><br></pre></td></tr></table></figure><br>示例 3：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入：x = 2.00000, n = -2</span><br><span class="line">输出：0.25000</span><br><span class="line">解释：2-2 = 1/22 = 1/4 = 0.25</span><br></pre></td></tr></table></figure></p>
+<p>提示：</p>
+<ul>
+<li><code>-100.0 &lt; x &lt; 100.0</code></li>
+<li><code>-231 &lt;= n &lt;= 231-1</code></li>
+<li><code>-104 &lt;= xn &lt;= 104</code><span id="more"></span>
+</li>
+</ul>
 <h2 id="题解"><a href="#题解" class="headerlink" title="题解"></a>题解</h2><p><strong>快速幂法！！！</strong><br>快速幂法有两种解析角度：<br><strong>二进制角度</strong><br>对于任意十进制数n，有对应二进制$b_m…b_2b_1b_0$…，则：</p>
 <ul>
 <li>$n=1b_0+2b_1+4b_2+…+2^mb_m$;</li>
@@ -300,7 +309,7 @@
 <ul>
 <li>首先，初始化<code>res=1</code>；</li>
 <li>接着，判断当前位二进制$b_k$是否为一，即<code>if (n&amp;1)</code>，若为1，则res乘上$x^{2^k}$，即<code>res *= x</code>；</li>
-<li>然后，将n右移一位（除以2），即<code>n &gt;&gt; 1</code>，并将<code>x *= x</code>。<br>循环2、3步，最后输出res。<span id="more"></span>
+<li>然后，将n右移一位（除以2），即<code>n &gt;&gt; 1</code>，并将<code>x *= x</code>。<br>循环2、3步，最后输出res。<!--more-->
 </li>
 </ul>
 <p><strong>二分法角度</strong><br>$x^n=x^{n/2}+x^{n/2}=(x^2)^{n/2}$，如果想要保持整数幂，则分奇偶两种情况，我们假设向下取整为<code>//</code>：</p>
@@ -393,7 +402,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">题解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">2.</span> <span class="nav-text">代码</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE"><span class="nav-number">1.</span> <span class="nav-text">题目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E8%A7%A3"><span class="nav-number">2.</span> <span class="nav-text">题解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">代码</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -409,7 +418,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-count">31</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -466,12 +475,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">71k</span>
+    <span title="站点总字数">81k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:04</span>
+    <span title="站点阅读时长">1:13</span>
 </div>
 
 <!--
