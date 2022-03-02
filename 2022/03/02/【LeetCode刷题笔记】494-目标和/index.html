@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"wangtianyang.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="题目面试题19. 正则表达式匹配 请实现一个函数用来匹配包含’. ‘和’‘的正则表达式。模式中的字符’.’表示任意一个字符，而’‘表示它前面的字符可以出现任意次（含0次）。在本题中，匹配是指字符串的所有字符匹配整个模式。例如，字符串”aaa”与模式”a.a”和”abaca”匹配，但与”aa.a”和”ab*a”均不匹配。 示例 1:12345输入:s &#x3D; &quot;aa&quot;p &#x3D; &amp;quo">
+  <meta name="description" content="题目494.目标和 给你一个整数数组nums和一个整数target。 向数组中的每个整数前添加&#39;+&#39;或&#39;-&#39;，然后串联起所有整数，可以构造一个表达式： 例如，nums &#x3D; [2, 1]，可以在2之前添加&#39;+&#39;，在 1 之前添加&#39;-&#39;，然后串联起来得到表达式&quot;+2-1&quot;。返回可以通过上述方法构造的、运算结果等于tar">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【LeetCode刷题笔记】面试题19.正则表达式匹配">
-<meta property="og:url" content="http://wangtianyang.com/2022/01/31/%E3%80%90LeetCode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0%E3%80%91%E9%9D%A2%E8%AF%95%E9%A2%9819-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%8C%B9%E9%85%8D/index.html">
+<meta property="og:title" content="【LeetCode刷题笔记】494.目标和">
+<meta property="og:url" content="http://wangtianyang.com/2022/03/02/%E3%80%90LeetCode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0%E3%80%91494-%E7%9B%AE%E6%A0%87%E5%92%8C/index.html">
 <meta property="og:site_name" content="王天阳的个人博客">
-<meta property="og:description" content="题目面试题19. 正则表达式匹配 请实现一个函数用来匹配包含’. ‘和’‘的正则表达式。模式中的字符’.’表示任意一个字符，而’‘表示它前面的字符可以出现任意次（含0次）。在本题中，匹配是指字符串的所有字符匹配整个模式。例如，字符串”aaa”与模式”a.a”和”abaca”匹配，但与”aa.a”和”ab*a”均不匹配。 示例 1:12345输入:s &#x3D; &quot;aa&quot;p &#x3D; &amp;quo">
+<meta property="og:description" content="题目494.目标和 给你一个整数数组nums和一个整数target。 向数组中的每个整数前添加&#39;+&#39;或&#39;-&#39;，然后串联起所有整数，可以构造一个表达式： 例如，nums &#x3D; [2, 1]，可以在2之前添加&#39;+&#39;，在 1 之前添加&#39;-&#39;，然后串联起来得到表达式&quot;+2-1&quot;。返回可以通过上述方法构造的、运算结果等于tar">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-01-31T02:50:57.000Z">
-<meta property="article:modified_time" content="2022-02-27T08:57:09.729Z">
+<meta property="article:published_time" content="2022-03-02T03:13:03.000Z">
+<meta property="article:modified_time" content="2022-03-02T06:38:21.490Z">
 <meta property="article:author" content="王天阳">
 <meta property="article:tag" content="刷题">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://wangtianyang.com/2022/01/31/%E3%80%90LeetCode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0%E3%80%91%E9%9D%A2%E8%AF%95%E9%A2%9819-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%8C%B9%E9%85%8D/">
+<link rel="canonical" href="http://wangtianyang.com/2022/03/02/%E3%80%90LeetCode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0%E3%80%91494-%E7%9B%AE%E6%A0%87%E5%92%8C/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>【LeetCode刷题笔记】面试题19.正则表达式匹配 | 王天阳的个人博客</title>
+  <title>【LeetCode刷题笔记】494.目标和 | 王天阳的个人博客</title>
   
 
 
@@ -204,7 +204,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://wangtianyang.com/2022/01/31/%E3%80%90LeetCode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0%E3%80%91%E9%9D%A2%E8%AF%95%E9%A2%9819-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%8C%B9%E9%85%8D/">
+    <link itemprop="mainEntityOfPage" href="http://wangtianyang.com/2022/03/02/%E3%80%90LeetCode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0%E3%80%91494-%E7%9B%AE%E6%A0%87%E5%92%8C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -217,7 +217,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          【LeetCode刷题笔记】面试题19.正则表达式匹配
+          【LeetCode刷题笔记】494.目标和
         </h1>
 
         <div class="post-meta">
@@ -226,16 +226,10 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2022-01-31 10:50:57" itemprop="dateCreated datePublished" datetime="2022-01-31T10:50:57+08:00">2022-01-31</time>
+              <time title="创建时间：2022-03-02 11:13:03 / 修改时间：14:38:21" itemprop="dateCreated datePublished" datetime="2022-03-02T11:13:03+08:00">2022-03-02</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-02-27 16:57:09" itemprop="dateModified" datetime="2022-02-27T16:57:09+08:00">2022-02-27</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -255,8 +249,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2022/01/31/%E3%80%90LeetCode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0%E3%80%91%E9%9D%A2%E8%AF%95%E9%A2%9819-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%8C%B9%E9%85%8D/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/01/31/%E3%80%90LeetCode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0%E3%80%91%E9%9D%A2%E8%AF%95%E9%A2%9819-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%8C%B9%E9%85%8D/" itemprop="commentCount"></span>
+    <a title="valine" href="/2022/03/02/%E3%80%90LeetCode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0%E3%80%91494-%E7%9B%AE%E6%A0%87%E5%92%8C/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/03/02/%E3%80%90LeetCode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0%E3%80%91494-%E7%9B%AE%E6%A0%87%E5%92%8C/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -266,14 +260,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.9k</span>
+              <span>1.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>1 分钟</span>
             </span>
 
         </div>
@@ -285,29 +279,29 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/zheng-ze-biao-da-shi-pi-pei-lcof/"><strong>面试题19. 正则表达式匹配</strong></a></p>
-<p>请实现一个函数用来匹配包含’. ‘和’<em>‘的正则表达式。模式中的字符’.’表示任意一个字符，而’</em>‘表示它前面的字符可以出现任意次（含0次）。在本题中，匹配是指字符串的所有字符匹配整个模式。例如，字符串”aaa”与模式”a.a”和”ab<em>ac</em>a”匹配，但与”aa.a”和”ab*a”均不匹配。</p>
-<p>示例 1:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">输入:</span><br><span class="line">s = &quot;aa&quot;</span><br><span class="line">p = &quot;a&quot;</span><br><span class="line">输出: false</span><br><span class="line">解释: &quot;a&quot; 无法匹配 &quot;aa&quot; 整个字符串。</span><br></pre></td></tr></table></figure><br>示例 2:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">输入:</span><br><span class="line">s = &quot;aa&quot;</span><br><span class="line">p = &quot;a*&quot;</span><br><span class="line">输出: true</span><br><span class="line">解释: 因为 &#x27;*&#x27; 代表可以匹配零个或多个前面的那一个元素, 在这里前面的元素就是 &#x27;a&#x27;。因此，字符串 &quot;aa&quot; 可被视为 &#x27;a&#x27; 重复了一次。</span><br></pre></td></tr></table></figure><br>示例 3:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">输入:</span><br><span class="line">s = &quot;ab&quot;</span><br><span class="line">p = &quot;.*&quot;</span><br><span class="line">输出: true</span><br><span class="line">解释: &quot;.*&quot; 表示可匹配零个或多个（&#x27;*&#x27;）任意字符（&#x27;.&#x27;）。</span><br></pre></td></tr></table></figure><br>示例 4:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">输入:</span><br><span class="line">s = &quot;aab&quot;</span><br><span class="line">p = &quot;c*a*b&quot;</span><br><span class="line">输出: true</span><br><span class="line">解释: 因为 &#x27;*&#x27; 表示零个或多个，这里 &#x27;c&#x27; 为 0 个, &#x27;a&#x27; 被重复一次。因此可以匹配字符串 &quot;aab&quot;。</span><br></pre></td></tr></table></figure><br>示例 5:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">输入:</span><br><span class="line">s = &quot;mississippi&quot;</span><br><span class="line">p = &quot;mis*is*p*.&quot;</span><br><span class="line">输出: false</span><br></pre></td></tr></table></figure></p>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/target-sum/"><strong>494.目标和</strong></a></p>
+<p>给你一个整数数组<code>nums</code>和一个整数<code>target</code>。</p>
+<p>向数组中的每个整数前添加<code>&#39;+&#39;</code>或<code>&#39;-&#39;</code>，然后串联起所有整数，可以构造一个<strong>表达式</strong>：</p>
+<p>例如，<code>nums = [2, 1]</code>，可以在<code>2</code>之前添加<code>&#39;+&#39;</code>，在 1 之前添加<code>&#39;-&#39;</code>，然后串联起来得到表达式<code>&quot;+2-1&quot;</code>。<br>返回可以通过上述方法构造的、运算结果等于<code>target</code>的不同 表达式 的数目。</p>
+<p>示例 1：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">输入：nums = [1,1,1,1,1], target = 3</span><br><span class="line">输出：5</span><br><span class="line">解释：一共有 5 种方法让最终目标和为 3 。</span><br><span class="line">-1 + 1 + 1 + 1 + 1 = 3</span><br><span class="line">+1 - 1 + 1 + 1 + 1 = 3</span><br><span class="line">+1 + 1 - 1 + 1 + 1 = 3</span><br><span class="line">+1 + 1 + 1 - 1 + 1 = 3</span><br><span class="line">+1 + 1 + 1 + 1 - 1 = 3</span><br></pre></td></tr></table></figure><br>示例 2：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：nums = [1], target = 1</span><br><span class="line">输出：1</span><br></pre></td></tr></table></figure></p>
+<p>提示：</p>
 <ul>
-<li><code>s</code>可能为空，且只包含从<code>a-z</code>的小写字母。</li>
-<li><code>p</code>可能为空，且只包含从<code>a-z</code>的小写字母以及字符<code>.</code>和<code>*</code>，无连续的<code>&#39;*&#39;</code>。<span id="more"></span>
+<li><code>1 &lt;= nums.length &lt;= 20</code></li>
+<li><code>0 &lt;= nums[i] &lt;= 1000</code></li>
+<li><code>0 &lt;= sum(nums[i]) &lt;= 1000</code></li>
+<li><code>-1000 &lt;= target &lt;= 1000</code><span id="more"></span>
 </li>
 </ul>
-<h2 id="题解"><a href="#题解" class="headerlink" title="题解"></a>题解</h2><p><strong>动态规划！</strong><br>我们用dp[i][j]记录s的前i个字符和p的前j个字符是否匹配，p的字符有三种情况：</p>
+<h2 id="题解"><a href="#题解" class="headerlink" title="题解"></a>题解</h2><p>本题最容易想到的是回溯，即暴力遍历，挨个尝试每个数的加减就好了。<br>但是会超时。<br>所以我们尝试动态规划。动态规划比起暴力算法的优点就是它消除了重叠子问题，因此时间复杂度会更低。<br>首先，我们要进行数学上的公式转换：<br>令A和B分别表示nums中取正和负的数的子集，那么：</p>
+<script type="math/tex; mode=display">\sum A-\sum B=target</script><script type="math/tex; mode=display">\sum A=traget+\sum B</script><script type="math/tex; mode=display">\sum A+\sum A=target+\sum B+\sum A</script><script type="math/tex; mode=display">2*\sum A=target+\sum nums</script><script type="math/tex; mode=display">\sum A=(target+\sum nums)/2</script><p>接下来就好办多了，公式右边是个定值，那么设定dp[i][j]为nums的前i个元素有多少个子集A满足和为j，动态规划要素如下：</p>
 <ol>
-<li>当p的第j个字符为字母时，转移规则如下：<script type="math/tex; mode=display">dp[i][j]=
-\begin{cases}
-dp[i-1][j-1],& p[j]\neq s[i] \\
-false,& p[j]=s[i]
-\end{cases}</script></li>
-<li>当p的第j个字符为’·’时，转移规则如下：<script type="math/tex; mode=display">dp[i][j]=dp[i-1][j-1]</script></li>
-<li>当p的第j个字符为’*’时，转移规则如下：<script type="math/tex; mode=display">dp[i][j]=
-\begin{cases}
-dp[i-1][j] or dp[i][j-2],& p[j-1]=s[i] or p[j-1]='·' \\
-dp[i][j-2],& p[j-1]\neq s[i]
-\end{cases}</script><strong>注意！</strong>需要先处理dp第一行，因为a*与空字符串匹配。</li>
+<li>初始状态：<code>dp[0][0]=1</code>（空集也是子集），<code>dp[0][else]=0</code>。</li>
+<li>终止状态：<code>dp[n][(target+sum)/2]</code></li>
+<li>状态转移：如果取当前元素加入子集A，则<code>dp[i][j]=dp[i-1][j-nums[i]]</code>；否则，<code>dp[i][j]=dp[i-1]</code>。故<code>dp[i][j]=dp[i-1][j-nums[i]]+dp[i-1][j]</code>。</li>
+<li>转移方向：从上往下，从左往右。</li>
 </ol>
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">isMatch</span><span class="params">(string s, string p)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> m = s.<span class="built_in">size</span>(), n = p.<span class="built_in">size</span>();</span><br><span class="line">        vector&lt;vector&lt;<span class="keyword">bool</span>&gt;&gt; <span class="built_in">dp</span>(m + <span class="number">1</span>, vector&lt;<span class="keyword">bool</span>&gt;(n + <span class="number">1</span>, <span class="literal">false</span>));</span><br><span class="line">        dp[<span class="number">0</span>][<span class="number">0</span>] = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>; i &lt; n + <span class="number">1</span>; i+=<span class="number">2</span>) </span><br><span class="line">            dp[<span class="number">0</span>][i] = dp[<span class="number">0</span>][i<span class="number">-2</span>] &amp; (p[i<span class="number">-1</span>] == <span class="string">&#x27;*&#x27;</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; m; ++i) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; n; ++ j) &#123;</span><br><span class="line">                <span class="keyword">if</span> (p[j] == <span class="string">&#x27;.&#x27;</span>) &#123;</span><br><span class="line">                    dp[i+<span class="number">1</span>][j+<span class="number">1</span>] = dp[i][j];</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (p[j] == <span class="string">&#x27;*&#x27;</span>) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (p[j<span class="number">-1</span>] == <span class="string">&#x27;.&#x27;</span> || p[j<span class="number">-1</span>] == s[i]) &#123;</span><br><span class="line">                        dp[i+<span class="number">1</span>][j+<span class="number">1</span>] = dp[i+<span class="number">1</span>][j<span class="number">-1</span>] | dp[i][j+<span class="number">1</span>];</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        dp[i+<span class="number">1</span>][j+<span class="number">1</span>] = dp[i+<span class="number">1</span>][j<span class="number">-1</span>];</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">if</span> (p[j] == s[i]) &#123;</span><br><span class="line">                        dp[i+<span class="number">1</span>][j+<span class="number">1</span>] = dp[i][j];</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        dp[i+<span class="number">1</span>][j+<span class="number">1</span>] = <span class="literal">false</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dp[m][n];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>优化：状态压缩</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">findTargetSumWays</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n = nums.<span class="built_in">size</span>(), sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> num : nums) sum += num;</span><br><span class="line">        target = target + sum;</span><br><span class="line">        <span class="keyword">if</span> (target % <span class="number">2</span> || target &lt; <span class="number">0</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        target = target /<span class="number">2</span>;</span><br><span class="line">        <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">dp</span><span class="params">(target+<span class="number">1</span>, <span class="number">0</span>)</span></span>;</span><br><span class="line">        dp[<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; ++i) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = target; j &gt;= <span class="number">0</span>; --j) &#123;</span><br><span class="line">                <span class="keyword">if</span> (j - nums[i<span class="number">-1</span>] &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">                    dp[j] = dp[j-nums[i<span class="number">-1</span>]] + dp[j];</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    dp[j] = dp[j];</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dp[target];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -326,13 +320,10 @@ dp[i][j-2],& p[j-1]\neq s[i]
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2022/01/30/%E3%80%90LeetCode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0%E3%80%91%E5%89%91%E6%8C%87Offer36-%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8/" rel="prev" title="【LeetCode刷题笔记】剑指Offer36.二叉搜索树与双向链表">
-      <i class="fa fa-chevron-left"></i> 【LeetCode刷题笔记】剑指Offer36.二叉搜索树与双向链表
+    <a href="/2022/03/01/%E5%AD%97%E8%8A%82%E5%89%8D%E7%AB%AF%E6%9A%91%E6%9C%9F%E4%B8%80%E9%9D%A2%EF%BC%882022-03-01%EF%BC%89/" rel="prev" title="字节前端暑期一面（2022/03/01）">
+      <i class="fa fa-chevron-left"></i> 字节前端暑期一面（2022/03/01）
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2022/01/31/%E3%80%90LeetCode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0%E3%80%91%E5%89%91%E6%8C%87Offer41-%E6%95%B0%E6%8D%AE%E6%B5%81%E4%B8%AD%E7%9A%84%E4%B8%AD%E4%BD%8D%E6%95%B0/" rel="next" title="【LeetCode刷题笔记】剑指Offer41.数据流中的中位数">
-      【LeetCode刷题笔记】剑指Offer41.数据流中的中位数 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
