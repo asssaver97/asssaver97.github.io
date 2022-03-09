@@ -36,7 +36,7 @@
 <meta property="og:image" content="http://wangtianyang.com/images/数据库基础7.png">
 <meta property="og:image" content="http://wangtianyang.com/images/数据库基础8.png">
 <meta property="article:published_time" content="2022-03-06T07:46:27.000Z">
-<meta property="article:modified_time" content="2022-03-09T13:41:59.793Z">
+<meta property="article:modified_time" content="2022-03-09T14:30:53.655Z">
 <meta property="article:author" content="王天阳">
 <meta property="article:tag" content="八股文">
 <meta name="twitter:card" content="summary">
@@ -243,7 +243,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-09 21:41:59" itemprop="dateModified" datetime="2022-03-09T21:41:59+08:00">2022-03-09</time>
+                <time title="修改时间：2022-03-09 22:30:53" itemprop="dateModified" datetime="2022-03-09T22:30:53+08:00">2022-03-09</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -275,14 +275,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>7.1k</span>
+              <span>7.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
+              <span>7 分钟</span>
             </span>
 
         </div>
@@ -326,7 +326,7 @@
 </ul>
 </li>
 </ul>
-<h2 id="常见的封锁类型？"><a href="#常见的封锁类型？" class="headerlink" title="常见的封锁类型？"></a>常见的封锁类型？</h2><p>意向锁是<code>InnoDB</code>自动加的， 不需用户干预。对于<code>UPDATE</code>、<code>DELETE</code>和<code>INSERT</code>语句，<code>InnoDB</code>会自动给涉及数据集加排他锁（X)； 对于普通<code>SELECT</code>语句，<code>InnoDB</code>不会加任何锁；事务可以通过以下语句显式给记录集加共享锁或排他锁：共享锁（S）：<code>SELECT * FROM table_name WHERE ... LOCK IN SHARE MODE</code>。其他 session 仍然可以查询记录，并也可以对该记录加 share mode 的共享锁。但是如果当前事务需要对该记录进行更新操作，则很有可能造成死锁。 排他锁（X)：<code>SELECT * FROM table_name WHERE ... FOR UPDATE</code>。其他 session 可以查询该记录，但是不能对该记录加共享锁或排他锁，而是等待获得锁</p>
+<h2 id="常见的封锁类型？"><a href="#常见的封锁类型？" class="headerlink" title="常见的封锁类型？"></a>常见的封锁类型？</h2><p>意向锁是<code>InnoDB</code><sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="InnoDB，是MySQL和MariaDB的数据库引擎之一，最初由MySQL AB发行。InnoDB由Innobase Oy公司所开发，2006年五月时由甲骨文公司并购。与传统的ISAM与MyISAM相比，InnoDB的最大特色就是支持了ACID兼容的事务（Transaction）功能，类似于PostgreSQL。">[1]</span></a></sup>自动加的， 不需用户干预。对于<code>UPDATE</code>、<code>DELETE</code>和<code>INSERT</code>语句，<code>InnoDB</code>会自动给涉及数据集加排他锁（X)； 对于普通<code>SELECT</code>语句，<code>InnoDB</code>不会加任何锁；事务可以通过以下语句显式给记录集加共享锁或排他锁：共享锁（S）：<code>SELECT * FROM table_name WHERE ... LOCK IN SHARE MODE</code>。其他 session 仍然可以查询记录，并也可以对该记录加 share mode 的共享锁。但是如果当前事务需要对该记录进行更新操作，则很有可能造成死锁。 排他锁（X)：<code>SELECT * FROM table_name WHERE ... FOR UPDATE</code>。其他 session 可以查询该记录，但是不能对该记录加共享锁或排他锁，而是等待获得锁</p>
 <ul>
 <li><strong>排它锁</strong>（Exclusive Lock）/ X锁：事务对数据加上X锁时，只允许此事务读取和修改此数据，并且其它事务不能对该数据加任何锁；</li>
 <li><strong>共享锁</strong>（Shared Lock）/ S锁：加了S锁后，该事务只能对数据进行读取而不能修改，并且其它事务只能加S锁，不能加X锁</li>
@@ -464,7 +464,7 @@ delete;
 <li>游标（Cursor）：用于定位在查询返回的<strong>结果集的特定行</strong>，以对特定行进行操作。使用游标可以方便地对结果集进行移动遍历，根据需要滚动或对浏览/修改任意行中的数据。主要用于交互式应用。</li>
 </ul>
 <h2 id="三级模式-二级映像"><a href="#三级模式-二级映像" class="headerlink" title="三级模式/二级映像"></a>三级模式/二级映像</h2><p><img src="/images/数据库基础7.png" alt=""><br><img src="/images/数据库基础8.png" alt=""></p>
-
+<div id="footnotes"><hr><div id="footnotelist"><ol style="list-style: none; padding-left: 0; margin-left: 40px"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">1.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">InnoDB，是MySQL和MariaDB的数据库引擎之一，最初由MySQL AB发行。InnoDB由Innobase Oy公司所开发，2006年五月时由甲骨文公司并购。与传统的ISAM与MyISAM相比，InnoDB的最大特色就是支持了ACID兼容的事务（Transaction）功能，类似于PostgreSQL。<a href="#fnref:1" rev="footnote"> ↩</a></span></li></ol></div></div>
     </div>
 
     
@@ -626,7 +626,7 @@ delete;
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">218k</span>
+    <span title="站点总字数">219k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
