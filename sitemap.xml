@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://wangtianyang.com/2022/03/06/%E3%80%90C-%E3%80%91%E7%B1%BB%E7%9B%B8%E5%85%B3/</loc>
+    
+    <lastmod>2022-03-15</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://wangtianyang.com/2022/03/06/%E3%80%90C-%E3%80%91%E5%85%B3%E9%94%AE%E5%AD%97%E5%BA%93%E5%87%BD%E6%95%B0/</loc>
     
     <lastmod>2022-03-15</lastmod>
@@ -66,15 +75,6 @@
   
   <url>
     <loc>http://wangtianyang.com/2022/03/06/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91Redis/</loc>
-    
-    <lastmod>2022-03-06</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://wangtianyang.com/2022/03/06/%E3%80%90C-%E3%80%91%E7%B1%BB%E7%9B%B8%E5%85%B3/</loc>
     
     <lastmod>2022-03-06</lastmod>
     
