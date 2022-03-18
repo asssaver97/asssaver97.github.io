@@ -20,24 +20,43 @@
     var CONFIG = {"hostname":"wangtianyang.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="数据库索引的实现原理（B+树）依次插入6 10 4 14 5 11 15 3 2 12 1 7 8 8 6 3 6 21 5 15 15 6 32 23 45 65 7 8 6 5 4 B树可以看作是对2-3查找树的一种扩展，即他允许每个节点有M-1个子节点。  根节点至少有两个子节点 每个节点有M-1个key，并且以升序排列 位于M-1和M key的子节点的值位于M-1 和M key对应的Val">
+  <meta name="description" content="数据库索引的实现原理（B+树）在介绍B+树之前， 先简单的介绍一下B树。 B树B树概念B树也称B-树,它是一颗多路平衡查找树。首先，B树和B+树都是从最简单的二叉树变换而来的，我们来看看B树的定义：  每个节点最多有m-1个关键字（可以存有的键值对）。 根节点最少可以只有1个关键字。 非根节点至少有m&#x2F;2个关键字。 每个节点中的关键字都按照从小到大的顺序排列，每个关键字的左子树中的所有关键字都小于">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【数据库】MySQL">
 <meta property="og:url" content="http://wangtianyang.com/2022/03/06/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91MySQL/index.html">
 <meta property="og:site_name" content="王天阳的个人博客">
-<meta property="og:description" content="数据库索引的实现原理（B+树）依次插入6 10 4 14 5 11 15 3 2 12 1 7 8 8 6 3 6 21 5 15 15 6 32 23 45 65 7 8 6 5 4 B树可以看作是对2-3查找树的一种扩展，即他允许每个节点有M-1个子节点。  根节点至少有两个子节点 每个节点有M-1个key，并且以升序排列 位于M-1和M key的子节点的值位于M-1 和M key对应的Val">
+<meta property="og:description" content="数据库索引的实现原理（B+树）在介绍B+树之前， 先简单的介绍一下B树。 B树B树概念B树也称B-树,它是一颗多路平衡查找树。首先，B树和B+树都是从最简单的二叉树变换而来的，我们来看看B树的定义：  每个节点最多有m-1个关键字（可以存有的键值对）。 根节点最少可以只有1个关键字。 非根节点至少有m&#x2F;2个关键字。 每个节点中的关键字都按照从小到大的顺序排列，每个关键字的左子树中的所有关键字都小于">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql1.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql2.gif">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql3.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql4.gif">
+<meta property="og:image" content="http://wangtianyang.com/images/mysql_Binsert1.png">
+<meta property="og:image" content="http://wangtianyang.com/images/mysql_Binsert2.png">
+<meta property="og:image" content="http://wangtianyang.com/images/mysql_Binsert3.png">
+<meta property="og:image" content="http://wangtianyang.com/images/mysql_Binsert4.png">
+<meta property="og:image" content="http://wangtianyang.com/images/mysql_Binsert5.png">
+<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bremove1.png">
+<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bremove2.png">
+<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bremove3.png">
+<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bremove4.png">
+<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bremove5.png">
+<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bremove6.png">
+<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bremove7.png">
+<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bremove8.png">
+<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bremove9.png">
+<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bplus.png">
+<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bplusinsert1.png">
+<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bplusinsert2.png">
+<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bplusinsert3.png">
+<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bplusinsert4.png">
+<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bplusremove1.png">
+<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bplusremove2.png">
+<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bplusremove3.png">
+<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bplusremove4.png">
 <meta property="og:image" content="http://wangtianyang.com/images/mysql5.png">
 <meta property="article:published_time" content="2022-03-06T08:19:16.000Z">
-<meta property="article:modified_time" content="2022-03-06T08:45:18.018Z">
+<meta property="article:modified_time" content="2022-03-18T02:59:11.542Z">
 <meta property="article:author" content="王天阳">
 <meta property="article:tag" content="八股文">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://wangtianyang.com/images/mysql1.png">
+<meta name="twitter:image" content="http://wangtianyang.com/images/mysql_Binsert1.png">
 
 <link rel="canonical" href="http://wangtianyang.com/2022/03/06/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91MySQL/">
 
@@ -232,10 +251,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-03-06 16:19:16 / 修改时间：16:45:18" itemprop="dateCreated datePublished" datetime="2022-03-06T16:19:16+08:00">2022-03-06</time>
+              <time title="创建时间：2022-03-06 16:19:16" itemprop="dateCreated datePublished" datetime="2022-03-06T16:19:16+08:00">2022-03-06</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-18 10:59:11" itemprop="dateModified" datetime="2022-03-18T10:59:11+08:00">2022-03-18</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -266,14 +291,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.9k</span>
+              <span>5.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
+              <span>5 分钟</span>
             </span>
 
         </div>
@@ -285,20 +310,61 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="数据库索引的实现原理（B-树）"><a href="#数据库索引的实现原理（B-树）" class="headerlink" title="数据库索引的实现原理（B+树）"></a>数据库索引的实现原理（B+树）</h2><p>依次插入<br>6 10 4 14 5 11 15 3 2 12 1 7 8 8 6 3 6 21 5 15 15 6 32 23 45 65 7 8 6 5 4</p>
-<p><strong>B树</strong>可以看作是对2-3查找树的一种扩展，<strong>即他允许每个节点有M-1个子节点</strong>。</p>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="数据库索引的实现原理（B-树）"><a href="#数据库索引的实现原理（B-树）" class="headerlink" title="数据库索引的实现原理（B+树）"></a>数据库索引的实现原理（B+树）</h2><p>在介绍B+树之前， 先简单的介绍一下B树。</p>
+<h3 id="B树"><a href="#B树" class="headerlink" title="B树"></a>B树</h3><h4 id="B树概念"><a href="#B树概念" class="headerlink" title="B树概念"></a>B树概念</h4><p>B树也称B-树,它是一颗多路平衡查找树。首先，B树和B+树都是从最简单的二叉树变换而来的，我们来看看B树的定义：</p>
 <ul>
-<li>根节点至少有两个子节点</li>
-<li>每个节点有M-1个key，并且以升序排列</li>
-<li>位于M-1和M key的子节点的值位于M-1 和M key对应的Value之间</li>
-<li>其它节点至少有M/2个子节点<br>下图是一个M=4 阶的B树:<span id="more"></span>
-<img src="/images/mysql1.png" alt=""><br>动画：<br><img src="/images/mysql2.gif" alt=""></li>
+<li>每个节点最多有m-1个<strong>关键字</strong>（可以存有的键值对）。</li>
+<li>根节点最少可以只有1个<strong>关键字</strong>。</li>
+<li>非根节点至少有m/2个<strong>关键字</strong>。</li>
+<li>每个节点中的关键字都按照从小到大的顺序排列，每个关键字的左子树中的所有关键字都小于它，而右子树中的所有关键字都大于它。</li>
+<li>所有叶子节点都位于同一层，或者说根节点到每个叶子节点的长度都相同。</li>
+<li>每个节点都存有索引和数据，也就是对应的key和value。</li>
 </ul>
-<p><strong>B+</strong>树是对B树的一种变形树，它与B树的差异在于：</p>
+<p>所以，根节点的关键字数量范围：1 &lt;= k &lt;= m-1，非根节点的关键字数量范围：m/2 &lt;= k &lt;= m-1。</p>
+<p>描述一颗B树时需要指定它的阶数，阶数表示了一个节点最多有多少个孩子节点，一般用字母m表示阶数。</p>
+<h4 id="B树插入"><a href="#B树插入" class="headerlink" title="B树插入"></a>B树插入</h4><p>插入的时候，我们需要记住一个规则：<strong>判断当前结点key的个数是否小于等于m-1，如果满足，直接插入即可，如果不满足，将节点的中间的key将这个节点分为左右两部分，中间的节点放到父节点中即可。</strong></p>
+<p>例子：在5阶B树中，结点最多有4个key,最少有2个key（注意：下面的节点统一用一个节点表示key和value）。</p>
 <ul>
-<li>有k个子结点的结点必然有k个关键码；</li>
-<li>非叶结点仅具有索引作用，跟记录有关的信息均存放在叶结点中。</li>
-<li>树的所有叶结点构成一个有序链表，可以按照关键码排序的次序遍历全部记录。<br><img src="/images/mysql3.png" alt=""><br>动画：<br><img src="/images/mysql4.gif" alt=""></li>
+<li>插入18，70，50, 40<br><img src="/images/mysql_Binsert1.png" alt=""></li>
+<li>插入22<br><img src="/images/mysql_Binsert2.png" alt=""></li>
+<li>插入22时，发现这个节点的关键字已经大于4了，所以需要进行分裂，分裂的规则在上面已经讲了，分裂之后，如下<br><img src="/images/mysql_Binsert3.png" alt=""></li>
+<li>接着插入23，25，39<br><img src="/images/mysql_Binsert4.png" alt=""></li>
+<li>分裂，得到下面的<br><img src="/images/mysql_Binsert5.png" alt=""></li>
+</ul>
+<h4 id="B树删除"><a href="#B树删除" class="headerlink" title="B树删除"></a>B树删除</h4><p>B树的删除操作相对于插入操作是相对复杂一些的，但是，你知道记住几种情况，一样可以很轻松的掌握的。</p>
+<p>例子：现在有一个初始状态是下面这样的B树，然后进行删除操作。<br><img src="/images/mysql_Bremove1.png" alt=""></p>
+<ul>
+<li>删除15，这种情况是删除叶子节点的元素，如果删除之后，节点数还是大于m/2，这种情况只要直接删除即可。<br><img src="/images/mysql_Bremove2.png" alt=""><br><img src="/images/mysql_Bremove3.png" alt=""></li>
+<li>接着，我们把22删除，这种情况的规则：22是非叶子节点，<strong>对于非叶子节点的删除，我们需要用后继key（元素）覆盖要删除的key，然后在后继key所在的子支中删除该后继key。</strong>对于删除22，需要将后继元素24移到被删除的22所在的节点。<br><img src="/images/mysql_Bremove4.png" alt=""><br><img src="/images/mysql_Bremove5.png" alt=""></li>
+<li>此时发现26所在的节点只有一个元素，小于2个（m/2），这个节点不符合要求，这时候的规则（向兄弟节点借元素）：<strong>如果删除叶子节点，如果删除元素后元素个数少于（m/2），并且它的兄弟节点的元素大于（m/2），也就是说兄弟节点的元素比最少值m/2还多，将先将父节点的元素移到该节点，然后将兄弟节点的元素再移动到父节点。</strong>这样就满足要求了。<br><img src="/images/mysql_Bremove6.png" alt=""><br><img src="/images/mysql_Bremove7.png" alt=""></li>
+<li>接着删除28，删除叶子节点，删除后不满足要求，所以，我们需要考虑向兄弟节点借元素，但是，兄弟节点也没有多的节点（2个），借不了，怎么办呢？如果遇到这种情况，<strong>首先，还是将先将父节点的元素移到该节点，然后，将当前节点及它的兄弟节点中的key合并，形成一个新的节点。</strong><br><img src="/images/mysql_Bremove8.png" alt=""><br><img src="/images/mysql_Bremove9.png" alt=""></li>
+</ul>
+<h3 id="B-树"><a href="#B-树" class="headerlink" title="B+树"></a>B+树</h3><p>相同点：</p>
+<ul>
+<li>根节点至少一个元素</li>
+<li>非根节点元素范围：m/2 &lt;= k &lt;= m-1</li>
+</ul>
+<p>不同点：</p>
+<ul>
+<li>B+树有两种类型的节点：内部结点（也称索引结点）和叶子结点。内部节点就是非叶子节点，内部节点不存储数据，只存储索引，数据都存储在叶子节点。</li>
+<li>内部结点中的key都按照从小到大的顺序排列，对于内部结点中的一个key，左树中的所有key都小于它，右子树中的key都大于等于它。叶子结点中的记录也按照key的大小排列。</li>
+<li>每个叶子结点都存有相邻叶子结点的指针，叶子结点本身依关键字的大小自小而大顺序链接。</li>
+<li>父节点存有右孩子的第一个元素的索引。</li>
+</ul>
+<p><img src="/images/mysql_Bplus.png" alt=""></p>
+<h4 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h4><p>对于插入操作很简单，只需要记住一个技巧即可：<strong>当节点元素数量大于m-1的时候，按中间元素分裂成左右两部分，中间元素分裂到父节点当做索引存储，但是，本身中间元素还是分裂右边这一部分的。</strong></p>
+<p>下面以一颗5阶B+树的插入过程为例，5阶B+树的节点最少2个元素，最多4个元素。</p>
+<ul>
+<li>插入5，10，15，20<br><img src="/images/mysql_Bplusinsert1.png" alt=""></li>
+<li>插入25，此时元素数量大于4个了，分裂<br><img src="/images/mysql_Bplusinsert2.png" alt=""></li>
+<li>接着插入26，30，继续分裂<br><img src="/images/mysql_Bplusinsert3.png" alt=""><br><img src="/images/mysql_Bplusinsert4.png" alt=""></li>
+</ul>
+<h4 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h4><p>对于删除操作是比B树简单一些的，因为<strong>叶子节点有指针的存在，向兄弟节点借元素时，不需要通过父节点了，而是可以直接通过兄弟节移动即可（前提是兄弟节点的元素大于m/2），然后更新父节点的索引；如果兄弟节点的元素不大于m/2（兄弟节点也没有多余的元素），则将当前节点和兄弟节点合并，并且删除父节点中的key，</strong>下面我们看看具体的实例。</p>
+<ul>
+<li>初始状态<br><img src="/images/mysql_Bplusremove1.png" alt=""></li>
+<li>删除10，删除后，不满足要求，发现左边兄弟节点有多余的元素，所以去借元素，最后，修改父节点索引<br><img src="/images/mysql_Bplusremove2.png" alt=""></li>
+<li>删除元素5，发现不满足要求，并且发现左右兄弟节点都没有多余的元素，所以，可以选择和兄弟节点合并，最后修改父节点索引<br><img src="/images/mysql_Bplusremove3.png" alt=""></li>
+<li>发现父节点索引也不满足条件，所以，需要做跟上面一步一样的操作<br><img src="/images/mysql_Bplusremove4.png" alt=""></li>
 </ul>
 <h2 id="B和B-树的区别"><a href="#B和B-树的区别" class="headerlink" title="B和B+树的区别"></a>B和B+树的区别</h2><p>B+树的非叶子结点只包含导航信息，不包含实际的值，所有的叶子结点和相连的节点使用链表相连，便于区间查找和遍历。</p>
 <h3 id="B-树的优点"><a href="#B-树的优点" class="headerlink" title="B+ 树的优点"></a>B+ 树的优点</h3><ul>
@@ -503,7 +569,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%EF%BC%88B-%E6%A0%91%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">数据库索引的实现原理（B+树）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#B%E5%92%8CB-%E6%A0%91%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">2.</span> <span class="nav-text">B和B+树的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#B-%E6%A0%91%E7%9A%84%E4%BC%98%E7%82%B9"><span class="nav-number">2.1.</span> <span class="nav-text">B+ 树的优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#B%E6%A0%91%E7%9A%84%E4%BC%98%E7%82%B9%E5%9C%A8%E4%BA%8E%EF%BC%9A"><span class="nav-number">2.2.</span> <span class="nav-text">B树的优点在于：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8B%E6%A0%91%E5%92%8CB-%E6%A0%91%E7%9A%84%E6%AF%94%E8%BE%83"><span class="nav-number">2.3.</span> <span class="nav-text">使用B树和B+树的比较</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8B%E6%A0%91%E7%B4%A2%E5%BC%95%E5%92%8C%E5%93%88%E5%B8%8C%E7%B4%A2%E5%BC%95%E7%9A%84%E6%AF%94%E8%BE%83"><span class="nav-number">3.</span> <span class="nav-text">使用B树索引和哈希索引的比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%B4%A2%E5%BC%95%E7%9A%84%E4%BC%98%E7%82%B9"><span class="nav-number">4.</span> <span class="nav-text">使用索引的优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%93%AA%E4%BA%9B%E6%83%85%E5%86%B5%E4%B8%8B%E7%B4%A2%E5%BC%95%E4%BC%9A%E5%A4%B1%E6%95%88%EF%BC%9F"><span class="nav-number">5.</span> <span class="nav-text">哪些情况下索引会失效？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8%E5%93%AA%E4%BA%9B%E5%9C%B0%E6%96%B9%E9%80%82%E5%90%88%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95%EF%BC%9F"><span class="nav-number">6.</span> <span class="nav-text">在哪些地方适合创建索引？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95%E6%97%B6%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">7.</span> <span class="nav-text">创建索引时需要注意什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E7%9A%84%E5%88%86%E7%B1%BB%EF%BC%9F"><span class="nav-number">8.</span> <span class="nav-text">索引的分类？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E7%9A%84%E4%B8%A4%E7%A7%8D%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E-InnoDB-%E5%92%8C-MyISAM-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">9.</span> <span class="nav-text">MySQL的两种存储引擎 InnoDB 和 MyISAM 的区别？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">9.1.</span> <span class="nav-text">应用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%83%AD%E5%A4%87%E4%BB%BD%E5%92%8C%E5%86%B7%E5%A4%87%E4%BB%BD"><span class="nav-number">9.2.</span> <span class="nav-text">热备份和冷备份</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E4%BC%98%E5%8C%96%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9F"><span class="nav-number">10.</span> <span class="nav-text">如何优化数据库？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E8%AF%AD%E5%8F%A5%E7%9A%84%E4%BC%98%E5%8C%96"><span class="nav-number">10.1.</span> <span class="nav-text">SQL 语句的优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E7%9A%84%E4%BC%98%E5%8C%96"><span class="nav-number">10.2.</span> <span class="nav-text">索引的优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A1%A8%E7%BB%93%E6%9E%84%E7%9A%84%E4%BC%98%E5%8C%96"><span class="nav-number">10.3.</span> <span class="nav-text">数据库表结构的优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E9%85%8D%E7%BD%AE%E7%9A%84%E4%BC%98%E5%8C%96"><span class="nav-number">10.4.</span> <span class="nav-text">系统配置的优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96"><span class="nav-number">10.5.</span> <span class="nav-text">硬件的优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%EF%BC%9F%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">11.</span> <span class="nav-text">什么是主从复制？实现原理是什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%EF%BC%9F"><span class="nav-number">11.1.</span> <span class="nav-text">为什么要主从复制？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">12.</span> <span class="nav-text">关系型数据库和非关系型数据库的区别？</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%EF%BC%88B-%E6%A0%91%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">数据库索引的实现原理（B+树）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#B%E6%A0%91"><span class="nav-number">1.1.</span> <span class="nav-text">B树</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#B%E6%A0%91%E6%A6%82%E5%BF%B5"><span class="nav-number">1.1.1.</span> <span class="nav-text">B树概念</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B%E6%A0%91%E6%8F%92%E5%85%A5"><span class="nav-number">1.1.2.</span> <span class="nav-text">B树插入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B%E6%A0%91%E5%88%A0%E9%99%A4"><span class="nav-number">1.1.3.</span> <span class="nav-text">B树删除</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#B-%E6%A0%91"><span class="nav-number">1.2.</span> <span class="nav-text">B+树</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%92%E5%85%A5"><span class="nav-number">1.2.1.</span> <span class="nav-text">插入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4"><span class="nav-number">1.2.2.</span> <span class="nav-text">删除</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#B%E5%92%8CB-%E6%A0%91%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">2.</span> <span class="nav-text">B和B+树的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#B-%E6%A0%91%E7%9A%84%E4%BC%98%E7%82%B9"><span class="nav-number">2.1.</span> <span class="nav-text">B+ 树的优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#B%E6%A0%91%E7%9A%84%E4%BC%98%E7%82%B9%E5%9C%A8%E4%BA%8E%EF%BC%9A"><span class="nav-number">2.2.</span> <span class="nav-text">B树的优点在于：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8B%E6%A0%91%E5%92%8CB-%E6%A0%91%E7%9A%84%E6%AF%94%E8%BE%83"><span class="nav-number">2.3.</span> <span class="nav-text">使用B树和B+树的比较</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8B%E6%A0%91%E7%B4%A2%E5%BC%95%E5%92%8C%E5%93%88%E5%B8%8C%E7%B4%A2%E5%BC%95%E7%9A%84%E6%AF%94%E8%BE%83"><span class="nav-number">3.</span> <span class="nav-text">使用B树索引和哈希索引的比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%B4%A2%E5%BC%95%E7%9A%84%E4%BC%98%E7%82%B9"><span class="nav-number">4.</span> <span class="nav-text">使用索引的优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%93%AA%E4%BA%9B%E6%83%85%E5%86%B5%E4%B8%8B%E7%B4%A2%E5%BC%95%E4%BC%9A%E5%A4%B1%E6%95%88%EF%BC%9F"><span class="nav-number">5.</span> <span class="nav-text">哪些情况下索引会失效？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8%E5%93%AA%E4%BA%9B%E5%9C%B0%E6%96%B9%E9%80%82%E5%90%88%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95%EF%BC%9F"><span class="nav-number">6.</span> <span class="nav-text">在哪些地方适合创建索引？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95%E6%97%B6%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">7.</span> <span class="nav-text">创建索引时需要注意什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E7%9A%84%E5%88%86%E7%B1%BB%EF%BC%9F"><span class="nav-number">8.</span> <span class="nav-text">索引的分类？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E7%9A%84%E4%B8%A4%E7%A7%8D%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E-InnoDB-%E5%92%8C-MyISAM-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">9.</span> <span class="nav-text">MySQL的两种存储引擎 InnoDB 和 MyISAM 的区别？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">9.1.</span> <span class="nav-text">应用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%83%AD%E5%A4%87%E4%BB%BD%E5%92%8C%E5%86%B7%E5%A4%87%E4%BB%BD"><span class="nav-number">9.2.</span> <span class="nav-text">热备份和冷备份</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E4%BC%98%E5%8C%96%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9F"><span class="nav-number">10.</span> <span class="nav-text">如何优化数据库？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E8%AF%AD%E5%8F%A5%E7%9A%84%E4%BC%98%E5%8C%96"><span class="nav-number">10.1.</span> <span class="nav-text">SQL 语句的优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E7%9A%84%E4%BC%98%E5%8C%96"><span class="nav-number">10.2.</span> <span class="nav-text">索引的优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A1%A8%E7%BB%93%E6%9E%84%E7%9A%84%E4%BC%98%E5%8C%96"><span class="nav-number">10.3.</span> <span class="nav-text">数据库表结构的优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E9%85%8D%E7%BD%AE%E7%9A%84%E4%BC%98%E5%8C%96"><span class="nav-number">10.4.</span> <span class="nav-text">系统配置的优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96"><span class="nav-number">10.5.</span> <span class="nav-text">硬件的优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%EF%BC%9F%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">11.</span> <span class="nav-text">什么是主从复制？实现原理是什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%EF%BC%9F"><span class="nav-number">11.1.</span> <span class="nav-text">为什么要主从复制？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">12.</span> <span class="nav-text">关系型数据库和非关系型数据库的区别？</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -519,7 +585,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-count">50</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -581,12 +647,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">224k</span>
+    <span title="站点总字数">226k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">3:24</span>
+    <span title="站点阅读时长">3:25</span>
 </div>
 
 <!--
