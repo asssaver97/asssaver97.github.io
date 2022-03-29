@@ -511,7 +511,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-27 23:30:28" itemprop="dateModified" datetime="2022-03-27T23:30:28+08:00">2022-03-27</time>
+                <time title="修改时间：2022-03-29 16:11:57" itemprop="dateModified" datetime="2022-03-29T16:11:57+08:00">2022-03-29</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -543,14 +543,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>366</span>
+              <span>1.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -573,6 +573,111 @@
 <li>时间复用。轮流使用CPU。</li>
 <li>空间复用。每个客户都得到资源的一部分。</li>
 </ul>
+<p><strong>CPU：</strong>首先从内存中取出指令，解码以确定其类型和操作数，接着执行它，然后读取、解码并执行下一条指令。</p>
+<h2 id="进程与线程"><a href="#进程与线程" class="headerlink" title="进程与线程"></a>进程与线程</h2><h3 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h3><p><strong>伪并行：</strong>在某一个瞬间，CPU只能允许一个进程，但在一秒内，它可能运行多个进程，与<strong>多处理器系统</strong>区别。</p>
+<p><strong>进程和程序的关系：</strong>（比喻）一个计算机科学家为他的女儿烘制生日蛋糕。他有做生日蛋糕的食谱，厨房里有所需的原料：面粉、鸡蛋、糖、香草汁等。在这个比喻中，<strong>做蛋糕的食谱就是程序（即用适当形式描述的算法）</strong>，<strong>计算机科学家就是处理器（CPU）</strong>，而做蛋糕的各种原料就是输入数据。<strong>进程就是厨师阅读食谱、取来各种原料以及烘制蛋糕等一系列动作的总和</strong>。</p>
+<p>现在假设计算机科学家的儿子哭着跑进来了，说他的头被一只蜜蜂蛰了。计算机科学加就记录下它照着食谱坐到哪了（保存进程的当前状态），然后拿出一本急救手册，按照其中的指示处理蛰伤。这里，处理机从一个进程（做蛋糕）切换到另一个优先级更高的进程（实施医疗救治），每个进程拥有各自的程序（食谱和急救手册）。当蜜蜂蛰伤处理完以后，这位计算机科学家又回来做蛋糕，从他离开时的那一步继续做下去。</p>
+<p>这里的关键思想是：一个进程是某种类型的一个活动，它有程序、输入、输出以及状态。<strong>单个处理器可以被若干进程共享，它使用某种调度算法决定何时停止一个进程的工作，并转而为另一个进程提供服务。</strong></p>
+<h4 id="进程的创建"><a href="#进程的创建" class="headerlink" title="进程的创建"></a>进程的创建</h4><p>4种主要事件会导致进程的创建：</p>
+<ol>
+<li>系统初始化</li>
+<li>正在运行的程序执行了创建进程的系统调用</li>
+<li>用户请求创建一个新进程</li>
+<li>一个批处理作业的初始化</li>
+</ol>
+<p>进程分为<strong>前台进程</strong>和<strong>后台进程</strong>。<strong>前台进程</strong>也就是同用户（人类）交互并且替他们完成工作的那些进程；<strong>后台进程</strong>与特定的用户没有关系，但具有专门的功能，比如接受发来邮件的后台进程。停留在后台诸如电子邮件、Web页面、新闻、打印之类活动的进程称为<strong>守护进程</strong>。</p>
+<p>在UNIX和Windows中，进程创建之后，父进程和子进程有各自不同的地址空间。如果其中某个进程在其地址空间中修改了一个字，这个修改对其他进程而言是不可见的。注意，<strong>可写的内存是不可以被共享的！</strong></p>
+<h4 id="进程的退出"><a href="#进程的退出" class="headerlink" title="进程的退出"></a>进程的退出</h4><p>进程的终止通常由下列条件引起：</p>
+<ol>
+<li>正常退出（自愿）</li>
+<li>出错退出（自愿）</li>
+<li>严重错误（非自愿）</li>
+<li>被其他进程杀死（非自愿）</li>
+</ol>
+<h4 id="进程的状态"><a href="#进程的状态" class="headerlink" title="进程的状态"></a>进程的状态</h4><p>进程有三种状态：</p>
+<ol>
+<li>运行态（该时刻进程实际占用CPU）</li>
+<li>就绪态（可运行，但因为其他进程正在运行而暂时停止）</li>
+<li>阻塞态（除非某种外部事件发生，比如有效输入，否则进程不能运行）</li>
+</ol>
+<h4 id="进程表"><a href="#进程表" class="headerlink" title="进程表"></a>进程表</h4><p>为了实现进程模型，操作系统维护着一张表格，即<strong>进程表</strong>。每个进程占用一个进程表项（<strong>进程控制块</strong>）。下图展示了典型进程表表项中的一些字段：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:left">进程管理</th>
+<th style="text-align:left">存储管理</th>
+<th style="text-align:left">文件管理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">寄存器</td>
+<td style="text-align:left">代码段指针</td>
+<td style="text-align:left">根目录</td>
+</tr>
+<tr>
+<td style="text-align:left">程序计数器</td>
+<td style="text-align:left">数据段指针</td>
+<td style="text-align:left">工作目录</td>
+</tr>
+<tr>
+<td style="text-align:left">程序状态字</td>
+<td style="text-align:left">堆栈段指针</td>
+<td style="text-align:left">文件描述符</td>
+</tr>
+<tr>
+<td style="text-align:left">堆栈指针</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">用户ID</td>
+</tr>
+<tr>
+<td style="text-align:left">进程状态</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">组ID</td>
+</tr>
+<tr>
+<td style="text-align:left">优先级</td>
+</tr>
+<tr>
+<td style="text-align:left">调度参数</td>
+</tr>
+<tr>
+<td style="text-align:left">进程ID</td>
+</tr>
+<tr>
+<td style="text-align:left">父进程</td>
+</tr>
+<tr>
+<td style="text-align:left">进程组</td>
+</tr>
+<tr>
+<td style="text-align:left">信号</td>
+</tr>
+<tr>
+<td style="text-align:left">进程开始时间</td>
+</tr>
+<tr>
+<td style="text-align:left">使用的CPU时间</td>
+</tr>
+<tr>
+<td style="text-align:left">子进程的CPU时间</td>
+</tr>
+<tr>
+<td style="text-align:left">下次定时器时间</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="多道程序设计模型"><a href="#多道程序设计模型" class="headerlink" title="多道程序设计模型"></a>多道程序设计模型</h4><p>假设一个进程等待 I/O 操作的时间与其停留在内存中的时间比为 $p$，当内存中同时有 $n$ 个进程时，则所有 $n$ 个进程都在等待 I/O 的概率是 $p^n$。CPU的利用率为：</p>
+<script type="math/tex; mode=display">CPU利用率=1-p^n</script><p>比如进程花费 80% 的时间等待 I/O，为使CPU的浪费低于 10%，至少要有10个进程同时在内存中。</p>
+<h3 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h3><p>需要线程的原因：</p>
+<ol>
+<li>在许多应用中发生着多种活动，其中某些活动会随着时间的推移被阻塞。通过将这些应用程序分解为可以准并行运行的多个顺序线程，程序设计模型会变得简单。</li>
+<li>由于线程比进程更轻量级，所以他们比进程更容易（即更快）创建，也更容易销毁。</li>
+<li>若多个线程都是CPU密集型的，那么并不能获得性能上的增强，但是如果存在着大量的I/O处理，拥有多个线程允许这些活动彼此重叠进行，从而加快应用程序执行的速度。</li>
+<li>在多CPU系统中，多线程是的真正的并行有了实现的可能。</li>
+</ol>
 
       
     </div>
@@ -1347,12 +1452,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">245k</span>
+    <span title="站点总字数">246k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">3:42</span>
+    <span title="站点阅读时长">3:44</span>
 </div>
 
 <!--
@@ -1414,6 +1519,59 @@
   
 
   
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 
