@@ -225,7 +225,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2022-03-31 16:55:39 / 修改时间：22:06:57" itemprop="dateCreated datePublished" datetime="2022-03-31T16:55:39+08:00">2022-03-31</time>
+              <time title="创建时间：2022-03-31 16:55:39 / 修改时间：22:24:30" itemprop="dateCreated datePublished" datetime="2022-03-31T16:55:39+08:00">2022-03-31</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -257,14 +257,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>4.3k</span>
+              <span>5.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
+              <span>5 分钟</span>
             </span>
 
         </div>
@@ -362,7 +362,20 @@
 <p>步骤9：在这个时间段结束时，RBS 通过检查 CRC’ 检查失败的次数是否超过阈值来确定是否有中间人攻击者存在。假设在10.24秒内可以交换2^10个TB，CRC的长度为24位，这个阈值可以从二项式测试和一个给定的置信度中得出。如果检测到一个中间人攻击者，RBS 会通知终端和网络关于中间人中继节点的存在。</p>
 <h3 id="结论-2"><a href="#结论-2" class="headerlink" title="结论"></a>结论</h3><p>本解决方案所提供的重放保护可以通过将blockID视为与通信链路中使用的物理资源相关的新鲜度参数来理解，而中间人由于没有 K_PHYint，就不能加密 CRC’，也就无法验证 CRC。因此可以防止中间人攻击。</p>
 <p>但是本方案无法阻止终端在伪基站上扎营。</p>
-<h2 id="解决方案25-检测中间人的假基站（针对问题3）"><a href="#解决方案25-检测中间人的假基站（针对问题3）" class="headerlink" title="解决方案25: 检测中间人的假基站（针对问题3）"></a>解决方案25: 检测中间人的假基站（针对问题3）</h2><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style: none; padding-left: 0; margin-left: 40px"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">1.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">在移动通信网络(2G, 3G, 4G或5G)中终端通过测量服务小区和邻近小区信号质量，来决定是否切换基站。<a href="#fnref:1" rev="footnote"> ↩</a></span></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">2.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">移动通信系统中，如果在一定区域里两基站信号强度剧烈变化，手机就会在两个基站间来回切换，产生所谓的“乒乓效应”。<a href="#fnref:2" rev="footnote"> ↩</a></span></li><li id="fn:3"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">3.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">循环冗余校验（英语：Cyclic redundancy check，通称“CRC”）是一种根据网络数据包或电脑文件等数据产生简短固定位数校验码的一种散列函数，主要用来检测或校验数据传输或者保存后可能出现的错误。生成的数字在传输或者存储之前计算出来并且附加到数据后面，然后接收方进行检验确定数据是否发生变化。<a href="#fnref:3" rev="footnote"> ↩</a></span></li></ol></div></div>
+<h2 id="解决方案25-检测中间人的伪基站（针对问题3）"><a href="#解决方案25-检测中间人的伪基站（针对问题3）" class="headerlink" title="解决方案25: 检测中间人的伪基站（针对问题3）"></a>解决方案25: 检测中间人的伪基站（针对问题3）</h2><h3 id="背景-3"><a href="#背景-3" class="headerlink" title="背景"></a>背景</h3><p>中间人伪基站攻击</p>
+<h3 id="解决思路-3"><a href="#解决思路-3" class="headerlink" title="解决思路"></a>解决思路</h3><p>基于终端和基站之间的链路分配资源参数，即终端的SFN（系统帧号）。基站可以比较它分配给终端的SFN和终端报告的SFN，来判断伪基站是否存在。如果存在中间人，那么前者是真基站和伪终端之间的SFN，后者是伪基站和真终端之间的SFN。</p>
+<h3 id="解决步骤-3"><a href="#解决步骤-3" class="headerlink" title="解决步骤"></a>解决步骤</h3><p>步骤1：假设终端已经通过伪基站与真基站建立了连接。无线电资源控制（RRC）的安全性已经建立，即所有无线电资源控制消息都受到FBS的保护。 </p>
+<p>步骤2：为了让终端发送RRC消息（以触发伪基站检测），终端根据当前的RAN程序向伪基站请求资源。假设伪基站分配的SFN参数集由SFN1表示（在本方案中SFN指系统帧号、子帧号、时隙、起始符号以及资源分配消息中的参数，特别是 “k2 “值）。 </p>
+<p>步骤3.：终端发送一个RRC消息来触发FBS检测。为了避免定义一个新的RRC消息，现有的RRC消息”UEAssistanceInformtion “可以使用一个新的可选元素 “SFN Check “来触发伪基站检测。 </p>
+<p>步骤4：像往常一样，伪基站打算将RRC消息转发给基站。首先，伪终端需要向基站请求资源。假设基站将分配一组SFN参数，即SFN2给为端口。 </p>
+<p>步骤5：伪终端根据预定的SFN2将RRC消息转发给基站。 </p>
+<p>步骤6：一旦收到 “SFN检查 “指示，基站就会存储它分配的SFN2。 </p>
+<p>步骤7：终端在RRC消息中发送SFN1值（在步骤2中分配）（安全保护不受FBS影响）。为了避免定义一个新的RRC消息，现有的RRC消息 “UEAssistanceInformtion “可以使用一个新的可选元素 “SFN result”（其值设置为SFN1）。</p>
+<p>步骤8：伪终端不知不觉地转发到基站。 </p>
+<p>步骤9：基站将收到的SFN1值与存储的SFN2值进行比较，确定是否存在伪基站。 </p>
+<h3 id="结论-3"><a href="#结论-3" class="headerlink" title="结论"></a>结论</h3><p>让基站向终端发送一个受保护的RRC消息来启动伪基站检测。由于这个消息是受安全保护的，攻击者无法知道其内容，也无法从正常的RRC报文中看出。</p>
+<p>但是 SFN 是不受加密保护的，所以如果中间人攻击者足够聪明，他可以获得 SFN，然后丢弃它。</p>
+<div id="footnotes"><hr><div id="footnotelist"><ol style="list-style: none; padding-left: 0; margin-left: 40px"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">1.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">在移动通信网络(2G, 3G, 4G或5G)中终端通过测量服务小区和邻近小区信号质量，来决定是否切换基站。<a href="#fnref:1" rev="footnote"> ↩</a></span></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">2.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">移动通信系统中，如果在一定区域里两基站信号强度剧烈变化，手机就会在两个基站间来回切换，产生所谓的“乒乓效应”。<a href="#fnref:2" rev="footnote"> ↩</a></span></li><li id="fn:3"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">3.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">循环冗余校验（英语：Cyclic redundancy check，通称“CRC”）是一种根据网络数据包或电脑文件等数据产生简短固定位数校验码的一种散列函数，主要用来检测或校验数据传输或者保存后可能出现的错误。生成的数字在传输或者存储之前计算出来并且附加到数据后面，然后接收方进行检验确定数据是否发生变化。<a href="#fnref:3" rev="footnote"> ↩</a></span></li></ol></div></div>
       
     </div>
 
@@ -1615,12 +1628,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">253k</span>
+    <span title="站点总字数">254k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">3:50</span>
+    <span title="站点阅读时长">3:51</span>
 </div>
 
 <!--
