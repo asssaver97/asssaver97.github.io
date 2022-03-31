@@ -200,6 +200,171 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://wangtianyang.com/2022/03/31/%E4%B8%AD%E9%97%B4%E4%BA%BA%E4%BC%AA%E5%9F%BA%E7%AB%99%E6%94%BB%E5%87%BB%E8%B0%83%E7%A0%94/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="王天阳">
+      <meta itemprop="description" content="学习｜记录｜心情">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王天阳的个人博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/03/31/%E4%B8%AD%E9%97%B4%E4%BA%BA%E4%BC%AA%E5%9F%BA%E7%AB%99%E6%94%BB%E5%87%BB%E8%B0%83%E7%A0%94/" class="post-title-link" itemprop="url">中间人伪基站攻击调研</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-03-31 16:55:39 / 修改时间：18:41:07" itemprop="dateCreated datePublished" datetime="2022-03-31T16:55:39+08:00">2022-03-31</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">网络安全</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/03/31/%E4%B8%AD%E9%97%B4%E4%BA%BA%E4%BC%AA%E5%9F%BA%E7%AB%99%E6%94%BB%E5%87%BB%E8%B0%83%E7%A0%94/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/03/31/%E4%B8%AD%E9%97%B4%E4%BA%BA%E4%BC%AA%E5%9F%BA%E7%AB%99%E6%94%BB%E5%87%BB%E8%B0%83%E7%A0%94/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="问题7：中间人攻击-伪基站"><a href="#问题7：中间人攻击-伪基站" class="headerlink" title="问题7：中间人攻击+伪基站"></a>问题7：中间人攻击+伪基站</h2><p>中间人攻击和伪基站是<strong>相关但不同的攻击</strong>，所以要分为两个子问题分析：</p>
+<ul>
+<li>伪基站在用户终端和网络之间传递消息，对于消息中受保护的部分，它原封不动地传输，但是对于消息中不受保护的部分，他可以随意修改、删除和新增，比如：<ul>
+<li>预认证流量</li>
+<li>MAC/RLC 层消息头</li>
+<li>下层控制信息，如缓冲器状态报告</li>
+</ul>
+</li>
+<li>中间人攻击主要是通过重放信息来实现的，即中间人位于实际的基站和终端之间，中间人将基站的信息转发给终端，终端的信息转发给基站。中间人可能在很长一段时间内不做任何事情，因此很难被发现。然而，在某些情况下，中间人可能会新增/改变/删除信息。解决中间人攻击的基本要求通常与重放保护有关。</li>
+</ul>
+<h2 id="解决方案6：避免用户终端在基站切换期间连接到伪基站（针对问题3）"><a href="#解决方案6：避免用户终端在基站切换期间连接到伪基站（针对问题3）" class="headerlink" title="解决方案6：避免用户终端在基站切换期间连接到伪基站（针对问题3）"></a>解决方案6：避免用户终端在基站切换期间连接到伪基站（针对问题3）</h2><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>通常情况下，5G无线电接入网的基站切换决策是基于终端的测量报告<sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="在移动通信网络(2G, 3G, 4G或5G)中终端通过测量服务小区和邻近小区信号质量，来决定是否切换基站。">[1]</span></a></sup>。终端根据同步信号块（SS Block，下称SS块）执行邻区的信号功率测量，SS块携带广播的同步信号和MIB信号，<strong>这些信号没有安全保护</strong>。假设有一个伪基站C伪造合法基站B的系统信息，服务基站A收到终端的测量报告，其中包括来自C的测量值。基站A会认为终端的测量报告中包括的信息属于基站B，然后可能决定将终端移交给B，结果UE反而连接到伪基站C。</p>
+<h3 id="攻击步骤"><a href="#攻击步骤" class="headerlink" title="攻击步骤"></a>攻击步骤</h3><blockquote>
+<ul>
+<li>A：切换前的服务基站，下称源基站；</li>
+<li>B：想要切换的正确基站，下称目标基站；</li>
+<li>C：伪基站。</li>
+</ul>
+</blockquote>
+<p>步骤0：终端向源基站（A）报告测量报告。 </p>
+<p>步骤1：源基站（A）认为来自伪基站（C）的测量符合切换触发阈值，然后源基站（A）用报告的物理小区身份查询邻区小区关系表，并找到目标基站（B）的小区。 </p>
+<p>步骤2：源基站（A）向目标基站（B）发送切换请求。</p>
+<p>步骤3：目标基站（B）做出切换接纳决定，并为终端准备无线电资源。</p>
+<p>步骤4：目标基站（B）以切换请求ACK消息进行响应，其中包含所有准备好的无线电资源控制的配置信息。</p>
+<p>步骤5：源基站（A）发送切换命令，指示终端切换到目标小区。 </p>
+<p>步骤6：终端从源小区分离出来。</p>
+<p>步骤7：终端试图根据广播的 SS 块信号和 SIB1 在目标小区进行同步和扎营。<strong>由于 SS 块信号和 SIB1 没有安全保护，终端无法验证这些信息的真实性。伪基站可以复制目标小区的 SS 块信号和 SIB1，然后以更强的功率发送。最后，终端在假的小区上扎营</strong>。</p>
+<p>步骤8：终端明文发送 MSG1 到扎营的小区，也就是伪基站C的小区。 </p>
+<p>步骤9：伪基站以明文形式回应 MSG2，指示终端使用专门的上行链路分配资源来发送下一条上行链路信息。 </p>
+<p>步骤10：终端使用专门的上行链路分配资源发送切换确认消息。尽管切换确认消息是使用真实的目标基站（B）的AS安全密钥来保护的，但伪基站不需要向终端回复任何确认，以便终端验证接收基站是持有相同AS安全上下文的真实基站。</p>
+<h3 id="攻击结果"><a href="#攻击结果" class="headerlink" title="攻击结果"></a>攻击结果</h3><ul>
+<li>真正的目标小区没有收到终端的切换确认消息，就认为切换失败。</li>
+<li>源小区没有收到来自目标小区的切换上下文释放消息，则判定切换失败。</li>
+<li>因为伪小区没有终端的安全上下文，所以终端在未来会发现无线链路失败。但是在此之前，终端已经在伪小区上扎营，伪小区可以向终端发起一些攻击，例如，向终端发送带有假小区重选黑名单的欺骗性 SIBs。</li>
+</ul>
+<h3 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h3><p>为了避免这种在切换期间终端连接到伪基站的可能性，该解决方案引入了基于目标基站分配给终端的特定 <strong>CSI-RS（信道状态信息参考信号）</strong>的二次测量。 </p>
+<p>具体来说，目标基站（B）在准备阶段为终端分配一个特定的 CSI-RS，并在切换请求ACK消息中携带 CSI-RS 信息。源基站（A）指示终端根据专用 CSI-RS 信息进行第二次测量。<strong>只有当第二次测量报告满足触发条件时，源基站（A）才会指示终端进行基站切换。</strong></p>
+<p>由于伪基站（C）事先不知道专用的 CSI-RS 信息，因此终端上传的第二次测量报告是用目标基站（B）的真实参考信号测量的。</p>
+<blockquote>
+<p>注：该方案可以选择一直开启或者需要时开启（比如向某个目标基站的切换失败次数超过特定阈值时）。</p>
+</blockquote>
+<h3 id="解决步骤"><a href="#解决步骤" class="headerlink" title="解决步骤"></a>解决步骤</h3><blockquote>
+<p>从第二步开始</p>
+</blockquote>
+<p>步骤2：当源基站（A）的本地配置表明启用了二次测量的功能时，源基站（A）发送带有新指标的切换请求，要求目标基站（B）为终端准备一个定制的CSI-RS。</p>
+<p>步骤3：目标基站（B）执行接纳控制并为终端准备基本的无线资源控制配置信息，包括定制的CSI-RS信息。 </p>
+<p>步骤4：目标基站（B）用切换请求ACK消息响应，其中包含所有准备好的无线资源控制配置信息，包括定制的CSI-RS信息。</p>
+<p>步骤5：源基站（A）收到切换请求ACK中的CSI-RS信息，并根据CSI-RS信息请求终端进行第二次测量。 </p>
+<p>步骤6：源基站（A）向终端发送包括CSI-RS信息的测量任务，同时受到无线资源控制安全上下文的保护。 </p>
+<p>步骤7：终端对测量任务中指出的专用CSI-RS信号执行第二次测量。</p>
+<p>步骤8：终端向源基站（A）上传第二个测量报告。 </p>
+<p>步骤9：根据第二个测量报告，源基站（A）决定是否继续进行切换。如果第二个测量报告满足切换触发阈值，即目标小区的真实参考信号功率足够强，源基站（A）发送切换命令，指示终端执行切换到目标小区。否则，源基站（A）向目标基站（B）发送切换取消，停止切换程序。</p>
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>CSI-RS用于基站进行测量，它是每个基站特定的参数，由目标无线电接入网分配，并且对每个终端都是不同的。在该解决方案中，CSI-RS是通过加密和完整性保护的RRC测量任务消息提供给UE的，因此，伪基站不能知道这个参数，也不能伪造正确的CSI-RS。因此，<strong>终端将测量目标无线电接入网的真实信令，并且不会因伪基站的伪造小区而启动错误的切换。</strong></p>
+<h2 id="解决方案18：避免终端在有条件交接期间连接到虚假基站（针对问题3）"><a href="#解决方案18：避免终端在有条件交接期间连接到虚假基站（针对问题3）" class="headerlink" title="解决方案18：避免终端在有条件交接期间连接到虚假基站（针对问题3）"></a>解决方案18：避免终端在有条件交接期间连接到虚假基站（针对问题3）</h2><h3 id="背景-1"><a href="#背景-1" class="headerlink" title="背景"></a>背景</h3><p>在解决方案6的基础上，提升稳健性，避免乒乓效应<sup id="fnref:2"><a href="#fn:2" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="移动通信系统中，如果在一定区域里两基站信号强度剧烈变化，手机就会在两个基站间来回切换，产生所谓的“乒乓效应”。">[2]</span></a></sup>。</p>
+<h3 id="解决思路-1"><a href="#解决思路-1" class="headerlink" title="解决思路"></a>解决思路</h3><p>该方案提出了与方案6类似的机制来支持有条件的移交，即目标基站（B0给终端分配一个特定的 CSI-RS 来指示终端测量目标基站（B）的真实参考信号，这可以避免终端测量到虚假基站。<strong>不同的是，源基站（A）向终端发送门限值以做出切换决定。因此，可以在终端上进行交接决策，也就不需要额外的信令来报告测量的信令，这样可以保证移交的稳健性，同时，这可以避免终端在有条件的移交过程中连接到假基站</strong>。</p>
+<blockquote>
+<p>注：该方案可以选择一直开启或者需要时开启（比如向某个目标基站的切换失败次数超过特定阈值时）。</p>
+</blockquote>
+<h3 id="解决步骤-1"><a href="#解决步骤-1" class="headerlink" title="解决步骤"></a>解决步骤</h3><blockquote>
+<p>从第一步开始</p>
+</blockquote>
+<p>步骤1：终端进行测量，并向源基站（A）发送包括该特定小区的测量信号1的测量报告。测量的信号可能是伪基站（C）的，他伪造了和目标基站（B）一样的小区。</p>
+<p>步骤2：当源基站收到测量报告时，被测信号将触发有条件移交，源gNB（A）用CSI-RS发送CHO请求，要求目标基站（B）为终端准备一个特定的CSI-RS。</p>
+<p>步骤3：目标基站（B）执行接纳控制，并为终端准备基本的无线电资源控制配置信息，包括专门的CSI-RS信息。 </p>
+<p>步骤4：目标基站(B)用CHO请求ACK消息进行响应，其中包含所有准备好的无线电资源控制配置信息（包括专用的CSI-RS信息）。</p>
+<p>步骤5：一旦源基站（A）收到条件移交请求ACK中的CSI-RS信息，源基站就会附加切换的阈值。 </p>
+<p>步骤6：源基站（A）向终端发送包括专用CSI-RS信息和切换阈值的CHO命令，同时受到无线电资源控制安全上下文的保护。 </p>
+<p>步骤7：终端对CHO命令中指出的专用CSI-RS信号进行第二次测量，并得到测量信号2。</p>
+<p>步骤8：根据信号2和切换阈值，终端决定是否继续进行切换。如果信号2满足阈值，意味着目标小区的真实参考信号功率足够强，终端就向目标小区发送切换确认，不增加延迟。否则，信号1可能是伪基站（C）的信号，终端将不会触发交接。因此，终端将不会连接到伪基站。</p>
+<h3 id="结论-1"><a href="#结论-1" class="headerlink" title="结论"></a>结论</h3><p>功能同解决方案6，只是第二次测量前，源基站（A）返回给终端的信息中包含了一条切换阈值，这样就可以在终端上决定是否切换（解决方案6要在源基站上决定是否切换）。</p>
+<h2 id="解决方案23：加密CRC-3-以避免中间人中继节点（针对问题3、5、7）"><a href="#解决方案23：加密CRC-3-以避免中间人中继节点（针对问题3、5、7）" class="headerlink" title="解决方案23：加密CRC[3]以避免中间人中继节点（针对问题3、5、7）"></a>解决方案23：加密CRC<sup id="fnref:3"><a href="#fn:3" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="循环冗余校验（英语：Cyclic redundancy check，通称“CRC”）是一种根据网络数据包或电脑文件等数据产生简短固定位数校验码的一种散列函数，主要用来检测或校验数据传输或者保存后可能出现的错误。生成的数字在传输或者存储之前计算出来并且附加到数据后面，然后接收方进行检验确定数据是否发生变化。">[3]</span></a></sup>以避免中间人中继节点（针对问题3、5、7）</h2><h3 id="背景-2"><a href="#背景-2" class="headerlink" title="背景"></a>背景</h3><p>问题7指出：<strong>中间人攻击和伪基站是相关但不同的攻击。</strong></p>
+<div id="footnotes"><hr><div id="footnotelist"><ol style="list-style: none; padding-left: 0; margin-left: 40px"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">1.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">在移动通信网络(2G, 3G, 4G或5G)中终端通过测量服务小区和邻近小区信号质量，来决定是否切换基站。<a href="#fnref:1" rev="footnote"> ↩</a></span></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">2.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">移动通信系统中，如果在一定区域里两基站信号强度剧烈变化，手机就会在两个基站间来回切换，产生所谓的“乒乓效应”。<a href="#fnref:2" rev="footnote"> ↩</a></span></li><li id="fn:3"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">3.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">循环冗余校验（英语：Cyclic redundancy check，通称“CRC”）是一种根据网络数据包或电脑文件等数据产生简短固定位数校验码的一种散列函数，主要用来检测或校验数据传输或者保存后可能出现的错误。生成的数字在传输或者存储之前计算出来并且附加到数据后面，然后接收方进行检验确定数据是否发生变化。<a href="#fnref:3" rev="footnote"> ↩</a></span></li></ol></div></div>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://wangtianyang.com/2022/03/29/%E3%80%90%E9%9D%A2%E7%BB%8F%E3%80%91%E7%BE%8E%E5%9B%A2%E6%9A%91%E6%9C%9F%E4%BA%8C%E9%9D%A2%EF%BC%882022-03-29%EF%BC%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -629,7 +794,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-29 16:11:57" itemprop="dateModified" datetime="2022-03-29T16:11:57+08:00">2022-03-29</time>
+                <time title="修改时间：2022-03-30 15:07:14" itemprop="dateModified" datetime="2022-03-30T15:07:14+08:00">2022-03-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -661,7 +826,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.9k</span>
+              <span>2.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -794,8 +959,73 @@
 <li>在许多应用中发生着多种活动，其中某些活动会随着时间的推移被阻塞。通过将这些应用程序分解为可以准并行运行的多个顺序线程，程序设计模型会变得简单。</li>
 <li>由于线程比进程更轻量级，所以他们比进程更容易（即更快）创建，也更容易销毁。</li>
 <li>若多个线程都是CPU密集型的，那么并不能获得性能上的增强，但是如果存在着大量的I/O处理，拥有多个线程允许这些活动彼此重叠进行，从而加快应用程序执行的速度。</li>
-<li>在多CPU系统中，多线程是的真正的并行有了实现的可能。</li>
+<li>在多CPU系统中，多线程是的真正的并行有了实现的可能。<em>例子见《现代操作系统》P55字处理软件。</em></li>
 </ol>
+<h4 id="构造服务器的三种方法"><a href="#构造服务器的三种方法" class="headerlink" title="构造服务器的三种方法"></a>构造服务器的三种方法</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:left">模型</th>
+<th style="text-align:left">特性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">多线程</td>
+<td style="text-align:left">并行性、阻塞系统调用</td>
+</tr>
+<tr>
+<td style="text-align:left">单线程进程</td>
+<td style="text-align:left">无并行性、阻塞系统调用</td>
+</tr>
+<tr>
+<td style="text-align:left">有限状态机</td>
+<td style="text-align:left">并行性、非阻塞系统调用、中断</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="经典的线程模型"><a href="#经典的线程模型" class="headerlink" title="经典的线程模型"></a>经典的线程模型</h4><p>进程用于把资源集中到一起，而线程则是在CPU上被调度执行的实体。</p>
+<p>进程中的不同线程不像不同进程之间那样存在很大的独立性。所有的线程都有完全一样的地址空间，这意味着它们也可以共享同样的全局变量。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:left">一个进程中所有线程共享的内容</th>
+<th style="text-align:left">每个线程自己的内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">地址空间</td>
+<td style="text-align:left">程序计数器</td>
+</tr>
+<tr>
+<td style="text-align:left">全局变量</td>
+<td style="text-align:left">寄存器</td>
+</tr>
+<tr>
+<td style="text-align:left">打开文件</td>
+<td style="text-align:left">堆栈</td>
+</tr>
+<tr>
+<td style="text-align:left">子进程</td>
+<td style="text-align:left">状态</td>
+</tr>
+<tr>
+<td style="text-align:left">即将发生的定时器</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">信号与信号处理程序</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">账户信息</td>
+</tr>
+</tbody>
+</table>
+</div>
 
       
     </div>
@@ -846,7 +1076,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-27 13:05:20" itemprop="dateModified" datetime="2022-03-27T13:05:20+08:00">2022-03-27</time>
+                <time title="修改时间：2022-03-30 18:08:40" itemprop="dateModified" datetime="2022-03-30T18:08:40+08:00">2022-03-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -878,14 +1108,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.4k</span>
+              <span>3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -952,10 +1182,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-03-24 14:56:34 / 修改时间：14:57:30" itemprop="dateCreated datePublished" datetime="2022-03-24T14:56:34+08:00">2022-03-24</time>
+              <time title="创建时间：2022-03-24 14:56:34" itemprop="dateCreated datePublished" datetime="2022-03-24T14:56:34+08:00">2022-03-24</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-30 18:35:33" itemprop="dateModified" datetime="2022-03-30T18:35:33+08:00">2022-03-30</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -986,7 +1222,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>0</span>
+              <span>37</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -1005,7 +1241,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css">
+          <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><h3 id="算法在计算中的作用"><a href="#算法在计算中的作用" class="headerlink" title="算法在计算中的作用"></a>算法在计算中的作用</h3><p>略</p>
+<h3 id="算法基础"><a href="#算法基础" class="headerlink" title="算法基础"></a>算法基础</h3><h4 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h4><p>插入排序是<strong>原址</strong>排序。</p>
+<p>伪代码：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure></p>
+
       
     </div>
 
@@ -1227,111 +1466,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://wangtianyang.com/2022/03/23/%E3%80%90C-%E3%80%91%E5%8F%8B%E5%85%83%E5%87%BD%E6%95%B0%E5%92%8C%E5%8F%8B%E5%85%83%E7%B1%BB/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="王天阳">
-      <meta itemprop="description" content="学习｜记录｜心情">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="王天阳的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/03/23/%E3%80%90C-%E3%80%91%E5%8F%8B%E5%85%83%E5%87%BD%E6%95%B0%E5%92%8C%E5%8F%8B%E5%85%83%E7%B1%BB/" class="post-title-link" itemprop="url">【C++】友元函数和友元类</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-03-23 14:14:16 / 修改时间：16:34:49" itemprop="dateCreated datePublished" datetime="2022-03-23T14:14:16+08:00">2022-03-23</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/03/23/%E3%80%90C-%E3%80%91%E5%8F%8B%E5%85%83%E5%87%BD%E6%95%B0%E5%92%8C%E5%8F%8B%E5%85%83%E7%B1%BB/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/03/23/%E3%80%90C-%E3%80%91%E5%8F%8B%E5%85%83%E5%87%BD%E6%95%B0%E5%92%8C%E5%8F%8B%E5%85%83%E7%B1%BB/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>私有成员只能在类的成员函数内部访问，如果想在别处访问对象的私有成员，只能通过类提供的接口（成员函数）间接地进行。这固然能够带来数据隐藏的好处，利于将来程序的扩充，但也会增加程序书写的麻烦。</p>
-<p>C++ 是从结构化的C语言发展而来的，需要照顾结构化设计程序员的习惯，所以在对私有成员可访问范围的问题上不可限制太死。</p>
-<p>C++ 设计者认为， 如果有的程序员真的非常怕麻烦，就是想在类的成员函数外部直接访问对象的私有成员，那还是做一点妥协以满足他们的愿望为好，这也算是眼前利益和长远利益的折中。因此，C++ 就有了友元（friend）的概念。打个比方，这相当于是说：朋友是值得信任的，所以可以对他们公开一些自己的隐私。<br>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/03/23/%E3%80%90C-%E3%80%91%E5%8F%8B%E5%85%83%E5%87%BD%E6%95%B0%E5%92%8C%E5%8F%8B%E5%85%83%E7%B1%BB/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1403,20 +1537,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-count">63</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1465,12 +1599,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">248k</span>
+    <span title="站点总字数">252k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">3:45</span>
+    <span title="站点阅读时长">3:49</span>
 </div>
 
 <!--
