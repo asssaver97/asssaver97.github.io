@@ -200,6 +200,126 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://wangtianyang.com/2022/04/06/%E3%80%90%E9%9D%A2%E7%BB%8F%E3%80%91%E9%98%BF%E9%87%8C%E6%9A%91%E6%9C%9F%E4%B8%80%E9%9D%A2%EF%BC%882022-04-06%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="王天阳">
+      <meta itemprop="description" content="学习｜记录｜心情">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王天阳的个人博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/04/06/%E3%80%90%E9%9D%A2%E7%BB%8F%E3%80%91%E9%98%BF%E9%87%8C%E6%9A%91%E6%9C%9F%E4%B8%80%E9%9D%A2%EF%BC%882022-04-06%EF%BC%89/" class="post-title-link" itemprop="url">【面经】阿里暑期一面（2022/04/06）</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-04-06 21:25:32" itemprop="dateCreated datePublished" datetime="2022-04-06T21:25:32+08:00">2022-04-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-07 00:00:10" itemprop="dateModified" datetime="2022-04-07T00:00:10+08:00">2022-04-07</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/04/06/%E3%80%90%E9%9D%A2%E7%BB%8F%E3%80%91%E9%98%BF%E9%87%8C%E6%9A%91%E6%9C%9F%E4%B8%80%E9%9D%A2%EF%BC%882022-04-06%EF%BC%89/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/04/06/%E3%80%90%E9%9D%A2%E7%BB%8F%E3%80%91%E9%98%BF%E9%87%8C%E6%9A%91%E6%9C%9F%E4%B8%80%E9%9D%A2%EF%BC%882022-04-06%EF%BC%89/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>804</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p>一、堆和栈哪个更快？</p>
+<ol>
+<li>栈是由编译器自动分配内存，所以更快；堆是程序员动态分配内存，相对更慢</li>
+<li>栈使用的是一级缓存， 他们通常都是被调用时处于存储空间中，调用完毕立即释放；堆则是存放在二级缓存中，生命周期由虚拟机的垃圾回收算法来决定（并不是一旦成为孤儿对象就能被回收）。所以调用这些对象的速度要相对来得低一些。</li>
+</ol>
+<p>二、什么是一级缓存、什么是二级缓存？</p>
+<ul>
+<li>一级缓存一般内置在内核旁边，是与CPU结合最为紧密的高速缓存，可以有效的提高CPU的运行效率。一级缓存越大，CPU的运行效率越高，但受到成本限制，一级缓存的容量都很小。</li>
+<li>L2（就是二级）缓存是在独立芯片（有可能是在一个扩展卡上），它的访问速度能比大的主存要快得多。通常一个二级缓存的大小为1024Kb（1Mb）。</li>
+</ul>
+<p>三、 栈的具体调用过程、怎么压入弹出的？</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/prokgtfy9n18/article/details/70231640">C语言下程序的堆栈调用（详细，图示）</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/yu97271486/article/details/80425089">EBP 和 ESP 详解</a></p>
+<p>四、free的时候怎么确定要释放多少内存？</p>
+<p>先是pop（弹出堆栈）edi,esi,ebx这三个寄存器，然后将ebp给esp，也就是说把刚刚上面开辟的空间收回，然后经过ret跳回至刚刚在main函数处调用函数那儿（现场保护）。（见上面第一个链接）</p>
+<p>五、C++14 string实现？</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/187499607">第14篇:C++的string-两手抓的内存分配</a></p>
+<p>六、http用的是tcp还是udp？</p>
+<p>七、tcp接收方收到乱序的包时，对这个包怎么处理？</p>
+<p>八、怎么从tcp中解出http？</p>
+<p>九、http1.0和http1.1区别？1.1的header里多了什么？</p>
+<p>十、有多个服务器时，怎么确保是正确的服务器接收到了消息？</p>
+<p>十一、muduo用的是什么单例模式？</p>
+<p>十二、epoll水平触发和边缘触发？</p>
+<p>十三怎么根据有几个核来确定设置几个线程？</p>
+<p>十四、linux在哪里查看日志？有几种方法进入插入模式？怎么查找？怎么跳到第一行？怎么跳到最后一行？怎么复制一行？</p>
+<p>十五、开放题：怎么在http服务端设计一个用户注册系统？</p>
+<p>十六、算法题：LRU</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://wangtianyang.com/2022/04/05/%E3%80%90LeetCode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0%E3%80%911792-%E6%9C%80%E5%A4%A7%E5%B9%B3%E5%9D%87%E9%80%9A%E8%BF%87%E7%8E%87/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1404,117 +1524,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://wangtianyang.com/2022/03/24/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E3%80%8AC-PrimerPlus%E3%80%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="王天阳">
-      <meta itemprop="description" content="学习｜记录｜心情">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="王天阳的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/03/24/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E3%80%8AC-PrimerPlus%E3%80%8B/" class="post-title-link" itemprop="url">【读书笔记】《C++PrimerPlus》</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-03-24 13:07:11 / 修改时间：14:30:11" itemprop="dateCreated datePublished" datetime="2022-03-24T13:07:11+08:00">2022-03-24</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/03/24/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E3%80%8AC-PrimerPlus%E3%80%8B/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/03/24/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E3%80%8AC-PrimerPlus%E3%80%8B/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>868</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h2><h3 id="面向过程和面向对象"><a href="#面向过程和面向对象" class="headerlink" title="面向过程和面向对象"></a>面向过程和面向对象</h3><p>一般来说，计算机语言要处理两个概念——<strong>数据</strong>和<strong>算法</strong>。数据时程序使用和处理的信息，而算法是程序使用的方法。</p>
-<p><strong>过程性语言</strong>强调的是编程的算法方面，从概念上来说，过程化编程首先要确定计算机应采取的操作，然后使用编程语言来实现这些操作，程序命令计算机按一系列流程生成特定的结果，就像菜谱制定了厨师做蛋糕时应遵循的一系列步骤一样。</p>
-<p>随着程序规模的扩大，早起的编程语言（如FORTRAN和BASIC）都会遇到组织方面的问题，简单来说，就是根据测试结果选择执行一组或另一组指令。但是旧时程序的执行路径很混乱，几乎不可能通过阅读程序来理解他。于是发展出了一种更有序的编程方法——<strong>结构化编程</strong>。</p>
-<p><strong>结构化编程</strong>依然属于过程化编程，只是它的拓展。结构比如for循环，while循环，if else语句等。</p>
-<p>但在编写大型程序是，结构化编程仍然面临着挑战。于是就产生了<strong>面向对象编程</strong>——OOP。<strong>与强调算法的过程性编程不同，OOP强调的是数据。</strong>其理念是设计与问题的本质特性相对应的数据结构。</p>
-<p>过程性编程与OOP的另一个区别是：</p>
-<ul>
-<li>过程性编程是<strong>自顶向下</strong>（top-down）的。比如C语言中，就是将大型程序分解成小型、便于管理的任务。比如整理书房时，可以分为整理桌子、整理书架，整理桌子又可以分为整理抽屉、打扫桌面……C语言鼓励程序员<strong>开发程序单元（函数）</strong>来表示各个任务模块。</li>
-<li>OOP是<strong>自下向上</strong>（bottom-up）的。也就是从低级组织（如类）到高级组织（如程序）的处理过程。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/03/24/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E3%80%8AC-PrimerPlus%E3%80%8B/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1586,7 +1595,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">64</span>
+          <span class="site-state-item-count">65</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1653,7 +1662,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">3:52</span>
+    <span title="站点阅读时长">3:53</span>
 </div>
 
 <!--
