@@ -231,7 +231,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-04-07 00:00:10" itemprop="dateModified" datetime="2022-04-07T00:00:10+08:00">2022-04-07</time>
+                <time title="修改时间：2022-04-07 13:03:08" itemprop="dateModified" datetime="2022-04-07T13:03:08+08:00">2022-04-07</time>
               </span>
 
           
@@ -254,14 +254,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>804</span>
+              <span>2.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -288,17 +288,66 @@
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/yu97271486/article/details/80425089">EBP 和 ESP 详解</a></p>
 <p>四、free的时候怎么确定要释放多少内存？</p>
 <p>先是pop（弹出堆栈）edi,esi,ebx这三个寄存器，然后将ebp给esp，也就是说把刚刚上面开辟的空间收回，然后经过ret跳回至刚刚在main函数处调用函数那儿（现场保护）。（见上面第一个链接）</p>
-<p>五、C++14 string实现？</p>
+<p>五、C++14 string实现？如果是不够就申请空间的话</p>
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/187499607">第14篇:C++的string-两手抓的内存分配</a></p>
 <p>六、http用的是tcp还是udp？</p>
+<p>tcp。追求可靠。</p>
 <p>七、tcp接收方收到乱序的包时，对这个包怎么处理？</p>
+<ul>
+<li>在缓存区里，不会丢弃，直到有序了以后直接排序。</li>
+<li>主机每次发送数据时，TCP就给每个数据包分配一个序列号并且在一个特定的时间内等待接收主机 对分配的这个序列号进行确认，如果发送主机在一个特定时间内没有收到接收主机的确认，则发送 主机会重传此数据包。接收主机利用序列号对接收的数据进行确认，以便检测对方发送的数据是否 有丢失或者乱序等，接收主机一旦收到已经顺序化的数据，它就将这些数据按正确的顺序重组成数 据流并传递到高层进行处理。</li>
+<li>具体步骤如下:</li>
+</ul>
+<ol>
+<li>为了保证数据包的可靠传递，发送方必须把已发送的数据包保留在缓冲区;</li>
+<li>并为每个已发送的数据包启动一个超时定时器;</li>
+<li>如在定时器超时之前收到了对方发来的应答信息(可能是对本包的应答，也可以是对本包后 续包的应答)，则释放该数据包占用的缓冲区;</li>
+<li>否则，重传该数据包，直到收到应答或重传次数超过规定的最大次数为止。</li>
+<li>接收方收到数据包后，先进行CRC校验，如果正确则把数据交给上层协议，然后给发送方发 送一个累计应答包，表明该数据已收到，如果接收方正好也有数据要发给发送方，应答包也可方在 数据包中捎带过去。</li>
+</ol>
 <p>八、怎么从tcp中解出http？</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u010088405/article/details/52396813">如何从TCP中提取HTTP报文</a></p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/news/717465">从一个HTTP请求来读懂HTTP、TCP协议</a></p>
 <p>九、http1.0和http1.1区别？1.1的header里多了什么？</p>
+<ul>
+<li>http/1.0 : <ol>
+<li>默认不支持长连接，需要设置keep-alive参数指定</li>
+<li>强缓存expired、协商缓存last-modified\if-modified-since 有一定的缺陷</li>
+</ol>
+</li>
+<li>http 1.1 :<ol>
+<li>默认长连接(keep-alive)，http请求可以复用Tcp连接，但是同一时间只能对应一个http请求(http请 求在一个Tcp中是串行的)</li>
+<li>增加了强缓存cache-control、协商缓存etag\if-none-match 是对http/1 缓存的优化</li>
+</ol>
+</li>
+</ul>
 <p>十、有多个服务器时，怎么确保是正确的服务器接收到了消息？</p>
 <p>十一、muduo用的是什么单例模式？</p>
 <p>十二、epoll水平触发和边缘触发？</p>
-<p>十三怎么根据有几个核来确定设置几个线程？</p>
+<p>十三、怎么根据有几个核来确定设置几个线程？怎么确定cpu有多少核？</p>
+<ul>
+<li>线程数量和哪些因素有关:CPU，IO、并行、并发</li>
+<li>如果是CPU密集型应用，则线程池大小设置为:CPU数目+1 </li>
+<li>如果是IO密集型应用，则线程池大小设置为:2*CPU数目+1 </li>
+<li>最佳线程数目 = (线程等待时间与线程CPU时间之比 + 1)* CPU数目</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 总核数 = 物理CPU个数 X 每颗物理CPU的核数 </span><br><span class="line"># 总逻辑CPU数 = 物理CPU个数 X 每颗物理CPU的核数 X 超线程数</span><br><span class="line"></span><br><span class="line"># 查看物理CPU个数</span><br><span class="line">cat /proc/cpuinfo| grep &quot;physical id&quot;| sort| uniq| wc -l</span><br><span class="line"></span><br><span class="line"># 查看每个物理CPU中core的个数(即核数)</span><br><span class="line">cat /proc/cpuinfo| grep &quot;cpu cores&quot;| uniq</span><br><span class="line"></span><br><span class="line"># 查看逻辑CPU的个数</span><br><span class="line">cat /proc/cpuinfo| grep &quot;processor&quot;| wc -l</span><br></pre></td></tr></table></figure>
 <p>十四、linux在哪里查看日志？有几种方法进入插入模式？怎么查找？怎么跳到第一行？怎么跳到最后一行？怎么复制一行？</p>
+<ul>
+<li>/var/log</li>
+<li>插入模式 <ul>
+<li>按「i」切换进入插入模式「insert mode」，按”i”进入插入模式后是从光标当前位置开始输入文件；</li>
+<li>按「a」进入插入模式后，是从目前光标所在位置的下一个位置开始输入文字； </li>
+<li>按「o」进入插入模式后，是插入新的一行，从行首开始输入文字。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">--递归查找目录下含有该字符串的所有文件</span><br><span class="line">grep -rn &quot;data_chushou_pay_info&quot;  /home/hadoop/nisj/automationDemand/</span><br><span class="line"> </span><br><span class="line">--查找当前目录下后缀名过滤的文件</span><br><span class="line">grep -Rn &quot;data_chushou_pay_info&quot; *.py</span><br><span class="line"> </span><br><span class="line">--当前目录及设定子目录下的符合条件的文件</span><br><span class="line">grep -Rn &quot;data_chushou_pay_info&quot; /home/hadoop/nisj/automationDemand/ *.py</span><br><span class="line"> </span><br><span class="line">--结合find命令过滤目录及文件名后缀</span><br><span class="line">find /home/hadoop/nisj/automationDemand/ -type f -name &#x27;*.py&#x27;|xargs grep -n &#x27;data_chushou_pay_info&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>跳到文本的最后一行：按“G”,即“shift+g”</li>
+<li>跳到第一行的第一个字符：先按两次“g”</li>
+<li>复制一行数据数据： 把光标放到要复制的行行首，然后按两下yy字母键； 然后把光标放到要复制到的地方去，按键盘的p字母键</li>
+</ul>
 <p>十五、开放题：怎么在http服务端设计一个用户注册系统？</p>
 <p>十六、算法题：LRU</p>
 
@@ -1657,12 +1706,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">256k</span>
+    <span title="站点总字数">258k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">3:53</span>
+    <span title="站点阅读时长">3:55</span>
 </div>
 
 <!--
