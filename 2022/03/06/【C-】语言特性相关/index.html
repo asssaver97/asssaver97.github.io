@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/w-solid.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/w-solid.svg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/w-solid.svg">
+  <link rel="mask-icon" href="/images/w-solid.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wangtianyang.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="左值和右值的区别？左值引用和右值引用的区别，如何将左值转换成右值？左值：指表达式结束后依然存在的持久对象。 右值：表达式结束就不再存在的临时对象。 左值和右值的区别：左值持久，右值短暂 右值引用和左值引用的区别：  左值引用不能绑定到要转换的表达式、字面常量或返回右值的表达式。右值引用恰好相反，可以绑定到这类表达式，但不能绑定到一个左值上。 右值引用必须绑定到右值的引用，通过 &amp;&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【C++】语言特性相关">
+<meta property="og:url" content="http://wangtianyang.com/2022/03/06/%E3%80%90C-%E3%80%91%E8%AF%AD%E8%A8%80%E7%89%B9%E6%80%A7%E7%9B%B8%E5%85%B3/index.html">
+<meta property="og:site_name" content="王天阳的个人博客">
+<meta property="og:description" content="左值和右值的区别？左值引用和右值引用的区别，如何将左值转换成右值？左值：指表达式结束后依然存在的持久对象。 右值：表达式结束就不再存在的临时对象。 左值和右值的区别：左值持久，右值短暂 右值引用和左值引用的区别：  左值引用不能绑定到要转换的表达式、字面常量或返回右值的表达式。右值引用恰好相反，可以绑定到这类表达式，但不能绑定到一个左值上。 右值引用必须绑定到右值的引用，通过 &amp;&amp;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-03-06T06:50:44.000Z">
+<meta property="article:modified_time" content="2023-01-05T08:03:47.020Z">
+<meta property="article:author" content="王天阳">
+<meta property="article:tag" content="八股文">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://wangtianyang.com/2022/03/06/%E3%80%90C-%E3%80%91%E8%AF%AD%E8%A8%80%E7%89%B9%E6%80%A7%E7%9B%B8%E5%85%B3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>【C++】语言特性相关 | 王天阳的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">王天阳的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-movies">
+
+    <a href="/movies/" rel="section"><i class="fa fa-film fa-fw"></i>观影</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://wangtianyang.com/2022/03/06/%E3%80%90C-%E3%80%91%E8%AF%AD%E8%A8%80%E7%89%B9%E6%80%A7%E7%9B%B8%E5%85%B3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="王天阳">
+      <meta itemprop="description" content="学习｜记录｜心情">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王天阳的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【C++】语言特性相关
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-06 14:50:44" itemprop="dateCreated datePublished" datetime="2022-03-06T14:50:44+08:00">2022-03-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-01-05 16:03:47" itemprop="dateModified" datetime="2023-01-05T16:03:47+08:00">2023-01-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/03/06/%E3%80%90C-%E3%80%91%E8%AF%AD%E8%A8%80%E7%89%B9%E6%80%A7%E7%9B%B8%E5%85%B3/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/03/06/%E3%80%90C-%E3%80%91%E8%AF%AD%E8%A8%80%E7%89%B9%E6%80%A7%E7%9B%B8%E5%85%B3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>9.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="左值和右值的区别？左值引用和右值引用的区别，如何将左值转换成右值？"><a href="#左值和右值的区别？左值引用和右值引用的区别，如何将左值转换成右值？" class="headerlink" title="左值和右值的区别？左值引用和右值引用的区别，如何将左值转换成右值？"></a>左值和右值的区别？左值引用和右值引用的区别，如何将左值转换成右值？</h2><p>左值：指表达式结束后依然存在的持久对象。</p>
+<p>右值：表达式结束就不再存在的临时对象。</p>
+<p>左值和右值的区别：左值持久，右值短暂</p>
+<p>右值引用和左值引用的区别：</p>
+<ul>
+<li>左值引用不能绑定到要转换的表达式、字面常量或返回右值的表达式。右值引用恰好相反，可以绑定到这类表达式，但不能绑定到一个左值上。</li>
+<li>右值引用必须绑定到右值的引用，通过 &amp;&amp; 获得。右值引用只能绑定到一个将要销毁的对象上，因此可以自由地移动其资源。<span id="more"></span>
+</li>
+</ul>
+<p><code>std::move</code>可以将一个左值强制转化为右值，继而可以通过右值引用使用该值，以用于移动语义。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">fun1</span><span class="params">(<span class="type">int</span>&amp; tmp)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;fun1(int&amp; tmp):&quot;</span> &lt;&lt; tmp &lt;&lt; endl; </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">fun2</span><span class="params">(<span class="type">int</span>&amp;&amp; tmp)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;fun2(int&amp;&amp; tmp)&quot;</span> &lt;&lt; tmp &lt;&lt; endl; </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">  <span class="type">int</span> var = <span class="number">11</span>; </span><br><span class="line">  <span class="built_in">fun1</span>(<span class="number">12</span>); <span class="comment">// error: cannot bind non-const lvalue reference of type &#x27;int&amp;&#x27; to an rvalue of type &#x27;int&#x27;</span></span><br><span class="line">  <span class="built_in">fun1</span>(var);</span><br><span class="line">  <span class="built_in">fun2</span>(<span class="number">1</span>); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="std-move-函数的实现原理"><a href="#std-move-函数的实现原理" class="headerlink" title="std::move() 函数的实现原理"></a>std::move() 函数的实现原理</h2><p><code>std::move()</code>函数原型：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">typename</span> remove_reference&lt;T&gt;::<span class="function">type&amp;&amp; <span class="title">move</span><span class="params">(T&amp;&amp; t)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">static_cast</span>&lt;<span class="keyword">typename</span> remove_reference&lt;T&gt;::type &amp;&amp;&gt;(t);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>说明：引用折叠原理</p>
+<ul>
+<li>右值传递给上述函数的形参 T&amp;&amp; 依然是右值，即 T&amp;&amp; &amp;&amp; 相当于 T&amp;&amp;。</li>
+<li>左值传递给上述函数的形参 T&amp;&amp; 依然是左值，即 T&amp;&amp; &amp; 相当于 T&amp;。</li>
+</ul>
+<p>小结：通过引用折叠原理可以知道，<code>move()</code>函数的形参既可以是左值也可以是右值。<br><code>remove_reference</code>具体实现：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//原始的，最通用的版本</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; <span class="keyword">struct</span> <span class="title class_">remove_reference</span>&#123;</span><br><span class="line">    <span class="keyword">typedef</span> T type;  <span class="comment">//定义 T 的类型别名为 type</span></span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="comment">//部分版本特例化，将用于左值引用和右值引用</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt; <span class="keyword">struct</span> <span class="title class_">remove_reference</span>&lt;T&amp;&gt; <span class="comment">//左值引用</span></span><br><span class="line">&#123; <span class="keyword">typedef</span> T type; &#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt; <span class="keyword">struct</span> <span class="title class_">remove_reference</span>&lt;T&amp;&amp;&gt; <span class="comment">//右值引用</span></span><br><span class="line">&#123; <span class="keyword">typedef</span> T type; &#125;   </span><br><span class="line">  </span><br><span class="line"><span class="comment">//举例如下,下列定义的a、b、c三个变量都是int类型</span></span><br><span class="line"><span class="type">int</span> i;</span><br><span class="line">remove_refrence&lt;<span class="keyword">decltype</span>(<span class="number">42</span>)&gt;::type a;             <span class="comment">//使用原版本，</span></span><br><span class="line">remove_refrence&lt;<span class="keyword">decltype</span>(i)&gt;::type  b;             <span class="comment">//左值引用特例版本</span></span><br><span class="line">remove_refrence&lt;<span class="keyword">decltype</span>(std::<span class="built_in">move</span>(i))&gt;::type  b;  <span class="comment">//右值引用特例版本 </span></span><br></pre></td></tr></table></figure><br>举例：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nt var = <span class="number">10</span>; </span><br></pre></td></tr></table></figure><br>转化过程：</p>
+<ol>
+<li><code>std::move(var)</code>=&gt;<code>std::move(int&amp;&amp; &amp;)</code>=&gt;折叠后<code>std::move(int&amp;)</code></li>
+<li>此时：<code>T</code>的类型为<code>int&amp;</code>，<code>typename remove_reference&lt;T&gt;::type</code>为<code>int</code>，这里使用<code>remove_reference</code>的左值引用的特例化版本</li>
+<li>通过<code>static_cast</code>将<code>int&amp;</code>强制转换为<code>int&amp;&amp;</code></li>
+</ol>
+<p>整个std::move被实例化如下<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">string&amp;&amp; <span class="title">move</span><span class="params">(<span class="type">int</span>&amp; t)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">static_cast</span>&lt;<span class="type">int</span>&amp;&amp;&gt;(t); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>总结：<code>std::move()</code>实现原理：</p>
+<ul>
+<li>利用引用折叠原理将右值经过 T&amp;&amp; 传递类型保持不变还是右值，而左值经过 T&amp;&amp; 变为普通的左值引用，以保证模板可以传递任意实参，且保持类型不变；</li>
+<li>然后通过 remove_refrence 移除引用，得到具体的类型 T；</li>
+<li>最后通过 static_cast&lt;&gt; 进行强制类型转换，返回 T&amp;&amp; 右值引用。</li>
+</ul>
+<h2 id="什么是指针？指针的大小及用法？"><a href="#什么是指针？指针的大小及用法？" class="headerlink" title="什么是指针？指针的大小及用法？"></a>什么是指针？指针的大小及用法？</h2><p><strong>指针：</strong>指向另外一种类型的复合类型。<br><strong>指针的大小：</strong>在 64 位计算机中，指针占 8 个字节空间。</p>
+<h2 id="什么是野指针和悬空指针？"><a href="#什么是野指针和悬空指针？" class="headerlink" title="什么是野指针和悬空指针？"></a>什么是野指针和悬空指针？</h2><p><strong>悬空指针：</strong><br>若指针指向一块内存空间，当这块内存空间被释放后，该指针依然指向这块内存空间，此时，称该指针为“悬空指针”。 举例：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> *p = <span class="built_in">malloc</span>(size);</span><br><span class="line"><span class="built_in">free</span>(p); </span><br><span class="line"><span class="comment">// 此时，p 指向的内存空间已释放， p 就是悬空指针。</span></span><br></pre></td></tr></table></figure><br><strong>野指针：</strong><br>“野指针”是指不确定其指向的指针，未初始化的指针为“野指针”<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> *p; </span><br><span class="line"><span class="comment">// 此时 p 是“野指针”。</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="C-11-nullptr-比-NULL-优势"><a href="#C-11-nullptr-比-NULL-优势" class="headerlink" title="C++ 11 nullptr 比 NULL 优势"></a>C++ 11 nullptr 比 NULL 优势</h2><p><strong>NULL：</strong>预处理变量，是一个宏，它的值是 0，定义在头文件 中，即<code>#define NULL 0</code>。<br><strong>nullptr：</strong>C++ 11 中的关键字，是一种特殊类型的字面值，可以被转换成任意其他类型。</p>
+<p>nullptr 的优势：</p>
+<ul>
+<li>有类型，类型是 typdef decltype(nullptr) nullptr_t;，使用 nullptr 提高代码的健壮性。</li>
+<li>函数重载：因为 NULL 本质上是 0，在函数调用过程中，若出现函数重载并且传递的实参是 NULL，可能会出现，不知和哪一个函数匹配的情况；但是传递实参 nullptr 就不会出现这种情况。</li>
+</ul>
+<h2 id="指针和引用的区别？"><a href="#指针和引用的区别？" class="headerlink" title="指针和引用的区别？"></a>指针和引用的区别？</h2><ul>
+<li>指针所指向的内存空间在程序运行过程中可以改变，而引用所绑定的对象一旦绑定就不能改变。（是否可变）</li>
+<li>指针本身在内存中占有内存空间，引用相当于变量的别名，在内存中不占内存空间。（是否占内存）</li>
+<li>指针可以为空，但是引用必须绑定对象。（是否可为空）</li>
+<li>指针可以有多级，但是引用只能一级。（是否能为多级）</li>
+</ul>
+<h2 id="常量指针和指针常量的区别"><a href="#常量指针和指针常量的区别" class="headerlink" title="常量指针和指针常量的区别"></a>常量指针和指针常量的区别</h2><p><strong>常量指针：</strong>常量指针本质上是个指针，只不过这个指针指向的对象是常量。 特点：const 的位置在指针声明运算符<code>*</code>的左侧。只要<code>const</code>位于<code>*</code>的左侧，无论它在类型名的左边或右边，都表示指向常量的指针。（可以这样理解<code>*</code>左侧表示指针指向的对象，该对象为常量，那么该指针为常量指针。）<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">int</span> * p;</span><br><span class="line"><span class="type">int</span> <span class="type">const</span> * p;</span><br></pre></td></tr></table></figure><br>注意 1：指针指向的对象不能通过这个指针来修改，也就是说常量指针可以被赋值为变量的地址，之所以叫做常量指针，是限制了通过这个指针修改变量的值。</p>
+<p>注意 2：虽然常量指针指向的对象不能变化，可是因为常量指针本身是一个变量，因此，可以被重新赋值。</p>
+<p><strong>指针常量：</strong>指针常量的本质上是个常量，只不过这个常量的值是一个指针。特点：<code>const</code>位于指针声明操作符右侧，表明该对象本身是一个常量，<code>*</code>左侧表示该指针指向的类型，即以<code>*</code>为分界线，其左侧表示指针指向的类型，右侧表示指针本身的性质。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">int</span> var;</span><br><span class="line"><span class="type">int</span> * <span class="type">const</span> c_p = &amp;var; </span><br></pre></td></tr></table></figure><br>注意 1：指针常量的值是指针，这个值因为是常量，所以指针本身不能改变。</p>
+<p>注意 2：指针的内容可以改变。</p>
+<h2 id="函数指针和指针函数的区别"><a href="#函数指针和指针函数的区别" class="headerlink" title="函数指针和指针函数的区别"></a>函数指针和指针函数的区别</h2><p><strong>指针函数：</strong>指针函数本质是一个函数，只不过该函数的返回值是一个指针。相对于普通函数而言，只是返回值是指针。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Type</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">int</span> var1;</span><br><span class="line">  <span class="type">int</span> var2;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">Type * <span class="title">fun</span><span class="params">(<span class="type">int</span> tmp1, <span class="type">int</span> tmp2)</span></span>&#123;</span><br><span class="line">    Type * t = <span class="keyword">new</span> <span class="built_in">Type</span>();</span><br><span class="line">    t-&gt;var1 = tmp1;</span><br><span class="line">    t-&gt;var2 = tmp2;</span><br><span class="line">    <span class="keyword">return</span> t;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Type *p = <span class="built_in">fun</span>(<span class="number">5</span>, <span class="number">6</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>函数指针：</strong>函数指针本质是一个指针变量，只不过这个指针指向一个函数。函数指针即指向函数的指针。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">fun1</span><span class="params">(<span class="type">int</span> tmp1, <span class="type">int</span> tmp2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> tmp1 * tmp2;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">fun2</span><span class="params">(<span class="type">int</span> tmp1, <span class="type">int</span> tmp2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> tmp1 / tmp2;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="built_in">int</span> (*fun)(<span class="type">int</span> x, <span class="type">int</span> y); </span><br><span class="line">  fun = fun1;</span><br><span class="line">  cout &lt;&lt; <span class="built_in">fun</span>(<span class="number">15</span>, <span class="number">5</span>) &lt;&lt; endl; </span><br><span class="line">  fun = fun2;</span><br><span class="line">  cout &lt;&lt; <span class="built_in">fun</span>(<span class="number">15</span>, <span class="number">5</span>) &lt;&lt; endl; </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">运行结果：</span></span><br><span class="line"><span class="comment">75</span></span><br><span class="line"><span class="comment">3</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="函数指针和指针函数的区别："><a href="#函数指针和指针函数的区别：" class="headerlink" title="函数指针和指针函数的区别："></a>函数指针和指针函数的区别：</h3><ul>
+<li>本质不同 指针函数本质是一个函数，其返回值为指针。 函数指针本质是一个指针变量，其指向一个函数。</li>
+</ul>
+<h2 id="强制类型转换有哪几种？"><a href="#强制类型转换有哪几种？" class="headerlink" title="强制类型转换有哪几种？"></a>强制类型转换有哪几种？</h2><ul>
+<li><strong>static_cast：</strong>用于数据的强制类型转换，强制将一种数据类型转换为另一种数据类型。<ol>
+<li>用于基本数据类型的转换。</li>
+<li>用于类层次之间的基类和派生类之间 指针或者引用 的转换（不要求必须包含虚函数，但必须是有相互联系的类），进行上行转换（派生类的指针或引用转换成基类表示）是安全的；进行下行转换（基类的指针或引用转换成派生类表示）由于没有动态类型检查，所以是不安全的，最好用 dynamic_cast 进行下行转换。</li>
+<li>可以将空指针转化成目标类型的空指针。</li>
+<li>可以将任何类型的表达式转化成 void 类型</li>
+</ol>
+</li>
+<li><strong>const_cast：</strong>强制去掉常量属性，不能用于去掉变量的常量性，只能用于去除指针或引用的常量性，将常量指针转化为非常量指针或者将常量引用转化为非常量引用（注意：表达式的类型和要转化的类型是相同的）。</li>
+<li><strong>reinterpret_cast：</strong>改变指针或引用的类型、将指针或引用转换为一个足够长度的整型、将整型转化为指针或引用类型。</li>
+<li><strong>dynamic_cast：</strong><ol>
+<li>其他三种都是编译时完成的，动态类型转换是在程序运行时处理的，运行时会进行类型检查。</li>
+<li>只能用于带有虚函数的基类或派生类的指针或者引用对象的转换，转换成功返回指向类型的指针或引用，转换失败返回 NULL；不能用于基本数据类型的转换。</li>
+<li>在向上进行转换时，即派生类类的指针转换成基类类的指针和 static_cast 效果是一样的，（注意：这里只是改变了指针的类型，指针指向的对象的类型并未发生改变）<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Base</span></span><br><span class="line">&#123;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Derive</span> : <span class="keyword">public</span> Base</span><br><span class="line">&#123;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Base *p1 = <span class="keyword">new</span> <span class="built_in">Derive</span>();</span><br><span class="line">    Derive *p2 = <span class="keyword">new</span> <span class="built_in">Derive</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//向上类型转换</span></span><br><span class="line">    p1 = <span class="built_in">dynamic_cast</span>&lt;Base *&gt;(p2);</span><br><span class="line">    <span class="keyword">if</span> (p1 == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;NULL&quot;</span> &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;NOT NULL&quot;</span> &lt;&lt; endl; <span class="comment">//输出</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>在下行转换时，基类的指针类型转化为派生类类的指针类型，只有当要转换的指针指向的对象类型和转化以后的对象类型相同时，才会转化成功。<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Base</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">fun</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;Base::fun()&quot;</span> &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Derive</span> : <span class="keyword">public</span> Base</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">fun</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;Derive::fun()&quot;</span> &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Base *p1 = <span class="keyword">new</span> <span class="built_in">Derive</span>();</span><br><span class="line">    Base *p2 = <span class="keyword">new</span> <span class="built_in">Base</span>();</span><br><span class="line">    Derive *p3 = <span class="keyword">new</span> <span class="built_in">Derive</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//转换成功</span></span><br><span class="line">    p3 = <span class="built_in">dynamic_cast</span>&lt;Derive *&gt;(p1);</span><br><span class="line">    <span class="keyword">if</span> (p3 == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;NULL&quot;</span> &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;NOT NULL&quot;</span> &lt;&lt; endl; <span class="comment">// 输出</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//转换失败</span></span><br><span class="line">    p3 = <span class="built_in">dynamic_cast</span>&lt;Derive *&gt;(p2);</span><br><span class="line">    <span class="keyword">if</span> (p3 == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;NULL&quot;</span> &lt;&lt; endl; <span class="comment">// 输出</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;NOT NULL&quot;</span> &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+</ul>
+<h2 id="参数传递时，值传递、引用传递、指针传递的区别？"><a href="#参数传递时，值传递、引用传递、指针传递的区别？" class="headerlink" title="参数传递时，值传递、引用传递、指针传递的区别？"></a>参数传递时，值传递、引用传递、指针传递的区别？</h2><p>参数传递的三种方式：</p>
+<ul>
+<li>值传递：形参是实参的拷贝，函数对形参的所有操作不会影响实参。</li>
+<li>指针传递：本质上是值传递，只不过拷贝的是指针的值，拷贝之后，实参和形参是不同的指针，通过指针可以间接的访问指针所指向的对象，从而可以修改它所指对象的值。</li>
+<li>引用传递：当形参是引用类型时，我们说它对应的实参被引用传递。<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">fun1</span><span class="params">(<span class="type">int</span> tmp)</span></span>&#123; <span class="comment">// 值传递</span></span><br><span class="line">    cout &lt;&lt; &amp;tmp &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">fun2</span><span class="params">(<span class="type">int</span> * tmp)</span></span>&#123; <span class="comment">// 指针传递</span></span><br><span class="line">    cout &lt;&lt; tmp &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">fun3</span><span class="params">(<span class="type">int</span> &amp;tmp)</span></span>&#123; <span class="comment">// 引用传递</span></span><br><span class="line">    cout &lt;&lt; &amp;tmp &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> var = <span class="number">5</span>;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;var 在主函数中的地址：&quot;</span> &lt;&lt; &amp;var &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;var 值传递时的地址：&quot;</span>;</span><br><span class="line">    <span class="built_in">fun1</span>(var);</span><br><span class="line"></span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;var 指针传递时的地址：&quot;</span>;</span><br><span class="line">    <span class="built_in">fun2</span>(&amp;var);</span><br><span class="line"></span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;var 引用传递时的地址：&quot;</span>;</span><br><span class="line">    <span class="built_in">fun3</span>(var);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">运行结果：</span></span><br><span class="line"><span class="comment">var 在主函数中的地址：0x23fe4c</span></span><br><span class="line"><span class="comment">var 值传递时的地址：0x23fe20</span></span><br><span class="line"><span class="comment">var 指针传递时的地址：0x23fe4c</span></span><br><span class="line"><span class="comment">var 引用传递时的地址：0x23fe4c</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+说明：从上述代码的运行结果可以看出，只有在值传递时，形参和实参的地址不一样，在函数体内操作的不是变量本身。引用传递和指针传递，在函数体内操作的是变量本身。</li>
+</ul>
+<h2 id="什么是模板？如何实现？"><a href="#什么是模板？如何实现？" class="headerlink" title="什么是模板？如何实现？"></a>什么是模板？如何实现？</h2><p><strong>模板：</strong>创建类或者函数的蓝图或者公式，分为函数模板和类模板。 实现方式：模板定义以关键字 template 开始，后跟一个模板参数列表。</p>
+<ul>
+<li>模板参数列表不能为空；</li>
+<li>模板类型参数前必须使用关键字 class 或者 typename，在模板参数列表中这两个关键字含义相同，可互换使用。<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> U, ...&gt;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><strong>函数模板：</strong>通过定义一个函数模板，可以避免为每一种类型定义一个新函数。</p>
+<ul>
+<li>对于函数模板而言，模板类型参数可以用来指定返回类型或函数的参数类型，以及在函数体内用于变量声明或类型转换。</li>
+<li>函数模板实例化：当调用一个模板时，编译器用函数实参来推断模板实参，从而使用实参的类型来确定绑定到模板参数的类型<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function">T <span class="title">add_fun</span><span class="params">(<span class="type">const</span> T &amp; tmp1, <span class="type">const</span> T &amp; tmp2)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> tmp1 + tmp2;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> var1, var2;</span><br><span class="line">    cin &gt;&gt; var1 &gt;&gt; var2;</span><br><span class="line">    cout &lt;&lt; <span class="built_in">add_fun</span>(var1, var2);</span><br><span class="line"></span><br><span class="line">    <span class="type">double</span> var3, var4;</span><br><span class="line">    cin &gt;&gt; var3 &gt;&gt; var4;</span><br><span class="line">    cout &lt;&lt; <span class="built_in">add_fun</span>(var3, var4);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><strong>类模板：</strong>类似函数模板，类模板以关键字 template 开始，后跟模板参数列表。但是，编译器不能为类模板推断模板参数类型，需要在使用该类模板时，在模板名后面的尖括号中指明类型。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Complex</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">//构造函数</span></span><br><span class="line">    <span class="built_in">Complex</span>(T a, T b)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">this</span>-&gt;a = a;</span><br><span class="line">        <span class="keyword">this</span>-&gt;b = b;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//运算符重载</span></span><br><span class="line">    Complex&lt;T&gt; <span class="keyword">operator</span>+(Complex &amp;c)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function">Complex&lt;T&gt; <span class="title">tmp</span><span class="params">(<span class="keyword">this</span>-&gt;a + c.a, <span class="keyword">this</span>-&gt;b + c.b)</span></span>;</span><br><span class="line">        cout &lt;&lt; tmp.a &lt;&lt; <span class="string">&quot; &quot;</span> &lt;&lt; tmp.b &lt;&lt; endl;</span><br><span class="line">        <span class="keyword">return</span> tmp;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    T a;</span><br><span class="line">    T b;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function">Complex&lt;<span class="type">int</span>&gt; <span class="title">a</span><span class="params">(<span class="number">10</span>, <span class="number">20</span>)</span></span>;</span><br><span class="line">    <span class="function">Complex&lt;<span class="type">int</span>&gt; <span class="title">b</span><span class="params">(<span class="number">20</span>, <span class="number">30</span>)</span></span>;</span><br><span class="line">    Complex&lt;<span class="type">int</span>&gt; c = a + b;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="函数模板和类模板的区别？"><a href="#函数模板和类模板的区别？" class="headerlink" title="函数模板和类模板的区别？"></a>函数模板和类模板的区别？</h2><ul>
+<li>实例化方式不同：函数模板实例化由编译程序在处理函数调用时自动完成，类模板实例化需要在程序中显式指定。</li>
+<li>实例化的结果不同：函数模板实例化后是一个函数，类模板实例化后是一个类。</li>
+<li>默认参数：类模板在模板参数列表中可以有默认参数。</li>
+<li>特化：函数模板只能全特化；而类模板可以全特化，也可以偏特化。</li>
+<li>调用方式不同：函数模板可以隐式调用，也可以显式调用；类模板只能显式调用。</li>
+</ul>
+<h2 id="什么是模板特化？为什么特化？"><a href="#什么是模板特化？为什么特化？" class="headerlink" title="什么是模板特化？为什么特化？"></a>什么是模板特化？为什么特化？</h2><p><strong>模板特化的原因：</strong>模板并非对任何模板实参都合适、都能实例化，某些情况下，通用模板的定义对特定类型不合适，可能会编译失败，或者得不到正确的结果。因此，当不希望使用模板版本时，可以定义类或者函数模板的一个特例化版本。</p>
+<p>模板特化：模板参数在某种特定类型下的具体实现。分为<strong>函数模板特化</strong>和<strong>类模板特化</strong></p>
+<ul>
+<li><strong>函数模板特化：</strong>将函数模板中的全部类型进行特例化，称为函数模板特化。</li>
+<li><strong>类模板特化：</strong>将类模板中的部分或全部类型进行特例化，称为类模板特化。</li>
+</ul>
+<p>特化分为<strong>全特化</strong>和<strong>偏特化</strong>：</p>
+<ul>
+<li><strong>全特化：</strong>模板中的模板参数全部特例化。</li>
+<li><strong>偏特化：</strong>模板中的模板参数只确定了一部分，剩余部分需要在编译器编译时确定。</li>
+</ul>
+<p>说明：要区分下函数重载与函数模板特化 定义函数模板的特化版本，本质上是接管了编译器的工作，为原函数模板定义了一个特殊实例，而不是函数重载，函数模板特化并不影响函数匹配。</p>
+<p>实例：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="comment">//函数模板</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">compare</span><span class="params">(T t1, T t2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;通用版本：&quot;</span>;</span><br><span class="line">    <span class="keyword">return</span> t1 == t2;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;&gt; <span class="comment">//函数模板特化</span></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">compare</span><span class="params">(<span class="type">char</span> *t1, <span class="type">char</span> *t2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;特化版本：&quot;</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">strcmp</span>(t1, t2) == <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">char</span> arr1[] = <span class="string">&quot;hello&quot;</span>;</span><br><span class="line">    <span class="type">char</span> arr2[] = <span class="string">&quot;abc&quot;</span>;</span><br><span class="line">    cout &lt;&lt; <span class="built_in">compare</span>(<span class="number">123</span>, <span class="number">123</span>) &lt;&lt; endl;</span><br><span class="line">    cout &lt;&lt; <span class="built_in">compare</span>(arr1, arr2) &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">运行结果：</span></span><br><span class="line"><span class="comment">通用版本：1</span></span><br><span class="line"><span class="comment">特化版本：0</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="include-“-“-和-lt-gt-的区别"><a href="#include-“-“-和-lt-gt-的区别" class="headerlink" title="include “ “ 和 &lt;&gt; 的区别"></a>include “ “ 和 &lt;&gt; 的区别</h2><p><code>include&lt;文件名&gt;</code>和<code>#include&quot;文件名&quot;</code>的区别:</p>
+<ul>
+<li>查找文件的位置：<code>include&lt;文件名&gt;</code>在标准库头文件所在的目录中查找，如果没有，再到当前源文件所在目录下查找；<code>#include&quot;文件名&quot;</code>在当前源文件所在目录中进行查找，如果没有；再到系统目录中查找。</li>
+<li>使用习惯：对于标准库中的头文件常用<code>include&lt;文件名&gt;</code>，对于自己定义的头文件，常用<code>#include&quot;文件名&quot;</code></li>
+</ul>
+<h2 id="switch-的-case-里为何不能定义变量"><a href="#switch-的-case-里为何不能定义变量" class="headerlink" title="switch 的 case 里为何不能定义变量"></a>switch 的 case 里为何不能定义变量</h2><p>switch 下面的这个花括号表示一块作用域，而不是每一个 case 表示一块作用域。如果在某一 case 中定义了变量，其作用域在这块花括号内，按理说在另一个 case 内可以使用该变量，但是在实际使用时，每一个 case 之间互不影响，是相对封闭的，参考如下实例。</p>
+<h2 id="迭代器的作用？"><a href="#迭代器的作用？" class="headerlink" title="迭代器的作用？"></a>迭代器的作用？</h2><p>作用：在无需知道容器底层原理的情况下，遍历容器中的元素。</p>
+<h2 id="泛型编程如何实现？"><a href="#泛型编程如何实现？" class="headerlink" title="泛型编程如何实现？"></a>泛型编程如何实现？</h2><p>泛型编程实现的基础：模板。模板是创建类或者函数的蓝图或者说公式，当时用一个 vector 这样的泛型，或者 find 这样的泛型函数时，编译时会转化为特定的类或者函数。</p>
+<p>泛型编程涉及到的知识点较广，例如：容器、迭代器、算法等都是泛型编程的实现实例。面试者可选择自己掌握比较扎实的一方面进行展开。</p>
+<ul>
+<li><strong>容器：</strong>涉及到 STL 中的容器，例如：vector、list、map 等，可选其中熟悉底层原理的容器进行展开讲解。</li>
+<li><strong>迭代器：</strong>在无需知道容器底层原理的情况下，遍历容器中的元素。</li>
+<li><strong>模板：</strong>可参考本章节中的模板相关问题。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%85%AB%E8%82%A1%E6%96%87/" rel="tag"># 八股文</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/06/%E3%80%90C-%E3%80%91%E7%B1%BB%E7%9B%B8%E5%85%B3/" rel="prev" title="【C++】类相关">
+      <i class="fa fa-chevron-left"></i> 【C++】类相关
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/03/06/%E3%80%90C-%E3%80%91%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="next" title="【C++】设计模式">
+      【C++】设计模式 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A6%E5%80%BC%E5%92%8C%E5%8F%B3%E5%80%BC%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F%E5%B7%A6%E5%80%BC%E5%BC%95%E7%94%A8%E5%92%8C%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%8C%E5%A6%82%E4%BD%95%E5%B0%86%E5%B7%A6%E5%80%BC%E8%BD%AC%E6%8D%A2%E6%88%90%E5%8F%B3%E5%80%BC%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">左值和右值的区别？左值引用和右值引用的区别，如何将左值转换成右值？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#std-move-%E5%87%BD%E6%95%B0%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">std::move() 函数的实现原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%8C%87%E9%92%88%EF%BC%9F%E6%8C%87%E9%92%88%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%8F%8A%E7%94%A8%E6%B3%95%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">什么是指针？指针的大小及用法？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E9%87%8E%E6%8C%87%E9%92%88%E5%92%8C%E6%82%AC%E7%A9%BA%E6%8C%87%E9%92%88%EF%BC%9F"><span class="nav-number">4.</span> <span class="nav-text">什么是野指针和悬空指针？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-11-nullptr-%E6%AF%94-NULL-%E4%BC%98%E5%8A%BF"><span class="nav-number">5.</span> <span class="nav-text">C++ 11 nullptr 比 NULL 优势</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E5%92%8C%E5%BC%95%E7%94%A8%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">6.</span> <span class="nav-text">指针和引用的区别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E9%87%8F%E6%8C%87%E9%92%88%E5%92%8C%E6%8C%87%E9%92%88%E5%B8%B8%E9%87%8F%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">7.</span> <span class="nav-text">常量指针和指针常量的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88%E5%92%8C%E6%8C%87%E9%92%88%E5%87%BD%E6%95%B0%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">8.</span> <span class="nav-text">函数指针和指针函数的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88%E5%92%8C%E6%8C%87%E9%92%88%E5%87%BD%E6%95%B0%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A"><span class="nav-number">8.1.</span> <span class="nav-text">函数指针和指针函数的区别：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%BA%E5%88%B6%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E6%9C%89%E5%93%AA%E5%87%A0%E7%A7%8D%EF%BC%9F"><span class="nav-number">9.</span> <span class="nav-text">强制类型转换有哪几种？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92%E6%97%B6%EF%BC%8C%E5%80%BC%E4%BC%A0%E9%80%92%E3%80%81%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92%E3%80%81%E6%8C%87%E9%92%88%E4%BC%A0%E9%80%92%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">10.</span> <span class="nav-text">参数传递时，值传递、引用传递、指针传递的区别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%A8%A1%E6%9D%BF%EF%BC%9F%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="nav-number">11.</span> <span class="nav-text">什么是模板？如何实现？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF%E5%92%8C%E7%B1%BB%E6%A8%A1%E6%9D%BF%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">12.</span> <span class="nav-text">函数模板和类模板的区别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%A8%A1%E6%9D%BF%E7%89%B9%E5%8C%96%EF%BC%9F%E4%B8%BA%E4%BB%80%E4%B9%88%E7%89%B9%E5%8C%96%EF%BC%9F"><span class="nav-number">13.</span> <span class="nav-text">什么是模板特化？为什么特化？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#include-%E2%80%9C-%E2%80%9C-%E5%92%8C-lt-gt-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">14.</span> <span class="nav-text">include “ “ 和 &lt;&gt; 的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#switch-%E7%9A%84-case-%E9%87%8C%E4%B8%BA%E4%BD%95%E4%B8%8D%E8%83%BD%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="nav-number">15.</span> <span class="nav-text">switch 的 case 里为何不能定义变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="nav-number">16.</span> <span class="nav-text">迭代器的作用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%9B%E5%9E%8B%E7%BC%96%E7%A8%8B%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="nav-number">17.</span> <span class="nav-text">泛型编程如何实现？</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="王天阳"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">王天阳</p>
+  <div class="site-description" itemprop="description">学习｜记录｜心情</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+
+
+
+  <div class="links-of-blogroll motion-element links-of-blogroll-block">
+    <div class="links-of-blogroll-title">
+      <!-- modify icon to fire by szw -->
+      <i class="fa fa-history fa-" aria-hidden="true"></i>
+      近期文章
+    </div>
+    <ul class="links-of-blogroll-list">
+      
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">王天阳</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">447k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">6:47</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'dPQ0eYKJKl0nx6N1Qv9srFwG-gzGzoHsz',
+      appKey     : 'SsmzAdYldap25VnTu0wf1AlJ',
+      placeholder: "你说，我在听",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+  <script src="/js/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+  
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/assets/hijiki.model.json"},"display":{"position":"right","width":145,"height":315},"mobile":{"show":true,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.8},"log":false});</script></body>
+</html>

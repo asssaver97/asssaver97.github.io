@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/w-solid.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/w-solid.svg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/w-solid.svg">
+  <link rel="mask-icon" href="/images/w-solid.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wangtianyang.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="引论操作系统是用来管理计算机各个部件的一层软件。用户与之交互的程序，基于文本的通常称为shell，而基于图标的则称为图形用户界面（也就是GUI）。它们不是操作系统的一部分，只是适用操作系统来完成工作。 多数计算机有两种运行模式：内核态和用户态。  计算机软件中最基础的部分是操作系统，它运行在内核态（也称为管态、核心态）。在这个模式中，操作系统具有对所有硬件的完全访问权，可以执行机器能够运行的任何指">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【读书笔记】《现代操作系统》">
+<meta property="og:url" content="http://wangtianyang.com/2022/03/24/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E3%80%8A%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E3%80%8B/index.html">
+<meta property="og:site_name" content="王天阳的个人博客">
+<meta property="og:description" content="引论操作系统是用来管理计算机各个部件的一层软件。用户与之交互的程序，基于文本的通常称为shell，而基于图标的则称为图形用户界面（也就是GUI）。它们不是操作系统的一部分，只是适用操作系统来完成工作。 多数计算机有两种运行模式：内核态和用户态。  计算机软件中最基础的部分是操作系统，它运行在内核态（也称为管态、核心态）。在这个模式中，操作系统具有对所有硬件的完全访问权，可以执行机器能够运行的任何指">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-03-24T06:59:54.000Z">
+<meta property="article:modified_time" content="2023-01-05T08:03:47.032Z">
+<meta property="article:author" content="王天阳">
+<meta property="article:tag" content="读书笔记">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://wangtianyang.com/2022/03/24/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E3%80%8A%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E3%80%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>【读书笔记】《现代操作系统》 | 王天阳的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">王天阳的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-movies">
+
+    <a href="/movies/" rel="section"><i class="fa fa-film fa-fw"></i>观影</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://wangtianyang.com/2022/03/24/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E3%80%8A%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E3%80%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="王天阳">
+      <meta itemprop="description" content="学习｜记录｜心情">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王天阳的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【读书笔记】《现代操作系统》
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-24 14:59:54" itemprop="dateCreated datePublished" datetime="2022-03-24T14:59:54+08:00">2022-03-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-01-05 16:03:47" itemprop="dateModified" datetime="2023-01-05T16:03:47+08:00">2023-01-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">操作系统</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/03/24/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E3%80%8A%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E3%80%8B/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/03/24/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E3%80%8A%E7%8E%B0%E4%BB%A3%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E3%80%8B/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="引论"><a href="#引论" class="headerlink" title="引论"></a>引论</h2><p><strong>操作系统</strong>是用来管理计算机各个部件的一层软件。用户与之交互的程序，基于文本的通常称为<strong>shell</strong>，而基于图标的则称为<strong>图形用户界面</strong>（也就是<strong>GUI</strong>）。它们不是操作系统的一部分，只是适用操作系统来完成工作。</p>
+<p>多数计算机有两种运行模式：<strong>内核态</strong>和<strong>用户态</strong>。</p>
+<ul>
+<li>计算机软件中最基础的部分是<strong>操作系统</strong>，它运行在<strong>内核态</strong>（也称为<strong>管态</strong>、<strong>核心态</strong>）。在这个模式中，操作系统具有<strong>对所有硬件的完全访问权</strong>，可以执行机器能够运行的任何指令。</li>
+<li>软件的其余部分运行在<strong>用户态</strong>下。在用户态下，只使用了机器指令中的一个子集。用户接口程序（shell或GUI）处于用户态的最底层，允许用户运行其他程序；用户态的上层时Web浏览器、电子邮件阅读器、音乐播放器等程序。<strong>这些程序也大量使用操作系统。</strong></li>
+</ul>
+<p>资源管理包括两种形式的<strong>多路复用</strong>：</p>
+<ul>
+<li>时间复用。轮流使用CPU。</li>
+<li>空间复用。每个客户都得到资源的一部分。</li>
+</ul>
+<p><strong>CPU：</strong>首先从内存中取出指令，解码以确定其类型和操作数，接着执行它，然后读取、解码并执行下一条指令。</p>
+<h2 id="进程与线程"><a href="#进程与线程" class="headerlink" title="进程与线程"></a>进程与线程</h2><h3 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h3><p><strong>伪并行：</strong>在某一个瞬间，CPU只能允许一个进程，但在一秒内，它可能运行多个进程，与<strong>多处理器系统</strong>区别。</p>
+<p><strong>进程和程序的关系：</strong>（比喻）一个计算机科学家为他的女儿烘制生日蛋糕。他有做生日蛋糕的食谱，厨房里有所需的原料：面粉、鸡蛋、糖、香草汁等。在这个比喻中，<strong>做蛋糕的食谱就是程序（即用适当形式描述的算法）</strong>，<strong>计算机科学家就是处理器（CPU）</strong>，而做蛋糕的各种原料就是输入数据。<strong>进程就是厨师阅读食谱、取来各种原料以及烘制蛋糕等一系列动作的总和</strong>。</p>
+<p>现在假设计算机科学家的儿子哭着跑进来了，说他的头被一只蜜蜂蛰了。计算机科学加就记录下它照着食谱坐到哪了（保存进程的当前状态），然后拿出一本急救手册，按照其中的指示处理蛰伤。这里，处理机从一个进程（做蛋糕）切换到另一个优先级更高的进程（实施医疗救治），每个进程拥有各自的程序（食谱和急救手册）。当蜜蜂蛰伤处理完以后，这位计算机科学家又回来做蛋糕，从他离开时的那一步继续做下去。</p>
+<p>这里的关键思想是：一个进程是某种类型的一个活动，它有程序、输入、输出以及状态。<strong>单个处理器可以被若干进程共享，它使用某种调度算法决定何时停止一个进程的工作，并转而为另一个进程提供服务。</strong></p>
+<h4 id="进程的创建"><a href="#进程的创建" class="headerlink" title="进程的创建"></a>进程的创建</h4><p>4种主要事件会导致进程的创建：</p>
+<ol>
+<li>系统初始化</li>
+<li>正在运行的程序执行了创建进程的系统调用</li>
+<li>用户请求创建一个新进程</li>
+<li>一个批处理作业的初始化</li>
+</ol>
+<p>进程分为<strong>前台进程</strong>和<strong>后台进程</strong>。<strong>前台进程</strong>也就是同用户（人类）交互并且替他们完成工作的那些进程；<strong>后台进程</strong>与特定的用户没有关系，但具有专门的功能，比如接受发来邮件的后台进程。停留在后台诸如电子邮件、Web页面、新闻、打印之类活动的进程称为<strong>守护进程</strong>。</p>
+<p>在UNIX和Windows中，进程创建之后，父进程和子进程有各自不同的地址空间。如果其中某个进程在其地址空间中修改了一个字，这个修改对其他进程而言是不可见的。注意，<strong>可写的内存是不可以被共享的！</strong></p>
+<h4 id="进程的退出"><a href="#进程的退出" class="headerlink" title="进程的退出"></a>进程的退出</h4><p>进程的终止通常由下列条件引起：</p>
+<ol>
+<li>正常退出（自愿）</li>
+<li>出错退出（自愿）</li>
+<li>严重错误（非自愿）</li>
+<li>被其他进程杀死（非自愿）</li>
+</ol>
+<h4 id="进程的状态"><a href="#进程的状态" class="headerlink" title="进程的状态"></a>进程的状态</h4><p>进程有三种状态：</p>
+<ol>
+<li>运行态（该时刻进程实际占用CPU）</li>
+<li>就绪态（可运行，但因为其他进程正在运行而暂时停止）</li>
+<li>阻塞态（除非某种外部事件发生，比如有效输入，否则进程不能运行）</li>
+</ol>
+<h4 id="进程表"><a href="#进程表" class="headerlink" title="进程表"></a>进程表</h4><p>为了实现进程模型，操作系统维护着一张表格，即<strong>进程表</strong>。每个进程占用一个进程表项（<strong>进程控制块</strong>）。下图展示了典型进程表表项中的一些字段：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:left">进程管理</th>
+<th style="text-align:left">存储管理</th>
+<th style="text-align:left">文件管理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">寄存器</td>
+<td style="text-align:left">代码段指针</td>
+<td style="text-align:left">根目录</td>
+</tr>
+<tr>
+<td style="text-align:left">程序计数器</td>
+<td style="text-align:left">数据段指针</td>
+<td style="text-align:left">工作目录</td>
+</tr>
+<tr>
+<td style="text-align:left">程序状态字</td>
+<td style="text-align:left">堆栈段指针</td>
+<td style="text-align:left">文件描述符</td>
+</tr>
+<tr>
+<td style="text-align:left">堆栈指针</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">用户ID</td>
+</tr>
+<tr>
+<td style="text-align:left">进程状态</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">组ID</td>
+</tr>
+<tr>
+<td style="text-align:left">优先级</td>
+</tr>
+<tr>
+<td style="text-align:left">调度参数</td>
+</tr>
+<tr>
+<td style="text-align:left">进程ID</td>
+</tr>
+<tr>
+<td style="text-align:left">父进程</td>
+</tr>
+<tr>
+<td style="text-align:left">进程组</td>
+</tr>
+<tr>
+<td style="text-align:left">信号</td>
+</tr>
+<tr>
+<td style="text-align:left">进程开始时间</td>
+</tr>
+<tr>
+<td style="text-align:left">使用的CPU时间</td>
+</tr>
+<tr>
+<td style="text-align:left">子进程的CPU时间</td>
+</tr>
+<tr>
+<td style="text-align:left">下次定时器时间</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="多道程序设计模型"><a href="#多道程序设计模型" class="headerlink" title="多道程序设计模型"></a>多道程序设计模型</h4><p>假设一个进程等待 I/O 操作的时间与其停留在内存中的时间比为 $p$，当内存中同时有 $n$ 个进程时，则所有 $n$ 个进程都在等待 I/O 的概率是 $p^n$。CPU的利用率为：</p>
+<script type="math/tex; mode=display">CPU利用率=1-p^n</script><p>比如进程花费 80% 的时间等待 I/O，为使CPU的浪费低于 10%，至少要有10个进程同时在内存中。</p>
+<h3 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h3><p>需要线程的原因：</p>
+<ol>
+<li>在许多应用中发生着多种活动，其中某些活动会随着时间的推移被阻塞。通过将这些应用程序分解为可以准并行运行的多个顺序线程，程序设计模型会变得简单。</li>
+<li>由于线程比进程更轻量级，所以他们比进程更容易（即更快）创建，也更容易销毁。</li>
+<li>若多个线程都是CPU密集型的，那么并不能获得性能上的增强，但是如果存在着大量的I/O处理，拥有多个线程允许这些活动彼此重叠进行，从而加快应用程序执行的速度。</li>
+<li>在多CPU系统中，多线程是的真正的并行有了实现的可能。<em>例子见《现代操作系统》P55字处理软件。</em></li>
+</ol>
+<h4 id="构造服务器的三种方法"><a href="#构造服务器的三种方法" class="headerlink" title="构造服务器的三种方法"></a>构造服务器的三种方法</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:left">模型</th>
+<th style="text-align:left">特性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">多线程</td>
+<td style="text-align:left">并行性、阻塞系统调用</td>
+</tr>
+<tr>
+<td style="text-align:left">单线程进程</td>
+<td style="text-align:left">无并行性、阻塞系统调用</td>
+</tr>
+<tr>
+<td style="text-align:left">有限状态机</td>
+<td style="text-align:left">并行性、非阻塞系统调用、中断</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="经典的线程模型"><a href="#经典的线程模型" class="headerlink" title="经典的线程模型"></a>经典的线程模型</h4><p>进程用于把资源集中到一起，而线程则是在CPU上被调度执行的实体。</p>
+<p>进程中的不同线程不像不同进程之间那样存在很大的独立性。所有的线程都有完全一样的地址空间，这意味着它们也可以共享同样的全局变量。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:left">一个进程中所有线程共享的内容</th>
+<th style="text-align:left">每个线程自己的内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">地址空间</td>
+<td style="text-align:left">程序计数器</td>
+</tr>
+<tr>
+<td style="text-align:left">全局变量</td>
+<td style="text-align:left">寄存器</td>
+</tr>
+<tr>
+<td style="text-align:left">打开文件</td>
+<td style="text-align:left">堆栈</td>
+</tr>
+<tr>
+<td style="text-align:left">子进程</td>
+<td style="text-align:left">状态</td>
+</tr>
+<tr>
+<td style="text-align:left">即将发生的定时器</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">信号与信号处理程序</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">账户信息</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag"># 读书笔记</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/24/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E3%80%8AEffectiveC-%E3%80%8B/" rel="prev" title="【读书笔记】《EffectiveC++》">
+      <i class="fa fa-chevron-left"></i> 【读书笔记】《EffectiveC++》
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/03/25/%E3%80%90%E9%9D%A2%E7%BB%8F%E3%80%91%E7%BE%8E%E5%9B%A2%E6%9A%91%E6%9C%9F%E4%B8%80%E9%9D%A2%EF%BC%882022-03-25%EF%BC%89/" rel="next" title="【面经】美团暑期一面（2022/03/25）">
+      【面经】美团暑期一面（2022/03/25） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E8%AE%BA"><span class="nav-number">1.</span> <span class="nav-text">引论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">进程与线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B"><span class="nav-number">2.1.</span> <span class="nav-text">进程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%88%9B%E5%BB%BA"><span class="nav-number">2.1.1.</span> <span class="nav-text">进程的创建</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%9A%84%E9%80%80%E5%87%BA"><span class="nav-number">2.1.2.</span> <span class="nav-text">进程的退出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%9A%84%E7%8A%B6%E6%80%81"><span class="nav-number">2.1.3.</span> <span class="nav-text">进程的状态</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E8%A1%A8"><span class="nav-number">2.1.4.</span> <span class="nav-text">进程表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E9%81%93%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.1.5.</span> <span class="nav-text">多道程序设计模型</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B"><span class="nav-number">2.2.</span> <span class="nav-text">线程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E6%B3%95"><span class="nav-number">2.2.1.</span> <span class="nav-text">构造服务器的三种方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%8F%E5%85%B8%E7%9A%84%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.2.2.</span> <span class="nav-text">经典的线程模型</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="王天阳"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">王天阳</p>
+  <div class="site-description" itemprop="description">学习｜记录｜心情</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+
+
+
+  <div class="links-of-blogroll motion-element links-of-blogroll-block">
+    <div class="links-of-blogroll-title">
+      <!-- modify icon to fire by szw -->
+      <i class="fa fa-history fa-" aria-hidden="true"></i>
+      近期文章
+    </div>
+    <ul class="links-of-blogroll-list">
+      
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">王天阳</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">447k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">6:47</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'dPQ0eYKJKl0nx6N1Qv9srFwG-gzGzoHsz',
+      appKey     : 'SsmzAdYldap25VnTu0wf1AlJ',
+      placeholder: "你说，我在听",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+  <script src="/js/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+  
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/assets/hijiki.model.json"},"display":{"position":"right","width":145,"height":315},"mobile":{"show":true,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.8},"log":false});</script></body>
+</html>

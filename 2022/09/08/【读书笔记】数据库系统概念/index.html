@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/w-solid.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/w-solid.svg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/w-solid.svg">
+  <link rel="mask-icon" href="/images/w-solid.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wangtianyang.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="引言数据库系统应用数据库有两种用途：  联机事务处理，即大量用户使用数据库，每个用户检索相对少量的数据，进行小的更新 数据分析，即审阅数据，给出结论  数据库系统的目标文件处理系统（file-processing system）有如下弊端：  数据冗余和不一致性 数据访问困难 数据孤立 完整性问题 原子性问题 并发访问异常 安全性问题  数据视图数据模型数据库结构的基础是数据模型（data mod">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【读书笔记】数据库系统概念">
+<meta property="og:url" content="http://wangtianyang.com/2022/09/08/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E6%A6%82%E5%BF%B5/index.html">
+<meta property="og:site_name" content="王天阳的个人博客">
+<meta property="og:description" content="引言数据库系统应用数据库有两种用途：  联机事务处理，即大量用户使用数据库，每个用户检索相对少量的数据，进行小的更新 数据分析，即审阅数据，给出结论  数据库系统的目标文件处理系统（file-processing system）有如下弊端：  数据冗余和不一致性 数据访问困难 数据孤立 完整性问题 原子性问题 并发访问异常 安全性问题  数据视图数据模型数据库结构的基础是数据模型（data mod">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-09-08T13:53:38.000Z">
+<meta property="article:modified_time" content="2023-01-05T08:03:47.032Z">
+<meta property="article:author" content="王天阳">
+<meta property="article:tag" content="读书笔记">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://wangtianyang.com/2022/09/08/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E6%A6%82%E5%BF%B5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>【读书笔记】数据库系统概念 | 王天阳的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">王天阳的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-movies">
+
+    <a href="/movies/" rel="section"><i class="fa fa-film fa-fw"></i>观影</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://wangtianyang.com/2022/09/08/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E6%A6%82%E5%BF%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="王天阳">
+      <meta itemprop="description" content="学习｜记录｜心情">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王天阳的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【读书笔记】数据库系统概念
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-09-08 21:53:38" itemprop="dateCreated datePublished" datetime="2022-09-08T21:53:38+08:00">2022-09-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-01-05 16:03:47" itemprop="dateModified" datetime="2023-01-05T16:03:47+08:00">2023-01-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/09/08/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E6%A6%82%E5%BF%B5/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/08/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E6%A6%82%E5%BF%B5/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><h3 id="数据库系统应用"><a href="#数据库系统应用" class="headerlink" title="数据库系统应用"></a>数据库系统应用</h3><p>数据库有两种用途：</p>
+<ol>
+<li><strong>联机事务处理</strong>，即大量用户使用数据库，每个用户检索相对少量的数据，进行小的更新</li>
+<li><strong>数据分析</strong>，即审阅数据，给出结论</li>
+</ol>
+<h3 id="数据库系统的目标"><a href="#数据库系统的目标" class="headerlink" title="数据库系统的目标"></a>数据库系统的目标</h3><p><strong>文件处理系统（file-processing system）</strong>有如下弊端：</p>
+<ul>
+<li>数据冗余和不一致性</li>
+<li>数据访问困难</li>
+<li>数据孤立</li>
+<li>完整性问题</li>
+<li>原子性问题</li>
+<li>并发访问异常</li>
+<li>安全性问题</li>
+</ul>
+<h3 id="数据视图"><a href="#数据视图" class="headerlink" title="数据视图"></a>数据视图</h3><h4 id="数据模型"><a href="#数据模型" class="headerlink" title="数据模型"></a>数据模型</h4><p>数据库结构的基础是<strong>数据模型（data model）</strong>：一个描述数据、数据联系、数据语义以及一致性约束的概念工具的集合。</p>
+<p>数据模型可以被分为四类：</p>
+<ul>
+<li><strong>关系模型（relational model）</strong>：关系模型用<strong>表的集合</strong>来表示数据和数据间的联系，<strong>表也称为关系</strong>。</li>
+<li><strong>实体-联系模型（entity-relational model）</strong>：E-R模型使用称为<strong>实体</strong>的基本对象的集合，以及这些对象之间的<strong>联系</strong>。</li>
+<li><strong>半结构化数据模型（semi-structured data model）</strong>：半结构化数据模型允许在其数据定义中某些相同类型的数据项含有不同的属性集。比如JSON和可扩展标记语言（eXtensible Markuo Language, XML）。</li>
+<li><strong>基于对象的数据模型（object-based data model）</strong>：可以看成对关系模型进行扩展，增加了封装、方法和对象标识。<span id="more"></span>
+</li>
+</ul>
+<h4 id="数据抽象"><a href="#数据抽象" class="headerlink" title="数据抽象"></a>数据抽象</h4><p>通过<strong>数据抽象</strong>来对用户屏蔽复杂性，以简化用户与系统之间的交互，数据抽象的层次从低到高为：</p>
+<ul>
+<li><strong>物理层（physical level）</strong> 描述数据实际上是怎么存储的。</li>
+<li><strong>逻辑层（logical level）</strong> 描述数据库中存储什么数据以及数据间存在什么联系。</li>
+<li><strong>视图层（view level）</strong> 描述整个数据库的某个部分。</li>
+</ul>
+<h4 id="实例和模式"><a href="#实例和模式" class="headerlink" title="实例和模式"></a>实例和模式</h4><p>特定时刻存储在数据库中的信息的集合称为数据库的一个<strong>实例</strong>，而数据库的总体设计乘坐数据库<strong>模式</strong>。</p>
+<h3 id="数据库语言"><a href="#数据库语言" class="headerlink" title="数据库语言"></a>数据库语言</h3><p>数据库系统提供<strong>数据定义语言（Data-Definition Language, DDL）</strong>来定义数据库模式，并提供<strong>数据操纵语言（Data-Manipulation Language, DML）</strong>来表达数据库的查询和更新。他们是单一数据库语言（比如SQL）的不同部分。</p>
+<h4 id="数据库定义语言"><a href="#数据库定义语言" class="headerlink" title="数据库定义语言"></a>数据库定义语言</h4><p>可以通过一系列被称作<strong>数据存储和定义</strong>的DDL语言来说明数据库系统所采用的存储结构和访问方式，</p>
+<p>数据库系统仅实现可以以最小代价测试的完整性约束：</p>
+<ul>
+<li><strong>域约束（domain constraint）</strong>：每个属性都必须对应于一个域，比如整数型、字符型、日期/时间型。<strong>域约束是完整性约束的最基本形式。</strong></li>
+<li><strong>引用完整性（referential integrity）</strong>。</li>
+<li><strong>授权（autorization）</strong>：<ul>
+<li>读权限</li>
+<li>插入权限</li>
+<li>更新权限</li>
+<li>删除权限</li>
+</ul>
+</li>
+</ul>
+<h4 id="SQL数据定义语言"><a href="#SQL数据定义语言" class="headerlink" title="SQL数据定义语言"></a>SQL数据定义语言</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> department</span><br><span class="line">(dept_name	<span class="type">char</span>(<span class="number">20</span>),</span><br><span class="line">building	<span class="type">char</span>(<span class="number">15</span>),</span><br><span class="line">budget		<span class="type">numeric</span>(<span class="number">12</span>,<span class="number">2</span>));</span><br></pre></td></tr></table></figure>
+<h4 id="数据操纵语言"><a href="#数据操纵语言" class="headerlink" title="数据操纵语言"></a>数据操纵语言</h4><p>作用：对数据库<strong>增、删、改、查</strong>。</p>
+<p>有两种类型的DML：</p>
+<ul>
+<li><strong>过程化的DML（procedural DML）</strong>：要求用户指定需要什么数据以及如何获得这些数据。</li>
+<li><strong>声明式的DML（declarative DML）</strong>：只要求用户指定需要什么数据，而不必指明如何获得这些数据。</li>
+</ul>
+<h4 id="SQL数据操纵语言"><a href="#SQL数据操纵语言" class="headerlink" title="SQL数据操纵语言"></a>SQL数据操纵语言</h4><p>查询一个表的例子：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> instrector.name</span><br><span class="line"><span class="keyword">from</span> instructor</span><br><span class="line"><span class="keyword">where</span> instructor.dept_name <span class="operator">=</span> <span class="string">&#x27;History&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<p>查询多个表的例子：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> instrector.name, department.dept_name</span><br><span class="line"><span class="keyword">from</span> instructor, department</span><br><span class="line"><span class="keyword">where</span> instructor.dept_name <span class="operator">=</span> department.dept_name <span class="keyword">and</span> </span><br><span class="line">      department.budget <span class="operator">&gt;</span> <span class="number">95000</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="数据库引擎"><a href="#数据库引擎" class="headerlink" title="数据库引擎"></a>数据库引擎</h3><p>数据库系统的功能部件可分为<strong>存储管理器</strong>、<strong>查询处理器</strong>和<strong>事务管理部件</strong>。</p>
+<h4 id="存储管理器"><a href="#存储管理器" class="headerlink" title="存储管理器"></a>存储管理器</h4><p>存储管理器（storage manager）是数据库系统中负责在数据库中存储的低层数据与应用程序以及向系统提交的查询之间提供接口的部件。存储管理器部件包括：</p>
+<ul>
+<li>权限及完整性管理器</li>
+<li>事务管理器</li>
+<li>文件管理器</li>
+<li>缓冲区管理器</li>
+</ul>
+<p>存储管理器实现了以下几种数据结构：</p>
+<ul>
+<li>数据文件</li>
+<li>数据字典</li>
+<li>索引</li>
+</ul>
+<h4 id="查询处理器"><a href="#查询处理器" class="headerlink" title="查询处理器"></a>查询处理器</h4><ul>
+<li>DDL解释器</li>
+<li>DDL编译器</li>
+<li>查询执行引擎</li>
+</ul>
+<h4 id="事务管理"><a href="#事务管理" class="headerlink" title="事务管理"></a>事务管理</h4><ul>
+<li>原子性</li>
+<li>一致性</li>
+<li>持久性</li>
+</ul>
+<p>事务管理器包括<strong>并发控制管理器</strong>和<strong>恢复管理器</strong>。</p>
+<ul>
+<li>原子性和持久性的保证是<strong>恢复管理器</strong>的指责；</li>
+<li>一致性是<strong>并发控制管理器</strong>的指责。</li>
+</ul>
+<h3 id="数据库和应用体系结构"><a href="#数据库和应用体系结构" class="headerlink" title="数据库和应用体系结构"></a>数据库和应用体系结构</h3><p>早期的数据库采用<strong>两层体系结构</strong>：客户机 -&gt; 数据库；现如今的数据库采用<strong>三层体系结构</strong>：客户机 -&gt; 应用服务器 -&gt; 数据库系统。三层结构比两层结构<strong>更安全、性能更好</strong>。</p>
+<h2 id="关系模型介绍"><a href="#关系模型介绍" class="headerlink" title="关系模型介绍"></a>关系模型介绍</h2><h3 id="关系数据库的结构"><a href="#关系数据库的结构" class="headerlink" title="关系数据库的结构"></a>关系数据库的结构</h3><p>在关系模型中，术语 <strong>关系（relation）</strong>被用来指代 <strong>表</strong>，而术语 <strong>元组（tuple）</strong>被用来指代 <strong>行</strong>，术语 <strong>属性（attribute）</strong>指代的是表中的 <strong>列</strong>。</p>
+<p>关系是元组的 <strong>集合（set）</strong>，所以元组在关系中出现的顺序是无关紧要的。</p>
+<p>对于关系的每个属性都存在一个允许取值的集合，称为该属性的 <strong>域（domain）</strong>。我们要求<strong>一个关系的所有属性的域都是原子的。</strong>如果一个属性存的是一组集合，那么他就不是原子的。</p>
+<p>关系型数据库适合存定义明确而且相对静态的应用，但不是用于存取那些数据本身以及数据类型结构经常变化的应用。</p>
+<h3 id="数据库模式"><a href="#数据库模式" class="headerlink" title="数据库模式"></a>数据库模式</h3><ul>
+<li><strong>数据库模式：</strong>数据库的逻辑设计</li>
+<li><strong>数据库实例：</strong>数据库中数据的一个快照</li>
+</ul>
+<h3 id="码"><a href="#码" class="headerlink" title="码"></a>码</h3><p><strong>一个关系中不可以有两个元组在所有属性上取值完全相同。</strong></p>
+<p><strong>超码（superkey）</strong>是<strong>一个或多个</strong>属性的集合，超码可以让我们在一个关系中<strong>唯一地</strong>表示出来一个元组。</p>
+<p>如果 K 是一个超码，那么 K 的任意超集也都是超码，因此超码中可能包含无关紧要的属性。如果一个超码的任意真子集都不是超码，那么我们将这样的最小超码称为 <strong>候选码（candidate key）</strong>。</p>
+<p>一个关系中可能存在两个或以上的候选码，因此我们用 <strong>主码（primary key）</strong>来表示被选中的候选码。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag"># 读书笔记</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/09/02/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E9%9D%A2%E8%AF%95%E7%9F%A5%E8%AF%86%E7%82%B9%E8%87%AA%E6%9F%A5/" rel="prev" title="后台开发面试知识点自查">
+      <i class="fa fa-chevron-left"></i> 后台开发面试知识点自查
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/12/22/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E3%80%8AJAVA%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E5%8D%B7I%E3%80%8B/" rel="next" title="【读书笔记】《JAVA核心技术卷I》">
+      【读书笔记】《JAVA核心技术卷I》 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%BA%94%E7%94%A8"><span class="nav-number">1.1.</span> <span class="nav-text">数据库系统应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%9B%AE%E6%A0%87"><span class="nav-number">1.2.</span> <span class="nav-text">数据库系统的目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%A7%86%E5%9B%BE"><span class="nav-number">1.3.</span> <span class="nav-text">数据视图</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.3.1.</span> <span class="nav-text">数据模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%8A%BD%E8%B1%A1"><span class="nav-number">1.3.2.</span> <span class="nav-text">数据抽象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B%E5%92%8C%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.3.3.</span> <span class="nav-text">实例和模式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AF%AD%E8%A8%80"><span class="nav-number">1.4.</span> <span class="nav-text">数据库语言</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9A%E4%B9%89%E8%AF%AD%E8%A8%80"><span class="nav-number">1.4.1.</span> <span class="nav-text">数据库定义语言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SQL%E6%95%B0%E6%8D%AE%E5%AE%9A%E4%B9%89%E8%AF%AD%E8%A8%80"><span class="nav-number">1.4.2.</span> <span class="nav-text">SQL数据定义语言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%93%8D%E7%BA%B5%E8%AF%AD%E8%A8%80"><span class="nav-number">1.4.3.</span> <span class="nav-text">数据操纵语言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SQL%E6%95%B0%E6%8D%AE%E6%93%8D%E7%BA%B5%E8%AF%AD%E8%A8%80"><span class="nav-number">1.4.4.</span> <span class="nav-text">SQL数据操纵语言</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%95%E6%93%8E"><span class="nav-number">1.5.</span> <span class="nav-text">数据库引擎</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86%E5%99%A8"><span class="nav-number">1.5.1.</span> <span class="nav-text">存储管理器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E5%A4%84%E7%90%86%E5%99%A8"><span class="nav-number">1.5.2.</span> <span class="nav-text">查询处理器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86"><span class="nav-number">1.5.3.</span> <span class="nav-text">事务管理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E5%BA%94%E7%94%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84"><span class="nav-number">1.6.</span> <span class="nav-text">数据库和应用体系结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">关系模型介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-number">2.1.</span> <span class="nav-text">关系数据库的结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.2.</span> <span class="nav-text">数据库模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A0%81"><span class="nav-number">2.3.</span> <span class="nav-text">码</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="王天阳"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">王天阳</p>
+  <div class="site-description" itemprop="description">学习｜记录｜心情</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+
+
+
+  <div class="links-of-blogroll motion-element links-of-blogroll-block">
+    <div class="links-of-blogroll-title">
+      <!-- modify icon to fire by szw -->
+      <i class="fa fa-history fa-" aria-hidden="true"></i>
+      近期文章
+    </div>
+    <ul class="links-of-blogroll-list">
+      
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">王天阳</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">447k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">6:47</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'dPQ0eYKJKl0nx6N1Qv9srFwG-gzGzoHsz',
+      appKey     : 'SsmzAdYldap25VnTu0wf1AlJ',
+      placeholder: "你说，我在听",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+  <script src="/js/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+  
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/assets/hijiki.model.json"},"display":{"position":"right","width":145,"height":315},"mobile":{"show":true,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.8},"log":false});</script></body>
+</html>

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/w-solid.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/w-solid.svg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/w-solid.svg">
+  <link rel="mask-icon" href="/images/w-solid.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wangtianyang.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="C++程序编译过程编译过程分为四个过程：编译（编译预处理、编译、优化），汇编，链接。  编译预处理：处理以 # 开头的指令； 编译、优化：将源码 .cpp 文件翻译成 .s 汇编代码； 汇编：将汇编代码 .s 翻译成机器指令 .o 文件； 链接：汇编程序生成的目标文件，即 .o 文件，并不会立即执行，因为可能会出现：.cpp 文件中的函数引用了另一个 .cpp 文件中定义的符号或者调用了某个库文件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【C++】编译内存">
+<meta property="og:url" content="http://wangtianyang.com/2022/03/03/%E3%80%90C-%E3%80%91%E7%BC%96%E8%AF%91%E5%86%85%E5%AD%98/index.html">
+<meta property="og:site_name" content="王天阳的个人博客">
+<meta property="og:description" content="C++程序编译过程编译过程分为四个过程：编译（编译预处理、编译、优化），汇编，链接。  编译预处理：处理以 # 开头的指令； 编译、优化：将源码 .cpp 文件翻译成 .s 汇编代码； 汇编：将汇编代码 .s 翻译成机器指令 .o 文件； 链接：汇编程序生成的目标文件，即 .o 文件，并不会立即执行，因为可能会出现：.cpp 文件中的函数引用了另一个 .cpp 文件中定义的符号或者调用了某个库文件">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://wangtianyang.com/images/%E7%A8%8B%E5%BA%8F%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B.png">
+<meta property="article:published_time" content="2022-03-03T09:33:19.000Z">
+<meta property="article:modified_time" content="2023-01-05T08:03:47.019Z">
+<meta property="article:author" content="王天阳">
+<meta property="article:tag" content="八股文">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wangtianyang.com/images/%E7%A8%8B%E5%BA%8F%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B.png">
+
+<link rel="canonical" href="http://wangtianyang.com/2022/03/03/%E3%80%90C-%E3%80%91%E7%BC%96%E8%AF%91%E5%86%85%E5%AD%98/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>【C++】编译内存 | 王天阳的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">王天阳的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-movies">
+
+    <a href="/movies/" rel="section"><i class="fa fa-film fa-fw"></i>观影</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://wangtianyang.com/2022/03/03/%E3%80%90C-%E3%80%91%E7%BC%96%E8%AF%91%E5%86%85%E5%AD%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="王天阳">
+      <meta itemprop="description" content="学习｜记录｜心情">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王天阳的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【C++】编译内存
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-03 17:33:19" itemprop="dateCreated datePublished" datetime="2022-03-03T17:33:19+08:00">2022-03-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-01-05 16:03:47" itemprop="dateModified" datetime="2023-01-05T16:03:47+08:00">2023-01-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/03/03/%E3%80%90C-%E3%80%91%E7%BC%96%E8%AF%91%E5%86%85%E5%AD%98/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/03/03/%E3%80%90C-%E3%80%91%E7%BC%96%E8%AF%91%E5%86%85%E5%AD%98/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>13k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>12 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="C-程序编译过程"><a href="#C-程序编译过程" class="headerlink" title="C++程序编译过程"></a>C++程序编译过程</h2><p>编译过程分为四个过程：编译（编译预处理、编译、优化），汇编，链接。</p>
+<ul>
+<li><strong>编译预处理：</strong>处理以 # 开头的指令；</li>
+<li><strong>编译、优化：</strong>将源码 .cpp 文件翻译成 .s 汇编代码；</li>
+<li><strong>汇编：</strong>将汇编代码 .s 翻译成机器指令 .o 文件；</li>
+<li><strong>链接：</strong>汇编程序生成的目标文件，即 .o 文件，并不会立即执行，因为可能会出现：.cpp 文件中的函数引用了另一个 .cpp 文件中定义的符号或者调用了某个库文件中的函数。那链接的目的就是将这些文件对应的目标文件连接成一个整体，从而生成可执行的程序 .exe 文件。</li>
+</ul>
+<p><img src="/images/程序编译过程.png" alt=""><br><span id="more"></span></p>
+<p>链接分为两种：</p>
+<ul>
+<li><strong>静态链接：</strong>代码从其所在的静态链接库中拷贝到最终的可执行程序中，在该程序被执行时，这些代码会被装入到该进程的虚拟地址空间中。</li>
+<li><strong>动态链接：</strong>代码被放到动态链接库或共享对象的某个目标文件中，链接程序只是在最终的可执行程序中记录了共享对象的名字等一些信息。在程序执行时，动态链接库的全部内容会被映射到运行时相应进行的虚拟地址的空间。</li>
+</ul>
+<p>二者的优缺点：</p>
+<ul>
+<li><strong>静态链接：</strong>浪费空间，每个可执行程序都会有目标文件的一个副本，这样如果目标文件进行了更新操作，就需要重新进行编译链接生成可执行程序（更新困难）；优点就是执行的时候运行速度快，因为可执行程序具备了程序运行的所有内容。</li>
+<li><strong>动态链接：</strong>节省内存、更新方便，但是动态链接是在程序运行时，每次执行都需要链接，相比静态链接会有一定的性能损失。</li>
+</ul>
+<h2 id="C-内存管理"><a href="#C-内存管理" class="headerlink" title="C++ 内存管理"></a>C++ 内存管理</h2><p>C++ 内存分区：栈、堆、全局/静态存储区、常量存储区、代码区。</p>
+<ul>
+<li><strong>栈：</strong>存放函数的局部变量、函数参数、返回地址等，由编译器自动分配和释放。</li>
+<li><strong>堆：</strong>动态申请的内存空间，就是由 malloc 分配的内存块，由程序员控制它的分配和释放，如果程序执行结束还没有释放，操作系统会自动回收。</li>
+<li><strong>全局区/静态存储区</strong>（.bss 段和 .data 段）：存放全局变量和静态变量，程序运行结束操作系统自动释放，在 C 语言中，未初始化的放在 .bss 段中，初始化的放在 .data 段中，C++ 中不再区分了。</li>
+<li><strong>常量存储区</strong>（.data 段）：存放的是常量，不允许修改，程序运行结束自动释放。</li>
+<li><strong>代码区</strong>（.text 段）：存放代码，不允许修改，但可以执行。编译后的二进制文件存放在这里。 说明：</li>
+<li>从操作系统的本身来讲，以上存储区在内存中的分布是如下形式(从低地址到高地址)：.text 段 —&gt; .data 段 —&gt; .bss 段 —&gt; 堆 —&gt; unused —&gt; 栈 —&gt; env</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">说明：C++ 中不再区分初始化和未初始化的全局变量、静态变量的存储区，如果非要区分下述程序标注在了括号中</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> g_var = <span class="number">0</span>; <span class="comment">// g_var 在全局区（.data 段）</span></span><br><span class="line"><span class="type">char</span> *gp_var;  <span class="comment">// gp_var 在全局区（.bss 段）</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> var;                    <span class="comment">// var 在栈区</span></span><br><span class="line">    <span class="type">char</span> *p_var;                <span class="comment">// p_var 在栈区</span></span><br><span class="line">    <span class="type">char</span> arr[] = <span class="string">&quot;abc&quot;</span>;         <span class="comment">// arr 为数组变量，存储在栈区；&quot;abc&quot;为字符串常量，存储在常量区</span></span><br><span class="line">    <span class="type">char</span> *p_var1 = <span class="string">&quot;123456&quot;</span>;    <span class="comment">// p_var1 在栈区；&quot;123456&quot;为字符串常量，存储在常量区</span></span><br><span class="line">    <span class="type">static</span> <span class="type">int</span> s_var = <span class="number">0</span>;       <span class="comment">// s_var 为静态变量，存在静态存储区（.data 段）</span></span><br><span class="line">    p_var = (<span class="type">char</span> *)<span class="built_in">malloc</span>(<span class="number">10</span>); <span class="comment">// 分配得来的 10 个字节的区域在堆区</span></span><br><span class="line">    <span class="built_in">free</span>(p_var);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="栈和堆的区别"><a href="#栈和堆的区别" class="headerlink" title="栈和堆的区别"></a>栈和堆的区别</h2><ul>
+<li>申请方式：栈是系统自动分配，堆是程序员主动申请。</li>
+<li>申请后系统响应：分配栈空间，如果剩余空间大于申请空间则分配成功，否则分配失败栈溢出；申请堆空间，堆在内存中呈现的方式类似于链表（记录空闲地址空间的链表），在链表上寻找第一个大于申请空间的节点分配给程序，将该节点从链表中删除，大多数系统中该块空间的首地址存放的是本次分配空间的大小，便于释放，将该块空间上的剩余空间再次连接在空闲链表上。</li>
+<li>栈在内存中是连续的一块空间（向低地址扩展）最大容量是系统预定好的，堆在内存中的空间（向高地址扩展）是不连续的。</li>
+<li>申请效率：栈是有系统自动分配，申请效率高，但程序员无法控制；堆是由程序员主动申请，效率低，使用起来方便但是容易产生碎片。</li>
+<li>存放的内容：栈中存放的是局部变量，函数的参数；堆中存放的内容由程序员控制。</li>
+</ul>
+<h2 id="变量的区别"><a href="#变量的区别" class="headerlink" title="变量的区别"></a>变量的区别</h2><p><strong>全局变量</strong>、<strong>局部变量</strong>、<strong>静态全局变量</strong>、<strong>静态局部变量</strong>的区别 C++ 变量根据定义的位置的不同的生命周期，具有不同的作用域，作用域可分为 6 种：全局作用域，局部作用域，语句作用域，类作用域，命名空间作用域和文件作用域。</p>
+<p>从作用域看：</p>
+<ul>
+<li><strong>全局变量：</strong>具有全局作用域。全局变量只需在一个源文件中定义，就可以作用于所有的源文件。当然，其他不包含全局变量定义的源文件需要用 extern 关键字再次声明这个全局变量。</li>
+<li><strong>静态全局变量：</strong>具有文件作用域。它与全局变量的区别在于如果程序包含多个文件的话，它作用于定义它的文件里，不能作用到其它文件里，即被 static 关键字修饰过的变量具有文件作用域。这样即使两个不同的源文件都定义了相同名字的静态全局变量，它们也是不同的变量。</li>
+<li><strong>局部变量：</strong>具有局部作用域。它是自动对象（auto），在程序运行期间不是一直存在，而是只在函数执行期间存在，函数的一次调用执行结束后，变量被撤销，其所占用的内存也被收回。</li>
+<li><strong>静态局部变量：</strong>具有局部作用域。它只被初始化一次，自从第一次被初始化直到程序运行结束都一直存在，它和全局变量的区别在于全局变量对所有的函数都是可见的，而静态局部变量只对定义自己的函数体始终可见。</li>
+</ul>
+<p>从分配内存空间看：</p>
+<ul>
+<li><strong>静态存储区：</strong>全局变量，静态局部变量，静态全局变量。</li>
+<li><strong>栈：</strong>局部变量。</li>
+</ul>
+<p>说明：</p>
+<ul>
+<li>静态变量和栈变量（存储在栈中的变量）、堆变量（存储在堆中的变量）的区别：静态变量会被放在程序的静态数据存储区（.data 段）中（静态变量会自动初始化），这样可以在下一次调用的时候还可以保持原来的赋值。而栈变量或堆变量不能保证在下一次调用的时候依然保持原来的值。</li>
+<li>静态变量和全局变量的区别：静态变量用 static 告知编译器，自己仅仅在变量的作用范围内可见。</li>
+</ul>
+<h2 id="全局变量定义在头文件中有什么问题？"><a href="#全局变量定义在头文件中有什么问题？" class="headerlink" title="全局变量定义在头文件中有什么问题？"></a>全局变量定义在头文件中有什么问题？</h2><p>如果在头文件中定义全局变量，当该头文件被多个文件<code>include</code>时，该头文件中的全局变量就会被定义多次，导致重复定义，因此不能再头文件中定义全局变量。</p>
+<h2 id="如何限制类的对象只能在堆上创建？如何限制对象只能在栈上创建？"><a href="#如何限制类的对象只能在堆上创建？如何限制对象只能在栈上创建？" class="headerlink" title="如何限制类的对象只能在堆上创建？如何限制对象只能在栈上创建？"></a>如何限制类的对象只能在堆上创建？如何限制对象只能在栈上创建？</h2><p>说明：C++ 中的类的对象的建立分为两种：静态建立、动态建立。</p>
+<ul>
+<li><strong>静态建立：</strong>由编译器为对象在栈空间上分配内存，直接调用类的构造函数创建对象。例如：A a;</li>
+<li><strong>动态建立：</strong>使用 new 关键字在堆空间上创建对象，底层首先调用 operator new() 函数，在堆空间上寻找合适的内存并分配；然后，调用类的构造函数创建对象。例如：A *p = new A();</li>
+</ul>
+<p>限制对象只能建立在堆上：</p>
+<ul>
+<li>最直观的思想：避免直接调用类的构造函数，因为对象静态建立时，会调用类的构造函数创建对象。但是直接将类的构造函数设为私有并不可行，因为当构造函数设置为私有后，不能在类的外部调用构造函数来构造对象，只能用 new 来建立对象。但是由于 new 创建对象时，底层也会调用类的构造函数，将构造函数设置为私有后，那就无法在类的外部使用 new 创建对象了。因此，这种方法不可行。</li>
+</ul>
+<p>解决方法 1：</p>
+<ul>
+<li>将析构函数设置为私有。原因：静态对象建立在栈上，是由编译器分配和释放内存空间，编译器为对象分配内存空间时，会对类的非静态函数进行检查，即编译器会检查析构函数的访问性。当析构函数设为私有时，编译器创建的对象就无法通过访问析构函数来释放对象的内存空间，因此，编译器不会在栈上为对象分配内存。</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">A</span>() &#123;&#125;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">destory</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">delete</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    ~<span class="built_in">A</span>()</span><br><span class="line">    &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>该方法存在的问题：</p>
+<ul>
+<li>用 new 创建的对象，通常会使用 delete 释放该对象的内存空间，但此时类的外部无法调用析构函数，因此类内必须定义一个 destory() 函数，用来释放 new 创建的对象。</li>
+<li>无法解决继承问题，因为如果这个类作为基类，析构函数要设置成 virtual，然后在派生类中重写该函数，来实现多态。但此时，析构函数是私有的，派生类中无法访问。</li>
+</ul>
+<p>解决方法 2：</p>
+<ul>
+<li>构造函数设置为 protected，并提供一个 public 的静态函数来完成构造，而不是在类的外部使用 new 构造；将析构函数设置为 protected。原因：类似于单例模式，也保证了在派生类中能够访问析构函数。通过调用 create() 函数在堆上创建对象。</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    <span class="built_in">A</span>() &#123;&#125;</span><br><span class="line">    ~<span class="built_in">A</span>() &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">static</span> A *<span class="title">create</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">A</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">destory</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">delete</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>限制对象只能建立在栈上：</p>
+<ul>
+<li>解决方法：将 operator new() 设置为私有。原因：当对象建立在堆上时，是采用 new 的方式进行建立，其底层会调用 operator new() 函数，因此只要对该函数加以限制，就能够防止对象建立在堆上。 </li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> *<span class="keyword">operator</span> <span class="title">new</span><span class="params">(<span class="type">size_t</span> t)</span> </span>&#123;&#125;    <span class="comment">// 注意函数的第一个参数和返回值都是固定的</span></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="keyword">operator</span> <span class="title">delete</span><span class="params">(<span class="type">void</span> *ptr)</span> </span>&#123;&#125; <span class="comment">// 重载了 new 就需要重载 delete</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">A</span>() &#123;&#125;</span><br><span class="line">    ~<span class="built_in">A</span>() &#123;&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="什么是内存对齐？内存对齐的原则？为什么要进行内存对齐，有什么优点？"><a href="#什么是内存对齐？内存对齐的原则？为什么要进行内存对齐，有什么优点？" class="headerlink" title="什么是内存对齐？内存对齐的原则？为什么要进行内存对齐，有什么优点？"></a>什么是内存对齐？内存对齐的原则？为什么要进行内存对齐，有什么优点？</h2><p>内存对齐：编译器将程序中的每个“数据单元”安排在字的整数倍的地址指向的内存之中 内存对齐的原则：</p>
+<ul>
+<li>结构体变量的首地址能够被其最宽基本类型成员大小与对齐基数中的较小者所整除；</li>
+<li>结构体每个成员相对于结构体首地址的偏移量 （offset） 都是该成员大小与对齐基数中的较小者的整数倍，如有需要编译器会在成员之间加上填充字节 （internal padding）；</li>
+<li>结构体的总大小为结构体最宽基本类型成员大小与对齐基数中的较小者的整数倍，如有需要编译器会在最末一个成员之后加上填充字节 （trailing padding）。</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">说明：程序是在 64 位编译器下测试的</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">A</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">short</span> var; <span class="comment">// 2 字节</span></span><br><span class="line">    <span class="type">int</span> var1;  <span class="comment">// 8 字节 （内存对齐原则：填充 2 个字节） 2 (short) + 2 (填充) + 4 (int)= 8</span></span><br><span class="line">    <span class="type">long</span> var2; <span class="comment">// 12 字节 8 + 4 (long) = 12</span></span><br><span class="line">    <span class="type">char</span> var3; <span class="comment">// 16 字节 （内存对齐原则：填充 3 个字节）12 + 1 (char) + 3 (填充) = 16</span></span><br><span class="line">    string s;  <span class="comment">// 48 字节 16 + 32 (string) = 48</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">short</span> var;</span><br><span class="line">    <span class="type">int</span> var1;</span><br><span class="line">    <span class="type">long</span> var2;</span><br><span class="line">    <span class="type">char</span> var3;</span><br><span class="line">    string s;</span><br><span class="line">    A ex1;</span><br><span class="line">    cout &lt;&lt; <span class="built_in">sizeof</span>(var) &lt;&lt; endl;  <span class="comment">// 2 short</span></span><br><span class="line">    cout &lt;&lt; <span class="built_in">sizeof</span>(var1) &lt;&lt; endl; <span class="comment">// 4 int</span></span><br><span class="line">    cout &lt;&lt; <span class="built_in">sizeof</span>(var2) &lt;&lt; endl; <span class="comment">// 4 long</span></span><br><span class="line">    cout &lt;&lt; <span class="built_in">sizeof</span>(var3) &lt;&lt; endl; <span class="comment">// 1 char</span></span><br><span class="line">    cout &lt;&lt; <span class="built_in">sizeof</span>(s) &lt;&lt; endl;    <span class="comment">// 32 string</span></span><br><span class="line">    cout &lt;&lt; <span class="built_in">sizeof</span>(ex1) &lt;&lt; endl;  <span class="comment">// 48 struct</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>进行内存对齐的原因：（主要是硬件设备方面的问题）</p>
+<ul>
+<li>某些硬件设备只能存取对齐数据，存取非对齐的数据可能会引发异常；</li>
+<li>某些硬件设备不能保证在存取非对齐数据的时候的操作是原子操作；</li>
+<li>相比于存取对齐的数据，存取非对齐的数据需要花费更多的时间；</li>
+<li>某些处理器虽然支持非对齐数据的访问，但会引发对齐陷阱（alignment trap）；</li>
+<li>某些硬件设备只支持简单数据指令非对齐存取，不支持复杂数据指令的非对齐存取。</li>
+</ul>
+<p>内存对齐的优点：</p>
+<ul>
+<li>便于在不同的平台之间进行移植，因为有些硬件平台不能够支持任意地址的数据访问，只能在某些地址处取某些特定的数据，否则会抛出异常；</li>
+<li>提高内存的访问效率，因为 CPU 在读取内存时，是一块一块的读取。</li>
+</ul>
+<h2 id="类的大小"><a href="#类的大小" class="headerlink" title="类的大小"></a>类的大小</h2><p>类的大小是指类的实例化对象的大小，用 sizeof 对类型名操作时，结果是该类型的对象的大小。计算原则：</p>
+<ul>
+<li>遵循结构体的对齐原则。</li>
+<li>与普通成员变量有关，与成员函数和静态成员无关。即普通成员函数，静态成员函数，静态数据成员，静态常量数据成员均对类的大小无影响。因为静态数据成员被类的对象共享，并不属于哪个具体的对象。</li>
+<li>虚函数对类的大小有影响，是因为虚函数表指针的影响。</li>
+<li>虚继承对类的大小有影响，是因为虚基表指针带来的影响。</li>
+<li>空类的大小是一个特殊情况，空类的大小为 1，当用 new 来创建一个空类的对象时，为了保证不同对象的地址不同，空类也占用存储空间。</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">说明：程序是在 64 位编译器下测试的</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">static</span> <span class="type">int</span> s_var; <span class="comment">// 不影响类的大小</span></span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> c_var;  <span class="comment">// 4 字节</span></span><br><span class="line">    <span class="type">int</span> var;          <span class="comment">// 8 字节 4 + 4 (int) = 8</span></span><br><span class="line">    <span class="type">char</span> var1;        <span class="comment">// 12 字节 8 + 1 (char) + 3 (填充) = 12</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">A</span>(<span class="type">int</span> temp) : <span class="built_in">c_var</span>(temp) &#123;&#125; <span class="comment">// 不影响类的大小</span></span><br><span class="line">    ~<span class="built_in">A</span>() &#123;&#125;                    <span class="comment">// 不影响类的大小</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">B</span></span><br><span class="line">&#123;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function">A <span class="title">ex1</span><span class="params">(<span class="number">4</span>)</span></span>;</span><br><span class="line">    B ex2;</span><br><span class="line">    cout &lt;&lt; <span class="built_in">sizeof</span>(ex1) &lt;&lt; endl; <span class="comment">// 12 字节</span></span><br><span class="line">    cout &lt;&lt; <span class="built_in">sizeof</span>(ex2) &lt;&lt; endl; <span class="comment">// 1 字节</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>带有虚函数的情况：（注意：虚函数的个数并不影响所占内存的大小，因为类对象的内存中只保存了指向虚函数表的指针。）<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">说明：程序是在 64 位编译器下测试的</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">static</span> <span class="type">int</span> s_var; <span class="comment">// 不影响类的大小</span></span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> c_var;  <span class="comment">// 4 字节</span></span><br><span class="line">    <span class="type">int</span> var;          <span class="comment">// 8 字节 4 + 4 (int) = 8</span></span><br><span class="line">    <span class="type">char</span> var1;        <span class="comment">// 12 字节 8 + 1 (char) + 3 (填充) = 12</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">A</span>(<span class="type">int</span> temp) : <span class="built_in">c_var</span>(temp) &#123;&#125; <span class="comment">// 不影响类的大小</span></span><br><span class="line">    ~<span class="built_in">A</span>() &#123;&#125;                      <span class="comment">// 不影响类的大小</span></span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">f</span><span class="params">()</span> </span>&#123; cout &lt;&lt; <span class="string">&quot;A::f&quot;</span> &lt;&lt; endl; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">g</span><span class="params">()</span> </span>&#123; cout &lt;&lt; <span class="string">&quot;A::g&quot;</span> &lt;&lt; endl; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">h</span><span class="params">()</span> </span>&#123; cout &lt;&lt; <span class="string">&quot;A::h&quot;</span> &lt;&lt; endl; &#125; <span class="comment">// 24 字节 12 + 4 (填充) + 8 (指向虚函数的指针) = 24</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function">A <span class="title">ex1</span><span class="params">(<span class="number">4</span>)</span></span>;</span><br><span class="line">    A *p;</span><br><span class="line">    cout &lt;&lt; <span class="built_in">sizeof</span>(p) &lt;&lt; endl;   <span class="comment">// 8 字节 注意：指针所占的空间和指针指向的数据类型无关</span></span><br><span class="line">    cout &lt;&lt; <span class="built_in">sizeof</span>(ex1) &lt;&lt; endl; <span class="comment">// 24 字节</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="什么是内存泄露"><a href="#什么是内存泄露" class="headerlink" title="什么是内存泄露"></a>什么是内存泄露</h2><p><strong>内存泄漏：</strong>由于疏忽或错误导致的程序未能释放已经不再使用的内存。 进一步解释：</p>
+<ul>
+<li>并非指内存从物理上消失，而是指程序在运行过程中，由于疏忽或错误而失去了对该内存的控制，从而造成了内存的浪费。</li>
+<li>常指堆内存泄漏，因为堆是动态分配的，而且是用户来控制的，如果使用不当，会产生内存泄漏。</li>
+<li>使用 malloc、calloc、realloc、new 等分配内存时，使用完后要调用相应的 free 或 delete 释放内存，否则这块内存就会造成内存泄漏。</li>
+<li>指针重新赋值</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span> *p = (<span class="type">char</span> *)<span class="built_in">malloc</span>(<span class="number">10</span>);</span><br><span class="line"><span class="type">char</span> *p1 = (<span class="type">char</span> *)<span class="built_in">malloc</span>(<span class="number">10</span>);</span><br><span class="line">p = np;</span><br></pre></td></tr></table></figure>
+<p>开始时，指针 p 和 p 1 分别指向一块内存空间，但指针 p 被重新赋值，导致 p 初始时指向的那块内存空间无法找到，从而发生了内存泄漏。</p>
+<h2 id="怎么防止内存泄漏？内存泄漏检测工具的原理？"><a href="#怎么防止内存泄漏？内存泄漏检测工具的原理？" class="headerlink" title="怎么防止内存泄漏？内存泄漏检测工具的原理？"></a>怎么防止内存泄漏？内存泄漏检测工具的原理？</h2><p><strong>智能指针</strong></p>
+<ul>
+<li>智能指针是 C++ 中已经对内存泄漏封装好了一个工具，可以直接拿来使用</li>
+<li>智能指针是为了解决动态内存分配时带来的内存泄漏以及多次释放同一块内存空间而提出的。C++11 中封装在了 头文件中。</li>
+</ul>
+<h2 id="C-11-中智能指针有哪几种？"><a href="#C-11-中智能指针有哪几种？" class="headerlink" title="C++11 中智能指针有哪几种？"></a>C++11 中智能指针有哪几种？</h2><ul>
+<li><strong>共享指针</strong>（shared_ptr）：资源可以被多个指针共享，使用计数机制表明资源被几个指针共享。通过 use_count() 查看资源的所有者的个数，可以通过 unique_ptr、weak_ptr 来构造，调用 release() 释放资源的所有权，计数减一，当计数减为 0 时，会自动释放内存空间，从而避免了内存泄漏。</li>
+<li><strong>独占指针</strong>（unique_ptr）：独享所有权的智能指针，资源只能被一个指针占有，该指针不能拷贝构造和赋值。但可以进行移动构造和移动赋值构造（调用 move() 函数），即一个 unique_ptr 对象赋值给另一个 unique_ptr 对象，可以通过该方法进行赋值。</li>
+<li><strong>弱指针</strong>（weak_ptr）：指向 share_ptr 指向的对象，能够解决由shared_ptr带来的循环引用问题。</li>
+</ul>
+<h2 id="shared-ptr和unique-ptr的区别"><a href="#shared-ptr和unique-ptr的区别" class="headerlink" title="shared_ptr和unique_ptr的区别"></a>shared_ptr和unique_ptr的区别</h2><p>shared_ptr允许多个指针指向同一个对象，而unique_ptr 独占所指向的对象。与shared_ptr不同，某个时刻只能有一个unique_ptr指向一个给定对象。当unique_ptr被销毁时，它所指向的对象也被销毁。</p>
+<h3 id="shared-ptr类"><a href="#shared-ptr类" class="headerlink" title="shared_ptr类"></a>shared_ptr类</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">shared_ptr&lt;string&gt; p1;      <span class="comment">//可以指向string</span></span><br><span class="line">shared_ptr&lt;list&lt;<span class="type">int</span>&gt;&gt; p2;   <span class="comment">//可以指向int的list</span></span><br></pre></td></tr></table></figure>
+<h4 id="make-shared函数"><a href="#make-shared函数" class="headerlink" title="make_shared函数"></a>make_shared函数</h4><p>最安全的分配和使用动态内存的方法是调用一个名为<code>make_shared</code>的标准库函数。此函数在动态内存中分配一个对象并初始化它，返回指向此对象的<code>shared_ptr</code>。<br>当要用make_shared时，必须指定想要创建的对象的类型，如下：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//指向一个值为42的int的shared_ptr</span></span><br><span class="line">shared_ptr&lt;<span class="type">int</span>&gt; p3 = <span class="built_in">make_shared</span>&lt;<span class="type">int</span>&gt;(<span class="number">42</span>);</span><br><span class="line"><span class="comment">//p4指向一个值为&quot;9999999999&quot;的string</span></span><br><span class="line">shared_ptr&lt;string&gt; p4 = <span class="built_in">make_shared</span>&lt;string&gt;(<span class="number">10</span>,<span class="string">&#x27;9&#x27;</span>);</span><br><span class="line"><span class="comment">//p5指向一个值初始化的int,值为0</span></span><br><span class="line">shared_ptr&lt;<span class="type">int</span>&gt; p5 = <span class="built_in">make_shared</span>&lt;<span class="type">int</span>&gt;();</span><br></pre></td></tr></table></figure><br>也可以使用auto定义一个对象来保存make_shared的结果，更为简单：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//p6指向一个动态分配的空vector&lt;string&gt;</span></span><br><span class="line"><span class="keyword">auto</span> p6 = make_shared&lt;vector&lt;string&gt;&gt;();</span><br></pre></td></tr></table></figure><br>当进行拷贝或赋值操作时，每个shared_ptr都会记录有多少个其他shared_ptr指向相同的对象：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> p = <span class="built_in">make_shared</span>&lt;<span class="type">int</span>&gt;(<span class="number">42</span>);      <span class="comment">//p指向的对象只有p一个引用者</span></span><br><span class="line"><span class="function"><span class="keyword">auto</span> <span class="title">q</span><span class="params">(p)</span></span>;                         <span class="comment">//p和q指向相同对象，此对象有两个引用者    </span></span><br></pre></td></tr></table></figure><br>我们可以认为每个shared_ptr都有一个关联的计数器，通常称其为引用计数。无论何时我们拷贝一个shared_ptr，计数器都会递增。</p>
+<h3 id="unique-ptr类"><a href="#unique-ptr类" class="headerlink" title="unique_ptr类"></a>unique_ptr类</h3><p>与shared_ptr不同，没有类似make_shared的标准库函数返回一个unique_ptr。所以初始化unique_ptr必须采用直接初始化形式，如下：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">unique_ptr&lt;<span class="type">double</span>&gt; p1;      <span class="comment">//可以指向一个double的unique_ptr</span></span><br><span class="line"><span class="function">unique_ptr&lt;<span class="type">int</span>&gt; <span class="title">p2</span><span class="params">(<span class="keyword">new</span> <span class="type">int</span>(<span class="number">42</span>))</span></span>;    <span class="comment">//p2指向一个值为42的int</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="shared-ptr指针的实现原理"><a href="#shared-ptr指针的实现原理" class="headerlink" title="shared_ptr指针的实现原理"></a>shared_ptr指针的实现原理</h2><p>计数原理。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;memory&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SmartPtr</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">private</span> : </span><br><span class="line">	T *_ptr;</span><br><span class="line">	<span class="type">size_t</span> *_count;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="built_in">SmartPtr</span>(T *ptr = <span class="literal">nullptr</span>) : _ptr(ptr)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (_ptr)</span><br><span class="line">		&#123;</span><br><span class="line">			_count = <span class="keyword">new</span> <span class="built_in">size_t</span>(<span class="number">1</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">			_count = <span class="keyword">new</span> <span class="built_in">size_t</span>(<span class="number">0</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	~<span class="built_in">SmartPtr</span>()</span><br><span class="line">	&#123;</span><br><span class="line">		(*<span class="keyword">this</span>-&gt;_count)--;</span><br><span class="line">		<span class="keyword">if</span> (*<span class="keyword">this</span>-&gt;_count == <span class="number">0</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">delete</span> <span class="keyword">this</span>-&gt;_ptr;</span><br><span class="line">			<span class="keyword">delete</span> <span class="keyword">this</span>-&gt;_count;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">SmartPtr</span>(<span class="type">const</span> SmartPtr &amp;ptr) <span class="comment">// 拷贝构造：计数 +1</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (<span class="keyword">this</span> != &amp;ptr)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">this</span>-&gt;_ptr = ptr._ptr;</span><br><span class="line">			<span class="keyword">this</span>-&gt;_count = ptr._count;</span><br><span class="line">			(*<span class="keyword">this</span>-&gt;_count)++;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	SmartPtr &amp;<span class="keyword">operator</span>=(<span class="type">const</span> SmartPtr &amp;ptr) <span class="comment">// 赋值运算符重载 </span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (<span class="keyword">this</span>-&gt;_ptr == ptr._ptr)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> (<span class="keyword">this</span>-&gt;_ptr) <span class="comment">// 将当前的 ptr 指向的原来的空间的计数 -1</span></span><br><span class="line">		&#123;</span><br><span class="line">			(*<span class="keyword">this</span>-&gt;_count)--;</span><br><span class="line">			<span class="keyword">if</span> (<span class="keyword">this</span>-&gt;_count == <span class="number">0</span>)</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="keyword">delete</span> <span class="keyword">this</span>-&gt;_ptr;</span><br><span class="line">				<span class="keyword">delete</span> <span class="keyword">this</span>-&gt;_count;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">this</span>-&gt;_ptr = ptr._ptr;</span><br><span class="line">		<span class="keyword">this</span>-&gt;_count = ptr._count;</span><br><span class="line">		(*<span class="keyword">this</span>-&gt;_count)++; <span class="comment">// 此时 ptr 指向了新赋值的空间，该空间的计数 +1</span></span><br><span class="line">		<span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	T &amp;<span class="keyword">operator</span>*()</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">assert</span>(<span class="keyword">this</span>-&gt;_ptr == <span class="literal">nullptr</span>);</span><br><span class="line">		<span class="keyword">return</span> *(<span class="keyword">this</span>-&gt;_ptr);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	T *<span class="keyword">operator</span>-&gt;()</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">assert</span>(<span class="keyword">this</span>-&gt;_ptr == <span class="literal">nullptr</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">this</span>-&gt;_ptr;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="type">size_t</span> <span class="title">use_count</span><span class="params">()</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="keyword">return</span> *<span class="keyword">this</span>-&gt;count;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="一个独占指针（unique-ptr）怎么赋值给另一个独占指针（unique-ptr）对象？"><a href="#一个独占指针（unique-ptr）怎么赋值给另一个独占指针（unique-ptr）对象？" class="headerlink" title="一个独占指针（unique_ptr）怎么赋值给另一个独占指针（unique_ptr）对象？"></a>一个独占指针（unique_ptr）怎么赋值给另一个独占指针（unique_ptr）对象？</h2><p>借助 std::move() 可以实现将一个 unique_ptr 对象赋值给另一个 unique_ptr 对象，其目的是实现所有权的转移。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A 作为一个类 </span></span><br><span class="line"><span class="function">std::unique_ptr&lt;A&gt; <span class="title">ptr1</span><span class="params">(<span class="keyword">new</span> A())</span></span>;</span><br><span class="line">std::unique_ptr&lt;A&gt; ptr2 = std::<span class="built_in">move</span>(ptr1);</span><br></pre></td></tr></table></figure>
+<h2 id="使用智能指针会出现什么问题？怎么解决？"><a href="#使用智能指针会出现什么问题？怎么解决？" class="headerlink" title="使用智能指针会出现什么问题？怎么解决？"></a>使用智能指针会出现什么问题？怎么解决？</h2><p>智能指针可能出现的问题：<strong>循环引用。</strong><br>在如下例子中定义了两个类 Parent、Child，在两个类中分别定义另一个类的对象的共享指针，由于在程序结束后，两个指针相互指向对方的内存空间，导致内存无法释放。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;memory&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Child</span>;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Parent</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Parent</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    shared_ptr&lt;Child&gt; ChildPtr;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">setChild</span><span class="params">(shared_ptr&lt;Child&gt; child)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>-&gt;ChildPtr = child;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">doSomething</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span>-&gt;ChildPtr.<span class="built_in">use_count</span>()) &#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ~<span class="built_in">Parent</span>() &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Child</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    shared_ptr&lt;Parent&gt; ParentPtr;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">setPartent</span><span class="params">(shared_ptr&lt;Parent&gt; parent)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>-&gt;ParentPtr = parent;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">doSomething</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span>-&gt;ParentPtr.<span class="built_in">use_count</span>()) &#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    ~<span class="built_in">Child</span>() &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    weak_ptr&lt;Parent&gt; wpp;</span><br><span class="line">    weak_ptr&lt;Child&gt; wpc;</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function">shared_ptr&lt;Parent&gt; <span class="title">p</span><span class="params">(<span class="keyword">new</span> Parent)</span></span>;</span><br><span class="line">        <span class="function">shared_ptr&lt;Child&gt; <span class="title">c</span><span class="params">(<span class="keyword">new</span> Child)</span></span>;</span><br><span class="line">        p-&gt;<span class="built_in">setChild</span>(c);</span><br><span class="line">        c-&gt;<span class="built_in">setPartent</span>(p);</span><br><span class="line">        wpp = p;</span><br><span class="line">        wpc = c;</span><br><span class="line">        cout &lt;&lt; p.<span class="built_in">use_count</span>() &lt;&lt; endl; <span class="comment">// 2</span></span><br><span class="line">        cout &lt;&lt; c.<span class="built_in">use_count</span>() &lt;&lt; endl; <span class="comment">// 2</span></span><br><span class="line">    &#125;</span><br><span class="line">    cout &lt;&lt; wpp.<span class="built_in">use_count</span>() &lt;&lt; endl;  <span class="comment">// 1</span></span><br><span class="line">    cout &lt;&lt; wpc.<span class="built_in">use_count</span>() &lt;&lt; endl;  <span class="comment">// 1</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>循环引用的解决方法：</strong>weak_ptr<br>循环引用：该被调用的析构函数没有被调用，从而出现了内存泄漏。</p>
+<ul>
+<li>weak_ptr 对被 shared_ptr 管理的对象存在 非拥有性（弱）引用，在访问所引用的对象前必须先转化为 shared_ptr；</li>
+<li>weak_ptr 用来打断 shared_ptr 所管理对象的循环引用问题，若这种环被孤立（没有指向环中的外部共享指针），shared_ptr 引用计数无法抵达 0，内存被泄露；令环中的指针之一为弱指针可以避免该情况；</li>
+<li>weak_ptr 用来表达临时所有权的概念，当某个对象只有存在时才需要被访问，而且随时可能被他人删除，可以用 weak_ptr 跟踪该对象；需要获得所有权时将其转化为 shared_ptr，此时如果原来的 shared_ptr 被销毁，则该对象的生命期被延长至这个临时的 shared_ptr 同样被销毁。</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;memory&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Child</span>;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Parent</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Parent</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">//shared_ptr&lt;Child&gt; ChildPtr;</span></span><br><span class="line">    weak_ptr&lt;Child&gt; ChildPtr;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">setChild</span><span class="params">(shared_ptr&lt;Child&gt; child)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>-&gt;ChildPtr = child;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">doSomething</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">//new shared_ptr</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span>-&gt;ChildPtr.<span class="built_in">lock</span>()) &#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ~<span class="built_in">Parent</span>() &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Child</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    shared_ptr&lt;Parent&gt; ParentPtr;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">setPartent</span><span class="params">(shared_ptr&lt;Parent&gt; parent)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>-&gt;ParentPtr = parent;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">doSomething</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span>-&gt;ParentPtr.<span class="built_in">use_count</span>()) &#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    ~<span class="built_in">Child</span>() &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    weak_ptr&lt;Parent&gt; wpp;</span><br><span class="line">    weak_ptr&lt;Child&gt; wpc;</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function">shared_ptr&lt;Parent&gt; <span class="title">p</span><span class="params">(<span class="keyword">new</span> Parent)</span></span>;</span><br><span class="line">        <span class="function">shared_ptr&lt;Child&gt; <span class="title">c</span><span class="params">(<span class="keyword">new</span> Child)</span></span>;</span><br><span class="line">        p-&gt;<span class="built_in">setChild</span>(c);</span><br><span class="line">        c-&gt;<span class="built_in">setPartent</span>(p);</span><br><span class="line">        wpp = p;</span><br><span class="line">        wpc = c;</span><br><span class="line">        cout &lt;&lt; p.<span class="built_in">use_count</span>() &lt;&lt; endl; <span class="comment">// 2</span></span><br><span class="line">        cout &lt;&lt; c.<span class="built_in">use_count</span>() &lt;&lt; endl; <span class="comment">// 1</span></span><br><span class="line">    &#125;</span><br><span class="line">    cout &lt;&lt; wpp.<span class="built_in">use_count</span>() &lt;&lt; endl;  <span class="comment">// 0</span></span><br><span class="line">    cout &lt;&lt; wpc.<span class="built_in">use_count</span>() &lt;&lt; endl;  <span class="comment">// 0</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%85%AB%E8%82%A1%E6%96%87/" rel="tag"># 八股文</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/03/%E3%80%90C-%E3%80%91String%E8%BD%AC%E6%95%B0%E7%BB%84%EF%BC%88split%E6%96%B9%E6%B3%95%E6%9E%84%E5%BB%BA%EF%BC%89/" rel="prev" title="【C++】String转数组（split方法构建）">
+      <i class="fa fa-chevron-left"></i> 【C++】String转数组（split方法构建）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/03/04/%E3%80%90C-%E3%80%9111%E3%80%8114%E3%80%8117%E6%96%B0%E7%89%B9%E6%80%A7/" rel="next" title="【C++】11&14&17新特性">
+      【C++】11&14&17新特性 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E7%A8%8B%E5%BA%8F%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">C++程序编译过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">C++ 内存管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%88%E5%92%8C%E5%A0%86%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">3.</span> <span class="nav-text">栈和堆的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">4.</span> <span class="nav-text">变量的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%E5%AE%9A%E4%B9%89%E5%9C%A8%E5%A4%B4%E6%96%87%E4%BB%B6%E4%B8%AD%E6%9C%89%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="nav-number">5.</span> <span class="nav-text">全局变量定义在头文件中有什么问题？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E9%99%90%E5%88%B6%E7%B1%BB%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%8F%AA%E8%83%BD%E5%9C%A8%E5%A0%86%E4%B8%8A%E5%88%9B%E5%BB%BA%EF%BC%9F%E5%A6%82%E4%BD%95%E9%99%90%E5%88%B6%E5%AF%B9%E8%B1%A1%E5%8F%AA%E8%83%BD%E5%9C%A8%E6%A0%88%E4%B8%8A%E5%88%9B%E5%BB%BA%EF%BC%9F"><span class="nav-number">6.</span> <span class="nav-text">如何限制类的对象只能在堆上创建？如何限制对象只能在栈上创建？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90%EF%BC%9F%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90%E7%9A%84%E5%8E%9F%E5%88%99%EF%BC%9F%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%BF%9B%E8%A1%8C%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90%EF%BC%8C%E6%9C%89%E4%BB%80%E4%B9%88%E4%BC%98%E7%82%B9%EF%BC%9F"><span class="nav-number">7.</span> <span class="nav-text">什么是内存对齐？内存对齐的原则？为什么要进行内存对齐，有什么优点？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E7%9A%84%E5%A4%A7%E5%B0%8F"><span class="nav-number">8.</span> <span class="nav-text">类的大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2"><span class="nav-number">9.</span> <span class="nav-text">什么是内存泄露</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E9%98%B2%E6%AD%A2%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%EF%BC%9F%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E6%A3%80%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E5%8E%9F%E7%90%86%EF%BC%9F"><span class="nav-number">10.</span> <span class="nav-text">怎么防止内存泄漏？内存泄漏检测工具的原理？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-11-%E4%B8%AD%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E6%9C%89%E5%93%AA%E5%87%A0%E7%A7%8D%EF%BC%9F"><span class="nav-number">11.</span> <span class="nav-text">C++11 中智能指针有哪几种？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#shared-ptr%E5%92%8Cunique-ptr%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">12.</span> <span class="nav-text">shared_ptr和unique_ptr的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#shared-ptr%E7%B1%BB"><span class="nav-number">12.1.</span> <span class="nav-text">shared_ptr类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#make-shared%E5%87%BD%E6%95%B0"><span class="nav-number">12.1.1.</span> <span class="nav-text">make_shared函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#unique-ptr%E7%B1%BB"><span class="nav-number">12.2.</span> <span class="nav-text">unique_ptr类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#shared-ptr%E6%8C%87%E9%92%88%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">13.</span> <span class="nav-text">shared_ptr指针的实现原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E7%8B%AC%E5%8D%A0%E6%8C%87%E9%92%88%EF%BC%88unique-ptr%EF%BC%89%E6%80%8E%E4%B9%88%E8%B5%8B%E5%80%BC%E7%BB%99%E5%8F%A6%E4%B8%80%E4%B8%AA%E7%8B%AC%E5%8D%A0%E6%8C%87%E9%92%88%EF%BC%88unique-ptr%EF%BC%89%E5%AF%B9%E8%B1%A1%EF%BC%9F"><span class="nav-number">14.</span> <span class="nav-text">一个独占指针（unique_ptr）怎么赋值给另一个独占指针（unique_ptr）对象？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E4%BC%9A%E5%87%BA%E7%8E%B0%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98%EF%BC%9F%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3%EF%BC%9F"><span class="nav-number">15.</span> <span class="nav-text">使用智能指针会出现什么问题？怎么解决？</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="王天阳"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">王天阳</p>
+  <div class="site-description" itemprop="description">学习｜记录｜心情</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+
+
+
+  <div class="links-of-blogroll motion-element links-of-blogroll-block">
+    <div class="links-of-blogroll-title">
+      <!-- modify icon to fire by szw -->
+      <i class="fa fa-history fa-" aria-hidden="true"></i>
+      近期文章
+    </div>
+    <ul class="links-of-blogroll-list">
+      
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">王天阳</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">447k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">6:47</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'dPQ0eYKJKl0nx6N1Qv9srFwG-gzGzoHsz',
+      appKey     : 'SsmzAdYldap25VnTu0wf1AlJ',
+      placeholder: "你说，我在听",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+  <script src="/js/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+  
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/assets/hijiki.model.json"},"display":{"position":"right","width":145,"height":315},"mobile":{"show":true,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.8},"log":false});</script></body>
+</html>

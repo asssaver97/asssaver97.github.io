@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/w-solid.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/w-solid.svg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/w-solid.svg">
+  <link rel="mask-icon" href="/images/w-solid.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wangtianyang.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="请讲出以下代码的输出结果，并解释a,b,g三个变量分别存放在内存的哪片区域。1234567891011121314151617#include &lt;iostream&gt;using namespace std;int g;int main() &amp;#123;    int a;    static float b;    a +&#x3D; 1;    b +&#x3D; 100;    g +&#x3D; 200;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【面经】闪思面试（八股+算法）（2022&#x2F;03&#x2F;16）">
+<meta property="og:url" content="http://wangtianyang.com/2022/03/16/%E3%80%90%E9%9D%A2%E7%BB%8F%E3%80%91%E9%97%AA%E6%80%9D%E9%9D%A2%E8%AF%95%EF%BC%88%E5%85%AB%E8%82%A1-%E7%AE%97%E6%B3%95%EF%BC%89%EF%BC%882022-03-16%EF%BC%89/index.html">
+<meta property="og:site_name" content="王天阳的个人博客">
+<meta property="og:description" content="请讲出以下代码的输出结果，并解释a,b,g三个变量分别存放在内存的哪片区域。1234567891011121314151617#include &lt;iostream&gt;using namespace std;int g;int main() &amp;#123;    int a;    static float b;    a +&#x3D; 1;    b +&#x3D; 100;    g +&#x3D; 200;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-03-16T08:22:35.000Z">
+<meta property="article:modified_time" content="2023-01-05T08:03:47.033Z">
+<meta property="article:author" content="王天阳">
+<meta property="article:tag" content="面经">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://wangtianyang.com/2022/03/16/%E3%80%90%E9%9D%A2%E7%BB%8F%E3%80%91%E9%97%AA%E6%80%9D%E9%9D%A2%E8%AF%95%EF%BC%88%E5%85%AB%E8%82%A1-%E7%AE%97%E6%B3%95%EF%BC%89%EF%BC%882022-03-16%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>【面经】闪思面试（八股+算法）（2022/03/16） | 王天阳的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">王天阳的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-movies">
+
+    <a href="/movies/" rel="section"><i class="fa fa-film fa-fw"></i>观影</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://wangtianyang.com/2022/03/16/%E3%80%90%E9%9D%A2%E7%BB%8F%E3%80%91%E9%97%AA%E6%80%9D%E9%9D%A2%E8%AF%95%EF%BC%88%E5%85%AB%E8%82%A1-%E7%AE%97%E6%B3%95%EF%BC%89%EF%BC%882022-03-16%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="王天阳">
+      <meta itemprop="description" content="学习｜记录｜心情">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王天阳的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【面经】闪思面试（八股+算法）（2022/03/16）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-16 16:22:35" itemprop="dateCreated datePublished" datetime="2022-03-16T16:22:35+08:00">2022-03-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-01-05 16:03:47" itemprop="dateModified" datetime="2023-01-05T16:03:47+08:00">2023-01-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/03/16/%E3%80%90%E9%9D%A2%E7%BB%8F%E3%80%91%E9%97%AA%E6%80%9D%E9%9D%A2%E8%AF%95%EF%BC%88%E5%85%AB%E8%82%A1-%E7%AE%97%E6%B3%95%EF%BC%89%EF%BC%882022-03-16%EF%BC%89/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/03/16/%E3%80%90%E9%9D%A2%E7%BB%8F%E3%80%91%E9%97%AA%E6%80%9D%E9%9D%A2%E8%AF%95%EF%BC%88%E5%85%AB%E8%82%A1-%E7%AE%97%E6%B3%95%EF%BC%89%EF%BC%882022-03-16%EF%BC%89/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="请讲出以下代码的输出结果，并解释a-b-g三个变量分别存放在内存的哪片区域。"><a href="#请讲出以下代码的输出结果，并解释a-b-g三个变量分别存放在内存的哪片区域。" class="headerlink" title="请讲出以下代码的输出结果，并解释a,b,g三个变量分别存放在内存的哪片区域。"></a>请讲出以下代码的输出结果，并解释a,b,g三个变量分别存放在内存的哪片区域。</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> g;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> a;</span><br><span class="line">    <span class="type">static</span> <span class="type">float</span> b;</span><br><span class="line">    a += <span class="number">1</span>;</span><br><span class="line">    b += <span class="number">100</span>;</span><br><span class="line">    g += <span class="number">200</span>;</span><br><span class="line"></span><br><span class="line">    cout&lt;&lt;a&lt;&lt;endl;</span><br><span class="line">    cout&lt;&lt;b&lt;&lt;endl;</span><br><span class="line">    cout&lt;&lt;g&lt;&lt;endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<p><strong>答：</strong>b=100，g=200，a输出不明。原因：变量a为<strong>局部变量</strong>，储存在<strong>栈</strong>内，值必须由程序员初始化，变量g和变量b分别为<strong>全局变量</strong>和<strong>静态变量</strong>，存放在<strong>全局/静态储存区</strong>，编译器会自动初始化为零。</p>
+<h2 id="请讲出以下代码的输出结果，并说明引用和指针的区别。"><a href="#请讲出以下代码的输出结果，并说明引用和指针的区别。" class="headerlink" title="请讲出以下代码的输出结果，并说明引用和指针的区别。"></a>请讲出以下代码的输出结果，并说明引用和指针的区别。</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">swap</span><span class="params">(<span class="type">int</span> &amp;r1, <span class="type">int</span> &amp;r2)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> num1 = <span class="number">10</span>;</span><br><span class="line">    <span class="type">int</span> num2 = <span class="number">20</span>;</span><br><span class="line">    <span class="built_in">swap</span>(num1, num2);</span><br><span class="line">    cout&lt;&lt;num1&lt;&lt;<span class="string">&quot; &quot;</span>&lt;&lt;num2&lt;&lt;endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">swap</span><span class="params">(<span class="type">int</span> &amp;r1, <span class="type">int</span> &amp;r2)</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> temp = r1;</span><br><span class="line">    r1 = r2;</span><br><span class="line">    r2 = temp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>答：</strong>num1=20，num2=10。<br>引用和指针的区别与联系：</p>
+<ol>
+<li>引用只能在定义时初始化一次，之后不能改变指向其它变量（从一而终）；指针变量的值可变。</li>
+<li>引用必须指向有效的变量，指针可以为空。</li>
+<li>sizeof指针对象和引用对象的意义不一样。sizeof引用得到的是所指向的变量的大小，而sizeof指针是对象地址的大小。</li>
+<li>指针和引用自增(++)自减(—)意义不一样。引用是指值自增，而指针的自增指的是指向下一段内存地址。</li>
+<li>相对而言，引用比指针更安全。</li>
+</ol>
+<h2 id="说明面向过程编程和面向对象编程的区别"><a href="#说明面向过程编程和面向对象编程的区别" class="headerlink" title="说明面向过程编程和面向对象编程的区别"></a>说明面向过程编程和面向对象编程的区别</h2><p>面向过程是一种以过程为中心的编程思想，它首先分析出解决问题所需要的步骤，然后用函数把这些步骤一步一步实现，在使用时依次调用，是一种基础的顺序的思维方式。面向过程开发方式是对计算机底层结构的一层抽象，它将程序分为数据和操纵数据的操作两部分，其核心问题是数据结构和算法的开发和优化。常见的支持面向过程的编程语言有 C语言、COBOL 语言等。</p>
+<p>面向对象是按人们认识客观世界的系统思维方式，采用基于对象（实体）的概念建立模型，模拟客观世界分析、设计、实现软件的编程思想，通过面向对象的理念使计算机软件系统能与现实世界中的系统一一对应。</p>
+<p>面向对象方法直接把所有事物都当作独立的对象，处理问题过程中所思考的不再主要是怎样用数据结构来描述问题，而是直接考虑重现问题中各个对象之间的关系。面向对象方法的基础实现中也包含面向过程的思想。常见的支持面向对象的编程语言有 C++ 语言、C＃ 语言、Java 语言等。</p>
+<h2 id="面向对象编程的三大特性是什么？"><a href="#面向对象编程的三大特性是什么？" class="headerlink" title="面向对象编程的三大特性是什么？"></a>面向对象编程的三大特性是什么？</h2><p>封装、继承、多态。多态的两个前提：继承和虚函数。</p>
+<h2 id="C-类的封装特性在编程中如何体现？这些设计有什么好处？"><a href="#C-类的封装特性在编程中如何体现？这些设计有什么好处？" class="headerlink" title="C++类的封装特性在编程中如何体现？这些设计有什么好处？"></a>C++类的封装特性在编程中如何体现？这些设计有什么好处？</h2><p>public、private、protected。更安全，可以让继承或者调用类时不能访问到不想被访问的成员变量和成员函数。</p>
+<h2 id="使用类定义了两个对象，请问类中的成员变量在内存中有几份？成员函数有几份？"><a href="#使用类定义了两个对象，请问类中的成员变量在内存中有几份？成员函数有几份？" class="headerlink" title="使用类定义了两个对象，请问类中的成员变量在内存中有几份？成员函数有几份？"></a>使用类定义了两个对象，请问类中的成员变量在内存中有几份？成员函数有几份？</h2><p>两份成员变量，一份成员函数。</p>
+<h2 id="请讲一下this指针及其如何使用。"><a href="#请讲一下this指针及其如何使用。" class="headerlink" title="请讲一下this指针及其如何使用。"></a>请讲一下this指针及其如何使用。</h2><p>在 C++ 中，每一个对象都能通过 this 指针来访问自己的地址。this 指针是所有成员函数的隐含参数。因此，在成员函数内部，它可以用来指向调用对象。</p>
+<p>主要作用：结合上一题，因为this是所有成员函数的隐含参数，所以即使成员函数只拷贝了一份，也可以确定是哪一个对象在调用该成员函数。<br>次要作用：当对象内部成员变量与形参同名时，可以加以区分。</p>
+<h2 id="构造函数是否可以重载？不同作用域中的函数名称和参数完全相同的两个函数，是不是重载？"><a href="#构造函数是否可以重载？不同作用域中的函数名称和参数完全相同的两个函数，是不是重载？" class="headerlink" title="构造函数是否可以重载？不同作用域中的函数名称和参数完全相同的两个函数，是不是重载？"></a>构造函数是否可以重载？不同作用域中的函数名称和参数完全相同的两个函数，是不是重载？</h2><p>构造函数可以，析构函数不可以。<br>不是，它们就只是没有任何关系的两个函数而已。</p>
+<h2 id="C-继承的方式分为哪几种？请说明，使用派生类定义一个对象时，基类和派生类的构造函数的调用顺序；该对象消亡时，基类和派生类的析构函数的调用顺序。析构函数的函数名如何写？"><a href="#C-继承的方式分为哪几种？请说明，使用派生类定义一个对象时，基类和派生类的构造函数的调用顺序；该对象消亡时，基类和派生类的析构函数的调用顺序。析构函数的函数名如何写？" class="headerlink" title="C++继承的方式分为哪几种？请说明，使用派生类定义一个对象时，基类和派生类的构造函数的调用顺序；该对象消亡时，基类和派生类的析构函数的调用顺序。析构函数的函数名如何写？"></a>C++继承的方式分为哪几种？请说明，使用派生类定义一个对象时，基类和派生类的构造函数的调用顺序；该对象消亡时，基类和派生类的析构函数的调用顺序。析构函数的函数名如何写？</h2><ol>
+<li>public、protected、private。作用就是继承时把基类public区域的内容转换成对应权限。</li>
+<li>基类构造函数-&gt;派生类构造函数-&gt;派生类析构函数-&gt;基类析构函数。</li>
+<li>构造函数的名字和类名相同，而析构函数的名字是在类名前面加一个<code>~</code>符号。</li>
+</ol>
+<h2 id="请讲出以下代码的输出结果。输出结果是否符合预期？如果不符合，请对以下函数进行改造。请讲出C-是通过什么机制实现多态的。"><a href="#请讲出以下代码的输出结果。输出结果是否符合预期？如果不符合，请对以下函数进行改造。请讲出C-是通过什么机制实现多态的。" class="headerlink" title="请讲出以下代码的输出结果。输出结果是否符合预期？如果不符合，请对以下函数进行改造。请讲出C++是通过什么机制实现多态的。"></a>请讲出以下代码的输出结果。输出结果是否符合预期？如果不符合，请对以下函数进行改造。请讲出C++是通过什么机制实现多态的。</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="comment">//基类People</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">People</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">People</span>(<span class="type">char</span> *name, <span class="type">int</span> age);</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">display</span><span class="params">()</span></span>;</span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    <span class="type">char</span> *m_name;</span><br><span class="line">    <span class="type">int</span> m_age;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">People::<span class="built_in">People</span>(<span class="type">char</span> *name, <span class="type">int</span> age):<span class="built_in">m_name</span>(name),<span class="built_in">m_age</span>(age)&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">People::display</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    cout&lt;&lt;m_name&lt;&lt;<span class="string">&quot;今年&quot;</span>&lt;&lt;m_age&lt;&lt;<span class="string">&quot;岁了，是个小学生。&quot;</span>&lt;&lt;endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//派生类Teacher</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Teacher</span>: <span class="keyword">public</span> People &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">Teacher</span>(<span class="type">char</span> *name, <span class="type">int</span> age, <span class="type">int</span> salary);</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">display</span><span class="params">()</span></span>;</span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    <span class="type">int</span> m_salary;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Teacher::<span class="built_in">Teacher</span>(<span class="type">char</span> *name, <span class="type">int</span> age, <span class="type">int</span> salary):<span class="built_in">People</span>(name, age), <span class="built_in">m_salary</span>(salary)&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">Teacher::display</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  cout&lt;&lt;m_name&lt;&lt;<span class="string">&quot;今年&quot;</span>&lt;&lt;m_age&lt;&lt;<span class="string">&quot;岁了，是一名教师，每月有&quot;</span>&lt;&lt;m_salary&lt;&lt;<span class="string">&quot;元的收入。&quot;</span>&lt;&lt;endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    People *p = <span class="keyword">new</span> <span class="built_in">People</span>(<span class="string">&quot;宋佳&quot;</span>, <span class="number">10</span>);</span><br><span class="line">    p-&gt;<span class="built_in">display</span>();</span><br><span class="line">    p = <span class="keyword">new</span> <span class="built_in">Teacher</span>(<span class="string">&quot;李亮&quot;</span>, <span class="number">45</span>, <span class="number">10000</span>);</span><br><span class="line">    p-&gt;<span class="built_in">display</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>答：</strong>运行结果：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">宋佳今年10岁了，是个小学生。</span><br><span class="line">李亮今年45岁了，是个小学生。</span><br></pre></td></tr></table></figure><br>原因：多态需要虚函数！所以应该在<code>People</code>类的<code>display()</code>函数前加上<code>virtual</code>关键字。</p>
+<h2 id="请解释C-中浅拷贝和深拷贝的区别。"><a href="#请解释C-中浅拷贝和深拷贝的区别。" class="headerlink" title="请解释C++中浅拷贝和深拷贝的区别。"></a>请解释C++中浅拷贝和深拷贝的区别。</h2><ol>
+<li>在未定义显示拷贝构造函数的情况下，系统会调用默认的拷贝函数——即浅拷贝，它能够完成成员的一一复制。当数据成员中没有指针时，浅拷贝是可行的；但当数据成员中有指针时，如果采用简单的浅拷贝，则两类中的两个指针将指向同一个地址，当对象快结束时，会调用两次析构函数，而导致指针悬挂现象，所以，此时，必须采用深拷贝。</li>
+<li>深拷贝与浅拷贝的区别就在于深拷贝会在堆内存中另外申请空间来储存数据，从而也就解决了指针悬挂的问题。简而言之，当数据成员中有指针时，必须要用深拷贝。</li>
+</ol>
+<h2 id="请说明C-中的模板类别，使用模板的好处，使用模板是要用到哪个关键字。"><a href="#请说明C-中的模板类别，使用模板的好处，使用模板是要用到哪个关键字。" class="headerlink" title="请说明C++中的模板类别，使用模板的好处，使用模板是要用到哪个关键字。"></a>请说明C++中的模板类别，使用模板的好处，使用模板是要用到哪个关键字。</h2><p>模板是C++支持参数化多态的工具，使用模板可以使用户为类或者函数声明一种一般模式，使得类中的某些数据成员或者成员函数的参数、返回值取得任意类型。</p>
+<ul>
+<li><p>模板有两种类别：<strong>函数模板</strong>和<strong>类模板</strong>。</p>
+</li>
+<li><p>使用模板的好处就是能够让程序员编写与类型无关的代码。</p>
+</li>
+</ul>
+<p>格式：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> 形参名，<span class="keyword">class</span> 形参名，......&gt; 返回类型 函数名(参数列表)</span><br><span class="line">&#123;</span><br><span class="line">    函数体</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>其中<code>template</code>和<code>class</code>是关键字，<code>class</code>可以用<code>typename</code>关键字代替。</li>
+</ul>
+<p>例：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">inline</span> T <span class="type">const</span>&amp; <span class="title">Max</span> <span class="params">(T <span class="type">const</span>&amp; a, T <span class="type">const</span>&amp; b)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    <span class="keyword">return</span> a &lt; b ? b:a; </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure></p>
+<h2 id="请说明以下代码中3个const各自的作用。"><a href="#请说明以下代码中3个const各自的作用。" class="headerlink" title="请说明以下代码中3个const各自的作用。"></a>请说明以下代码中3个const各自的作用。</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt; <span class="function"><span class="type">const</span> std::string&amp; <span class="title">function</span><span class="params">(<span class="type">const</span> T*)</span> <span class="type">const</span></span>;</span><br></pre></td></tr></table></figure>
+<p>第一个const修饰函数返回值。Const 修饰返回值分三种情况：</p>
+<ol>
+<li>const 修饰内置类型的返回值，修饰与不修饰返回值作用一样。</li>
+<li>const 修饰自定义类型的作为返回值，此时返回的值不能作为左值使用，既不能被赋值，也不能被修改。</li>
+<li>const 修饰返回的指针或者引用，是为了避免返回值被修改。</li>
+</ol>
+<p>第二个const修饰参数传递。const 修饰函数参数可以分为三种情况：</p>
+<ol>
+<li>const 修饰指针指向的内容，比如<code>const int *p = 8;</code>，则内容为不可变量。</li>
+<li>const 修饰指针，比如<code>int* const p = &amp;a;</code>，则指针为不可变量。</li>
+<li>结合1和2。</li>
+</ol>
+<p>第三个const修饰类成员函数，其目的是防止成员函数修改被调用对象的值。默认在成员函数的第一个位置是this指针，如果在成员函数（只能是成员函数，要是类的静态函数或者是非成员函数就不可以在函数后面加上const）后面加const，则说明this指针的值是不可以修改的，只能读取。而如果函数里面试图改变成员变量的值，这样编辑器肯定是不允许的，所以会出现错误的。</p>
+<h2 id="C-有哪些临时变量"><a href="#C-有哪些临时变量" class="headerlink" title="C++有哪些临时变量"></a>C++有哪些临时变量</h2><ol>
+<li>当函数的返回值没有赋值给其他变量时，会产生临时变量</li>
+<li>类型转换时的中间变量</li>
+</ol>
+<h2 id="要访问容器的元素，需要通过什么？有哪些类型？"><a href="#要访问容器的元素，需要通过什么？有哪些类型？" class="headerlink" title="要访问容器的元素，需要通过什么？有哪些类型？"></a>要访问容器的元素，需要通过什么？有哪些类型？</h2><p>迭代器。<br>STL定义了五种迭代器。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:left">迭代器类别</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">输入</td>
+<td style="text-align:left">从容器中读取元素。输入迭代器只能一次读入一个元素向前移动，输入迭代器只支持一遍算法，同一个输入迭代器不能两遍遍历一个序列</td>
+</tr>
+<tr>
+<td style="text-align:left">输出</td>
+<td style="text-align:left">向容器中写入元素。输出迭代器只能一次一个元素向前移动。输出迭代器只支持一遍算法，统一输出迭代器不能两次遍历一个序列</td>
+</tr>
+<tr>
+<td style="text-align:left">正向</td>
+<td style="text-align:left">组合输入迭代器和输出迭代器的功能，并保留在容器中的位置</td>
+</tr>
+<tr>
+<td style="text-align:left">反向</td>
+<td style="text-align:left">组合正向迭代器和逆向迭代器的功能，支持多遍算法</td>
+</tr>
+<tr>
+<td style="text-align:left">随机访问</td>
+<td style="text-align:left">组合双向迭代器的功能与直接访问容器中任何元素的功能，即可向前向后跳过任意个元素</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="请讲出STL中vector、map、unordered-map的用途。"><a href="#请讲出STL中vector、map、unordered-map的用途。" class="headerlink" title="请讲出STL中vector、map、unordered_map的用途。"></a>请讲出STL中vector、map、unordered_map的用途。</h2><p>map底层是红黑树，优点是有序，时间复杂度为O(logn)；unordered_map底层是哈希表，优点是搜索更快，时间复杂度为O(1)。其他略。</p>
+<h2 id="用C-实现一个单向链表，要求实现增加元素、获得元素、弹出元素的功能。"><a href="#用C-实现一个单向链表，要求实现增加元素、获得元素、弹出元素的功能。" class="headerlink" title="用C++实现一个单向链表，要求实现增加元素、获得元素、弹出元素的功能。"></a>用C++实现一个单向链表，要求实现增加元素、获得元素、弹出元素的功能。</h2><p>略。</p>
+<h2 id="用C-实现快排。"><a href="#用C-实现快排。" class="headerlink" title="用C++实现快排。"></a>用C++实现快排。</h2><p>略。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%9D%A2%E7%BB%8F/" rel="tag"># 面经</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/06/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91Redis/" rel="prev" title="【数据库】Redis">
+      <i class="fa fa-chevron-left"></i> 【数据库】Redis
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/03/17/%E3%80%90%E7%AC%94%E7%BB%8F%E3%80%91%E7%BE%8E%E5%9B%A22020%E6%A0%A1%E6%8B%9B%EF%BC%88%E9%80%89%E6%8B%A9%E9%A2%98%EF%BC%89/" rel="next" title="【笔经】美团2020校招（选择题）">
+      【笔经】美团2020校招（选择题） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B7%E8%AE%B2%E5%87%BA%E4%BB%A5%E4%B8%8B%E4%BB%A3%E7%A0%81%E7%9A%84%E8%BE%93%E5%87%BA%E7%BB%93%E6%9E%9C%EF%BC%8C%E5%B9%B6%E8%A7%A3%E9%87%8Aa-b-g%E4%B8%89%E4%B8%AA%E5%8F%98%E9%87%8F%E5%88%86%E5%88%AB%E5%AD%98%E6%94%BE%E5%9C%A8%E5%86%85%E5%AD%98%E7%9A%84%E5%93%AA%E7%89%87%E5%8C%BA%E5%9F%9F%E3%80%82"><span class="nav-number">1.</span> <span class="nav-text">请讲出以下代码的输出结果，并解释a,b,g三个变量分别存放在内存的哪片区域。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B7%E8%AE%B2%E5%87%BA%E4%BB%A5%E4%B8%8B%E4%BB%A3%E7%A0%81%E7%9A%84%E8%BE%93%E5%87%BA%E7%BB%93%E6%9E%9C%EF%BC%8C%E5%B9%B6%E8%AF%B4%E6%98%8E%E5%BC%95%E7%94%A8%E5%92%8C%E6%8C%87%E9%92%88%E7%9A%84%E5%8C%BA%E5%88%AB%E3%80%82"><span class="nav-number">2.</span> <span class="nav-text">请讲出以下代码的输出结果，并说明引用和指针的区别。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E%E9%9D%A2%E5%90%91%E8%BF%87%E7%A8%8B%E7%BC%96%E7%A8%8B%E5%92%8C%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">3.</span> <span class="nav-text">说明面向过程编程和面向对象编程的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B%E7%9A%84%E4%B8%89%E5%A4%A7%E7%89%B9%E6%80%A7%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">4.</span> <span class="nav-text">面向对象编程的三大特性是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E7%B1%BB%E7%9A%84%E5%B0%81%E8%A3%85%E7%89%B9%E6%80%A7%E5%9C%A8%E7%BC%96%E7%A8%8B%E4%B8%AD%E5%A6%82%E4%BD%95%E4%BD%93%E7%8E%B0%EF%BC%9F%E8%BF%99%E4%BA%9B%E8%AE%BE%E8%AE%A1%E6%9C%89%E4%BB%80%E4%B9%88%E5%A5%BD%E5%A4%84%EF%BC%9F"><span class="nav-number">5.</span> <span class="nav-text">C++类的封装特性在编程中如何体现？这些设计有什么好处？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%B1%BB%E5%AE%9A%E4%B9%89%E4%BA%86%E4%B8%A4%E4%B8%AA%E5%AF%B9%E8%B1%A1%EF%BC%8C%E8%AF%B7%E9%97%AE%E7%B1%BB%E4%B8%AD%E7%9A%84%E6%88%90%E5%91%98%E5%8F%98%E9%87%8F%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD%E6%9C%89%E5%87%A0%E4%BB%BD%EF%BC%9F%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0%E6%9C%89%E5%87%A0%E4%BB%BD%EF%BC%9F"><span class="nav-number">6.</span> <span class="nav-text">使用类定义了两个对象，请问类中的成员变量在内存中有几份？成员函数有几份？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B7%E8%AE%B2%E4%B8%80%E4%B8%8Bthis%E6%8C%87%E9%92%88%E5%8F%8A%E5%85%B6%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E3%80%82"><span class="nav-number">7.</span> <span class="nav-text">请讲一下this指针及其如何使用。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E6%98%AF%E5%90%A6%E5%8F%AF%E4%BB%A5%E9%87%8D%E8%BD%BD%EF%BC%9F%E4%B8%8D%E5%90%8C%E4%BD%9C%E7%94%A8%E5%9F%9F%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%90%8D%E7%A7%B0%E5%92%8C%E5%8F%82%E6%95%B0%E5%AE%8C%E5%85%A8%E7%9B%B8%E5%90%8C%E7%9A%84%E4%B8%A4%E4%B8%AA%E5%87%BD%E6%95%B0%EF%BC%8C%E6%98%AF%E4%B8%8D%E6%98%AF%E9%87%8D%E8%BD%BD%EF%BC%9F"><span class="nav-number">8.</span> <span class="nav-text">构造函数是否可以重载？不同作用域中的函数名称和参数完全相同的两个函数，是不是重载？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E7%BB%A7%E6%89%BF%E7%9A%84%E6%96%B9%E5%BC%8F%E5%88%86%E4%B8%BA%E5%93%AA%E5%87%A0%E7%A7%8D%EF%BC%9F%E8%AF%B7%E8%AF%B4%E6%98%8E%EF%BC%8C%E4%BD%BF%E7%94%A8%E6%B4%BE%E7%94%9F%E7%B1%BB%E5%AE%9A%E4%B9%89%E4%B8%80%E4%B8%AA%E5%AF%B9%E8%B1%A1%E6%97%B6%EF%BC%8C%E5%9F%BA%E7%B1%BB%E5%92%8C%E6%B4%BE%E7%94%9F%E7%B1%BB%E7%9A%84%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E7%9A%84%E8%B0%83%E7%94%A8%E9%A1%BA%E5%BA%8F%EF%BC%9B%E8%AF%A5%E5%AF%B9%E8%B1%A1%E6%B6%88%E4%BA%A1%E6%97%B6%EF%BC%8C%E5%9F%BA%E7%B1%BB%E5%92%8C%E6%B4%BE%E7%94%9F%E7%B1%BB%E7%9A%84%E6%9E%90%E6%9E%84%E5%87%BD%E6%95%B0%E7%9A%84%E8%B0%83%E7%94%A8%E9%A1%BA%E5%BA%8F%E3%80%82%E6%9E%90%E6%9E%84%E5%87%BD%E6%95%B0%E7%9A%84%E5%87%BD%E6%95%B0%E5%90%8D%E5%A6%82%E4%BD%95%E5%86%99%EF%BC%9F"><span class="nav-number">9.</span> <span class="nav-text">C++继承的方式分为哪几种？请说明，使用派生类定义一个对象时，基类和派生类的构造函数的调用顺序；该对象消亡时，基类和派生类的析构函数的调用顺序。析构函数的函数名如何写？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B7%E8%AE%B2%E5%87%BA%E4%BB%A5%E4%B8%8B%E4%BB%A3%E7%A0%81%E7%9A%84%E8%BE%93%E5%87%BA%E7%BB%93%E6%9E%9C%E3%80%82%E8%BE%93%E5%87%BA%E7%BB%93%E6%9E%9C%E6%98%AF%E5%90%A6%E7%AC%A6%E5%90%88%E9%A2%84%E6%9C%9F%EF%BC%9F%E5%A6%82%E6%9E%9C%E4%B8%8D%E7%AC%A6%E5%90%88%EF%BC%8C%E8%AF%B7%E5%AF%B9%E4%BB%A5%E4%B8%8B%E5%87%BD%E6%95%B0%E8%BF%9B%E8%A1%8C%E6%94%B9%E9%80%A0%E3%80%82%E8%AF%B7%E8%AE%B2%E5%87%BAC-%E6%98%AF%E9%80%9A%E8%BF%87%E4%BB%80%E4%B9%88%E6%9C%BA%E5%88%B6%E5%AE%9E%E7%8E%B0%E5%A4%9A%E6%80%81%E7%9A%84%E3%80%82"><span class="nav-number">10.</span> <span class="nav-text">请讲出以下代码的输出结果。输出结果是否符合预期？如果不符合，请对以下函数进行改造。请讲出C++是通过什么机制实现多态的。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B7%E8%A7%A3%E9%87%8AC-%E4%B8%AD%E6%B5%85%E6%8B%B7%E8%B4%9D%E5%92%8C%E6%B7%B1%E6%8B%B7%E8%B4%9D%E7%9A%84%E5%8C%BA%E5%88%AB%E3%80%82"><span class="nav-number">11.</span> <span class="nav-text">请解释C++中浅拷贝和深拷贝的区别。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B7%E8%AF%B4%E6%98%8EC-%E4%B8%AD%E7%9A%84%E6%A8%A1%E6%9D%BF%E7%B1%BB%E5%88%AB%EF%BC%8C%E4%BD%BF%E7%94%A8%E6%A8%A1%E6%9D%BF%E7%9A%84%E5%A5%BD%E5%A4%84%EF%BC%8C%E4%BD%BF%E7%94%A8%E6%A8%A1%E6%9D%BF%E6%98%AF%E8%A6%81%E7%94%A8%E5%88%B0%E5%93%AA%E4%B8%AA%E5%85%B3%E9%94%AE%E5%AD%97%E3%80%82"><span class="nav-number">12.</span> <span class="nav-text">请说明C++中的模板类别，使用模板的好处，使用模板是要用到哪个关键字。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B7%E8%AF%B4%E6%98%8E%E4%BB%A5%E4%B8%8B%E4%BB%A3%E7%A0%81%E4%B8%AD3%E4%B8%AAconst%E5%90%84%E8%87%AA%E7%9A%84%E4%BD%9C%E7%94%A8%E3%80%82"><span class="nav-number">13.</span> <span class="nav-text">请说明以下代码中3个const各自的作用。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E6%9C%89%E5%93%AA%E4%BA%9B%E4%B8%B4%E6%97%B6%E5%8F%98%E9%87%8F"><span class="nav-number">14.</span> <span class="nav-text">C++有哪些临时变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A6%81%E8%AE%BF%E9%97%AE%E5%AE%B9%E5%99%A8%E7%9A%84%E5%85%83%E7%B4%A0%EF%BC%8C%E9%9C%80%E8%A6%81%E9%80%9A%E8%BF%87%E4%BB%80%E4%B9%88%EF%BC%9F%E6%9C%89%E5%93%AA%E4%BA%9B%E7%B1%BB%E5%9E%8B%EF%BC%9F"><span class="nav-number">15.</span> <span class="nav-text">要访问容器的元素，需要通过什么？有哪些类型？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B7%E8%AE%B2%E5%87%BASTL%E4%B8%ADvector%E3%80%81map%E3%80%81unordered-map%E7%9A%84%E7%94%A8%E9%80%94%E3%80%82"><span class="nav-number">16.</span> <span class="nav-text">请讲出STL中vector、map、unordered_map的用途。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E5%8D%95%E5%90%91%E9%93%BE%E8%A1%A8%EF%BC%8C%E8%A6%81%E6%B1%82%E5%AE%9E%E7%8E%B0%E5%A2%9E%E5%8A%A0%E5%85%83%E7%B4%A0%E3%80%81%E8%8E%B7%E5%BE%97%E5%85%83%E7%B4%A0%E3%80%81%E5%BC%B9%E5%87%BA%E5%85%83%E7%B4%A0%E7%9A%84%E5%8A%9F%E8%83%BD%E3%80%82"><span class="nav-number">17.</span> <span class="nav-text">用C++实现一个单向链表，要求实现增加元素、获得元素、弹出元素的功能。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E5%BF%AB%E6%8E%92%E3%80%82"><span class="nav-number">18.</span> <span class="nav-text">用C++实现快排。</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="王天阳"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">王天阳</p>
+  <div class="site-description" itemprop="description">学习｜记录｜心情</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+
+
+
+  <div class="links-of-blogroll motion-element links-of-blogroll-block">
+    <div class="links-of-blogroll-title">
+      <!-- modify icon to fire by szw -->
+      <i class="fa fa-history fa-" aria-hidden="true"></i>
+      近期文章
+    </div>
+    <ul class="links-of-blogroll-list">
+      
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">王天阳</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">447k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">6:47</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'dPQ0eYKJKl0nx6N1Qv9srFwG-gzGzoHsz',
+      appKey     : 'SsmzAdYldap25VnTu0wf1AlJ',
+      placeholder: "你说，我在听",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+  <script src="/js/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+  
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/assets/hijiki.model.json"},"display":{"position":"right","width":145,"height":315},"mobile":{"show":true,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.8},"log":false});</script></body>
+</html>

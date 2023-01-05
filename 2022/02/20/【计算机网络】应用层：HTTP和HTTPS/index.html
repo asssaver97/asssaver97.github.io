@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/w-solid.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/w-solid.svg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/w-solid.svg">
+  <link rel="mask-icon" href="/images/w-solid.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wangtianyang.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="HTTP协议的特点HTTP协议客户端请求request消息包括以下格式：请求行（request line）、请求头部（header）、空行、请求数据；  服务端响应response也由四个部分组成，分别是：响应行、响应头、空行、响应体。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【计算机网络】应用层：HTTP和HTTPS">
+<meta property="og:url" content="http://wangtianyang.com/2022/02/20/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91%E5%BA%94%E7%94%A8%E5%B1%82%EF%BC%9AHTTP%E5%92%8CHTTPS/index.html">
+<meta property="og:site_name" content="王天阳的个人博客">
+<meta property="og:description" content="HTTP协议的特点HTTP协议客户端请求request消息包括以下格式：请求行（request line）、请求头部（header）、空行、请求数据；  服务端响应response也由四个部分组成，分别是：响应行、响应头、空行、响应体。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://wangtianyang.com/images/http%E7%BB%93%E6%9E%84.png">
+<meta property="article:published_time" content="2022-02-20T07:57:17.000Z">
+<meta property="article:modified_time" content="2023-01-05T08:03:47.030Z">
+<meta property="article:author" content="王天阳">
+<meta property="article:tag" content="八股文">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wangtianyang.com/images/http%E7%BB%93%E6%9E%84.png">
+
+<link rel="canonical" href="http://wangtianyang.com/2022/02/20/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91%E5%BA%94%E7%94%A8%E5%B1%82%EF%BC%9AHTTP%E5%92%8CHTTPS/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>【计算机网络】应用层：HTTP和HTTPS | 王天阳的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">王天阳的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-movies">
+
+    <a href="/movies/" rel="section"><i class="fa fa-film fa-fw"></i>观影</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://wangtianyang.com/2022/02/20/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91%E5%BA%94%E7%94%A8%E5%B1%82%EF%BC%9AHTTP%E5%92%8CHTTPS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="王天阳">
+      <meta itemprop="description" content="学习｜记录｜心情">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王天阳的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【计算机网络】应用层：HTTP和HTTPS
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-02-20 15:57:17" itemprop="dateCreated datePublished" datetime="2022-02-20T15:57:17+08:00">2022-02-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-01-05 16:03:47" itemprop="dateModified" datetime="2023-01-05T16:03:47+08:00">2023-01-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/02/20/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91%E5%BA%94%E7%94%A8%E5%B1%82%EF%BC%9AHTTP%E5%92%8CHTTPS/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/02/20/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91%E5%BA%94%E7%94%A8%E5%B1%82%EF%BC%9AHTTP%E5%92%8CHTTPS/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="HTTP协议的特点"><a href="#HTTP协议的特点" class="headerlink" title="HTTP协议的特点"></a>HTTP协议的特点</h2><p>HTTP协议客户端请求request消息包括以下格式：请求行（request line）、请求头部（header）、空行、请求数据；</p>
+<p><img src="/images/http结构.png" alt=""></p>
+<p>服务端响应response也由四个部分组成，分别是：响应行、响应头、空行、响应体。<br><span id="more"></span></p>
+<p>请求头部字段包括：</p>
+<ul>
+<li>Accept：能够接受的回应内容类型</li>
+<li>Accept-Charset：能够接受的字符集</li>
+<li>Accept-Encoding：能够接受的编码方式列表</li>
+<li>Connection：该浏览器想要优先使用的连接类型</li>
+<li>Date：发送该消息的日期和时间(按照 RFC 7231 中定义的”超文本传输协议日期”格式来发送)</li>
+<li>Host：服务器的域名(用于虚拟主机 )，以及服务器所监听的传输控制协议端口号。如果所请求的端口是对应的服务的标准端口，则端口号可被省略</li>
+<li>……</li>
+</ul>
+<p>响应头部字段包括：</p>
+<ul>
+<li>Age：这个对象在代理缓存中存在的时间，以秒为单位</li>
+<li>Access-Control-Allow-Origin：指定哪些网站可参与到跨来源资源共享过程中</li>
+<li>Accept-Patch：指定服务器支持的文件格式类型。</li>
+<li>Date</li>
+<li>Allow：对于特定资源有效的动作。针对HTTP/405这一错误代码而使用</li>
+<li>Connection</li>
+<li>……</li>
+</ul>
+<h3 id="HTTP请求方法"><a href="#HTTP请求方法" class="headerlink" title="HTTP请求方法"></a>HTTP请求方法</h3><p>HTTP协议定义了多种请求方式，具体如下：<br>GET：<strong>获取资源</strong>，用来请求访问已被URI（统一资源标志符，和URL是包含和被包含的关系，URL是最常见的URI）识别的资源。<br>POST：用来<strong>传输实体的主体</strong>，虽然GET也可以实现，但是一般不用。<br>PUT：<strong>传输文件</strong>。但是鉴于PUT方法自身不带验证机制，任何人都可以上传文件，存在安全性问题，因此一般网站都不采用该方法。<br>HEAD：<strong>获得报文首部</strong>。和GET请求一样，只是不返回报文主体部分。<br>DELETE：<strong>删除文件</strong>。同样不带验证机制，存在安全性问题。<br>OPTIONS：<strong>询问指定的请求URI支持哪些方法</strong>。<br>TRACE：<strong>追踪路径</strong>，让Web服务器将之前的请求通信环回给客户端的方法。<br>CONNECT：要求在<strong>与代理服务器通信时建立隧道</strong>，实现隧道协议进行TCP通信。</p>
+<h2 id="HTTP和HTTPS有什么区别？"><a href="#HTTP和HTTPS有什么区别？" class="headerlink" title="HTTP和HTTPS有什么区别？"></a>HTTP和HTTPS有什么区别？</h2><ol>
+<li>端口不同：HTTP使用的是80端口，HTTPS使用443端口；</li>
+<li>HTTP（超文本传输协议）信息是明文传输，HTTPS运行在SSL(Secure Socket Layer)之上，添加了加密和认证机制，更加安全；</li>
+<li>HTTPS由于加密解密会带来更大的CPU和内存开销；</li>
+<li>HTTPS通信需要证书，一般需要向证书颁发机构（CA）购买</li>
+</ol>
+<h2 id="Https的连接过程（即SSL建立连接过程）？"><a href="#Https的连接过程（即SSL建立连接过程）？" class="headerlink" title="Https的连接过程（即SSL建立连接过程）？"></a>Https的连接过程（即SSL建立连接过程）？</h2><ol>
+<li>客户端向服务器发送请求，同时发送客户端支持的一套加密规则（包括对称加密、非对称加密、摘要算法）；</li>
+<li>服务器从中选出一组加密算法与HASH算法，并将自己的身份信息以证书的形式发回给浏览器。证书里面包含了网站地址，加密公钥（用于非对称加密），以及证书的颁发机构等信息（证书中的私钥只能用于服务器端进行解密）；</li>
+<li>客户端验证服务器的合法性，包括：证书是否过期，CA（证书颁发机构） 是否可靠，发行者证书的公钥能否正确解开服务器证书的“发行者的数字签名”，服务器证书上的域名是否和服务器的实际域名相匹配；</li>
+<li>如果证书受信任，或者用户接收了不受信任的证书，浏览器会生成一个随机密钥（用于对称算法），并用服务器提供的公钥加密（采用非对称算法对密钥加密）；使用Hash算法对握手消息进行摘要计算，并对摘要使用之前产生的密钥加密（对称算法）；将加密后的随机密钥和摘要一起发送给服务器；</li>
+<li>服务器使用自己的私钥解密，得到对称加密的密钥，用这个密钥解密出Hash摘要值，并验证握手消息是否一致；如果一致，服务器使用对称加密的密钥加密握手消息发给浏览器；</li>
+<li>浏览器解密并验证摘要，若一致，则握手结束。之后的数据传送都使用对称加密的密钥进行加密。<br>总结：<strong>非对称加密算法用于在握手过程中加密生成的密码；对称加密算法用于对真正传输的数据进行加密；HASH算法用于验证数据的完整性。</strong></li>
+</ol>
+<h2 id="怎么确定用HTTP还是HTTPS？你访问的网站是如何自动切换到-HTTPS-的？"><a href="#怎么确定用HTTP还是HTTPS？你访问的网站是如何自动切换到-HTTPS-的？" class="headerlink" title="怎么确定用HTTP还是HTTPS？你访问的网站是如何自动切换到 HTTPS 的？"></a>怎么确定用HTTP还是HTTPS？你访问的网站是如何自动切换到 HTTPS 的？</h2><p>一种是原始的302跳转，服务器把所有的HTTP流量跳转到HTTPS。但这样有一个漏洞，就是中间人可能在第一次访问站点的时候就劫持。解决方法是引入HSTS （HTTP 严格传输安全，HTTP Strict Transport Security）机制，用户浏览器在访问站点的时候强制使用HTTPS。</p>
+<blockquote>
+<p>302重定向又称之为暂时性转移(Temporarily Moved )，英文名称：302 redirect。 也被认为是暂时重定向（temporary redirect）</p>
+</blockquote>
+<h2 id="HTTPS连接的时候，怎么确定收到的包是服务器发来的（中间人攻击）？"><a href="#HTTPS连接的时候，怎么确定收到的包是服务器发来的（中间人攻击）？" class="headerlink" title="HTTPS连接的时候，怎么确定收到的包是服务器发来的（中间人攻击）？"></a>HTTPS连接的时候，怎么确定收到的包是服务器发来的（中间人攻击）？</h2><p>攻击者在传输过程中伪造服务器的证书，将服务器的公钥替换成自己的公钥，但是对于客户端来说，如果中间人伪造了证书，在校验证书过程中会提示证书错误。</p>
+<p>HTTPS因为增加了CA证书，可以在会话前通过证书验证证明通信的彼此就是所声称的人，因此可以防范中间人攻击。这种防范中间人攻击的前提是在HTTPs协议的双向认证上。如果仅仅实现了HTTPs的单向认证，如不验证客户端，只验证服务器，这种情况下还是不能抵御中间人攻击的，这种情况下就会出现<strong>SSL剥离攻击（SSLTrip）</strong>和<strong>SSL劫持攻击</strong>。</p>
+<p>SSL剥离攻击剥离SSL协议，表现为用户和攻击者之间使用HTTP，攻击者和服务器之间使用https协议。</p>
+<blockquote>
+<p>如何防止SSL剥离攻击？可以（1）在服务器上开启HSTS，使服务器只接收使用HTTPS的连接。（2）将 HSTS 站点列表内置到浏览器中，这样只要浏览器离线判断该站点启用了 HSTS，就会跳过原先的 HTTP 重定向，直接发起 HTTPS 请求。</p>
+</blockquote>
+<p>SSL劫持攻击表现为用户和攻击者之间使用攻击者伪造的CA证书使用其https协议进行通信，（其中重要的步骤是把burpsuit的CA根证书导入用户浏览器，这样用户浏览器就能信任假CA发给中间人的证书(即信任中间人burpsuit)，建立客户端和中间人之间的会话信道）。而攻击者和服务器之间使用真正的CA证书创建的对称秘钥进行加密，攻击者收到客户端信息先用前者会话秘钥解密，再使用后者之间的会话秘钥加密。这样使得客户端和服务器都以为是和真正的对方通信。</p>
+<blockquote>
+<p>如何防止SSL劫持攻击？使用https双向认证</p>
+</blockquote>
+<h2 id="什么是对称加密、非对称加密？区别是什么？"><a href="#什么是对称加密、非对称加密？区别是什么？" class="headerlink" title="什么是对称加密、非对称加密？区别是什么？"></a>什么是对称加密、非对称加密？区别是什么？</h2><ul>
+<li>对称加密：加密和解密采用相同的密钥。如：DES、RC2、RC4</li>
+<li>非对称加密：需要两个密钥：公钥和私钥。如果用公钥加密，需要用私钥才能解密。如：RSA<br>区别：对称加密速度更快，通常用于大量数据的加密；非对称加密安全性更高（不需要传送私钥）</li>
+</ul>
+<h2 id="数字签名、报文摘要的原理"><a href="#数字签名、报文摘要的原理" class="headerlink" title="数字签名、报文摘要的原理"></a>数字签名、报文摘要的原理</h2><ul>
+<li>发送者A用私钥进行签名，接收者B用公钥验证签名。因为除A外没有人有私钥，所以B相信签名是来自A。A不可抵赖，B也不能伪造报文。</li>
+<li>摘要算法:MD5、SHA<blockquote>
+<p><strong>MD5信息摘要算法</strong>（英语：MD5 Message-Digest Algorithm），一种被广泛使用的密码散列函数，可以产生出一个128位（16字节）的散列值（hash value），用于确保信息传输完整一致</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="GET与POST的区别？"><a href="#GET与POST的区别？" class="headerlink" title="GET与POST的区别？"></a>GET与POST的区别？</h2><ol>
+<li>GET是幂等的，即读取同一个资源，总是得到相同的数据，POST不是幂等的；<blockquote>
+<p>幂等操作的特点是其任意多次执行所产生的影响均与一次执行的影响相同</p>
+</blockquote>
+</li>
+<li>GET一般用于从服务器获取资源，而POST有可能改变服务器上的资源；</li>
+<li>请求形式上：GET请求的数据附在URL之后，在HTTP请求头中；POST请求的数据在请求体中；</li>
+<li>安全性：GET请求可被缓存、收藏、保留到历史记录，且其请求数据明文出现在URL中。POST的参数不会被保存，安全性相对较高；</li>
+<li>GET只允许ASCII字符，POST对数据类型没有要求，也允许二进制数据；</li>
+<li>GET的长度有限制（操作系统或者浏览器），而POST数据大小无限制</li>
+</ol>
+<h2 id="Get和Head的区别"><a href="#Get和Head的区别" class="headerlink" title="Get和Head的区别"></a>Get和Head的区别</h2><p>HEAD和GET本质是一样的，区别在于HEAD不含有呈现数据，而仅仅是HTTP头信息。有的人可能觉得这个方法没什么用，其实不是这样的。想象一个业务情景：欲判断某个资源是否存在，我们通常使用GET，但这里用HEAD则意义更加明确。</p>
+<h2 id="Session与Cookie的区别？"><a href="#Session与Cookie的区别？" class="headerlink" title="Session与Cookie的区别？"></a>Session与Cookie的区别？</h2><p>Session是服务器端保持状态的方案，Cookie是客户端保持状态的方案</p>
+<p>Cookie保存在客户端本地，客户端请求服务器时会将Cookie一起提交；Session保存在服务端，通过检索Sessionid查看状态。保存Sessionid的方式可以采用Cookie，如果禁用了Cookie，可以使用URL重写机制（把会话ID保存在URL中）。</p>
+<blockquote>
+<p>由于HTTP协议是无状态的协议，所以服务端需要记录用户的状态时，就需要用某种机制来识具体的用户，这个机制就是Session。第一次创建Session的时候，服务端会在HTTP协议中告诉客户端，需要在 Cookie 里面记录一个Session ID，以后每次请求把这个会话ID发送到服务器，我就知道你是谁了。URL重写的技术来进行会话跟踪，URL后面都会被附加上一个诸如 sid=xxxxx 这样的参数，服务端据此来识别用户。Session是在服务端保存的一个数据结构，用来跟踪用户的状态；Cookie是客户端保存用户信息的一种机制，用来记录用户的一些信息，也是实现Session的一种方式。</p>
+</blockquote>
+<h2 id="从输入网址到获得页面的过程-包括DNS如何解析成IP-？"><a href="#从输入网址到获得页面的过程-包括DNS如何解析成IP-？" class="headerlink" title="从输入网址到获得页面的过程 (包括DNS如何解析成IP)？"></a>从输入网址到获得页面的过程 (包括DNS如何解析成IP)？</h2><ol>
+<li>浏览器查询 DNS，获取域名对应的IP地址:具体过程包括浏览器搜索自身的DNS缓存、搜索操作系统的DNS缓存、读取本地的Host文件和向本地DNS服务器进行查询等。对于向本地DNS服务器进行查询，如果要查询的域名包含在本地配置区域资源中，则返回解析结果给客户机，完成域名解析(此解析具有权威性)；如果要查询的域名不由本地DNS服务器区域解析，但该服务器已缓存了此网址映射关系，则调用这个IP地址映射，完成域名解析（此解析不具有权威性）。如果本地域名服务器并未缓存该网址映射关系，那么将根据其设置发起递归查询或者迭代查询；</li>
+<li>浏览器获得域名对应的IP地址以后，浏览器向服务器请求建立链接，发起三次握手；</li>
+<li>TCP/IP链接建立起来后，浏览器向服务器发送HTTP请求；</li>
+<li>服务器接收到这个请求，并根据路径参数映射到特定的请求处理器进行处理，并将处理结果及相应的视图返回给浏览器；</li>
+<li>浏览器解析并渲染视图，若遇到对js文件、css文件及图片等静态资源的引用，则重复上述步骤并向服务器请求这些资源；<blockquote>
+<p>CSS 中的“样式”就是指外观；JavaScript 是一种脚本语言，它在网页中的作用是控制 HTML 中的每一个元素</p>
+</blockquote>
+</li>
+<li>浏览器根据其请求到的资源、数据渲染页面，最终向用户呈现一个完整的页面。</li>
+</ol>
+<h2 id="全球一共有多少台根域名服务器？"><a href="#全球一共有多少台根域名服务器？" class="headerlink" title="全球一共有多少台根域名服务器？"></a>全球一共有多少台根域名服务器？</h2><p>全球只有13台（这13台IPv4根域名服务器名字分别为“A”至“M”），1个为主根服务器在美国，由美国互联网机构Network Solutions运作。其余12个均为辅根服务器，其中9个在美国，2个在欧洲(位于英国和瑞典)，1个在亚洲(位于日本)。</p>
+<h2 id="HTTP请求有哪些常见状态码？"><a href="#HTTP请求有哪些常见状态码？" class="headerlink" title="HTTP请求有哪些常见状态码？"></a>HTTP请求有哪些常见状态码？</h2><p>HTTP 状态码由三个十进制数字组成，第一个十进制数字定义了状态码的类型。响应分为五类：信息响应(100–199)，成功响应(200–299)，重定向(300–399)，客户端错误(400–499)和服务器错误 (500–599)：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:left">分类</th>
+<th style="text-align:left">分类描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">1xx</td>
+<td style="text-align:left">信息，服务器收到请求，需要请求者继续执行操作</td>
+</tr>
+<tr>
+<td style="text-align:left">2xx</td>
+<td style="text-align:left">成功，操作被成功接收并处理</td>
+</tr>
+<tr>
+<td style="text-align:left">3xx</td>
+<td style="text-align:left">重定向，需要进一步的操作以完成请求</td>
+</tr>
+<tr>
+<td style="text-align:left">4xx</td>
+<td style="text-align:left">客户端错误，请求包含语法错误或无法完成请求</td>
+</tr>
+<tr>
+<td style="text-align:left">5xx</td>
+<td style="text-align:left">服务器错误，服务器在处理请求的过程中发生了错误</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>HTTP状态码列表：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:left">状态码</th>
+<th style="text-align:left">状态码英文名称</th>
+<th style="text-align:left">中文描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">100</td>
+<td style="text-align:left">Continue</td>
+<td style="text-align:left">继续。客户端应继续其请求</td>
+</tr>
+<tr>
+<td style="text-align:left">101</td>
+<td style="text-align:left">Switching Protocols</td>
+<td style="text-align:left">切换协议。服务器根据客户端的请求切换协议。只能切换到更高级的协议，例如，切换到HTTP的新版本协议</td>
+</tr>
+<tr>
+<td style="text-align:left">200</td>
+<td style="text-align:left">OK</td>
+<td style="text-align:left">请求成功。一般用于GET与POST请求</td>
+</tr>
+<tr>
+<td style="text-align:left">201</td>
+<td style="text-align:left">Created</td>
+<td style="text-align:left">已创建。成功请求并创建了新的资源</td>
+</tr>
+<tr>
+<td style="text-align:left">202</td>
+<td style="text-align:left">Accepted</td>
+<td style="text-align:left">已接受。已经接受请求，但未处理完成</td>
+</tr>
+<tr>
+<td style="text-align:left">203</td>
+<td style="text-align:left">Non-Authoritative Information</td>
+<td style="text-align:left">非授权信息。请求成功。但返回的meta信息不在原始的服务器，而是一个副本</td>
+</tr>
+<tr>
+<td style="text-align:left">204</td>
+<td style="text-align:left">No Content</td>
+<td style="text-align:left">无内容。服务器成功处理，但未返回内容。在未更新网页的情况下，可确保浏览器继续显示当前文档</td>
+</tr>
+<tr>
+<td style="text-align:left">205</td>
+<td style="text-align:left">Reset Content</td>
+<td style="text-align:left">重置内容。服务器处理成功，用户终端（例如：浏览器）应重置文档视图。可通过此返回码清除浏览器的表单域</td>
+</tr>
+<tr>
+<td style="text-align:left">206</td>
+<td style="text-align:left">Partial Content</td>
+<td style="text-align:left">部分内容。服务器成功处理了部分GET请求</td>
+</tr>
+<tr>
+<td style="text-align:left">300</td>
+<td style="text-align:left">Multiple Choices</td>
+<td style="text-align:left">多种选择。请求的资源可包括多个位置，相应可返回一个资源特征与地址的列表用于用户终端（例如：浏览器）选择</td>
+</tr>
+<tr>
+<td style="text-align:left">301</td>
+<td style="text-align:left">Moved Permanently</td>
+<td style="text-align:left">永久移动。请求的资源已被永久的移动到新URI，返回信息会包括新的URI，浏览器会自动定向到新URI。今后任何新的请求都应使用新的URI代替</td>
+</tr>
+<tr>
+<td style="text-align:left">302</td>
+<td style="text-align:left">Found</td>
+<td style="text-align:left">临时移动。与301类似。但资源只是临时被移动。客户端应继续使用原有URI</td>
+</tr>
+<tr>
+<td style="text-align:left">303</td>
+<td style="text-align:left">See Other</td>
+<td style="text-align:left">查看其它地址。与301类似。使用GET和POST请求查看</td>
+</tr>
+<tr>
+<td style="text-align:left">304</td>
+<td style="text-align:left">Not Modified</td>
+<td style="text-align:left">未修改。所请求的资源未修改，服务器返回此状态码时，不会返回任何资源。客户端通常会缓存访问过的资源，通过提供一个头信息指出客户端希望只返回在指定日期之后修改的资源</td>
+</tr>
+<tr>
+<td style="text-align:left">305</td>
+<td style="text-align:left">Use Proxy</td>
+<td style="text-align:left">使用代理。所请求的资源必须通过代理访问</td>
+</tr>
+<tr>
+<td style="text-align:left">306</td>
+<td style="text-align:left">Unused</td>
+<td style="text-align:left">已经被废弃的HTTP状态码</td>
+</tr>
+<tr>
+<td style="text-align:left">307</td>
+<td style="text-align:left">Temporary Redirect</td>
+<td style="text-align:left">临时重定向。与302类似。使用GET请求重定向</td>
+</tr>
+<tr>
+<td style="text-align:left">400</td>
+<td style="text-align:left">Bad Request</td>
+<td style="text-align:left">客户端请求的语法错误，服务器无法理解</td>
+</tr>
+<tr>
+<td style="text-align:left">401</td>
+<td style="text-align:left">Unauthorized</td>
+<td style="text-align:left">请求要求用户的身份认证</td>
+</tr>
+<tr>
+<td style="text-align:left">402</td>
+<td style="text-align:left">Payment Required</td>
+<td style="text-align:left">保留，将来使用</td>
+</tr>
+<tr>
+<td style="text-align:left">403</td>
+<td style="text-align:left">Forbidden</td>
+<td style="text-align:left">服务器理解请求客户端的请求，但是拒绝执行此请求</td>
+</tr>
+<tr>
+<td style="text-align:left">404</td>
+<td style="text-align:left">Not Found</td>
+<td style="text-align:left">服务器无法根据客户端的请求找到资源（网页）。通过此代码，网站设计人员可设置”您所请求的资源无法找到”的个性页面</td>
+</tr>
+<tr>
+<td style="text-align:left">405</td>
+<td style="text-align:left">Method Not Allowed</td>
+<td style="text-align:left">客户端请求中的方法被禁止</td>
+</tr>
+<tr>
+<td style="text-align:left">406</td>
+<td style="text-align:left">Not Acceptable</td>
+<td style="text-align:left">服务器无法根据客户端请求的内容特性完成请求</td>
+</tr>
+<tr>
+<td style="text-align:left">407</td>
+<td style="text-align:left">Proxy Authentication Required</td>
+<td style="text-align:left">请求要求代理的身份认证，与401类似，但请求者应当使用代理进行授权</td>
+</tr>
+<tr>
+<td style="text-align:left">408</td>
+<td style="text-align:left">Request Time-out</td>
+<td style="text-align:left">服务器等待客户端发送的请求时间过长，超时</td>
+</tr>
+<tr>
+<td style="text-align:left">409</td>
+<td style="text-align:left">Conflict</td>
+<td style="text-align:left">服务器完成客户端的 PUT 请求时可能返回此代码，服务器处理请求时发生了冲突</td>
+</tr>
+<tr>
+<td style="text-align:left">410</td>
+<td style="text-align:left">Gone</td>
+<td style="text-align:left">客户端请求的资源已经不存在。410不同于404，如果资源以前有现在被永久删除了可使用410代码，网站设计人员可通过301代码指定资源的新位置</td>
+</tr>
+<tr>
+<td style="text-align:left">411</td>
+<td style="text-align:left">Length Required</td>
+<td style="text-align:left">服务器无法处理客户端发送的不带Content-Length的请求信息</td>
+</tr>
+<tr>
+<td style="text-align:left">412</td>
+<td style="text-align:left">Precondition Failed</td>
+<td style="text-align:left">客户端请求信息的先决条件错误</td>
+</tr>
+<tr>
+<td style="text-align:left">413</td>
+<td style="text-align:left">Request Entity Too Large</td>
+<td style="text-align:left">由于请求的实体过大，服务器无法处理，因此拒绝请求。为防止客户端的连续请求，服务器可能会关闭连接。如果只是服务器暂时无法处理，则会包含一个Retry-After的响应信息</td>
+</tr>
+<tr>
+<td style="text-align:left">414</td>
+<td style="text-align:left">Request-URI Too Large</td>
+<td style="text-align:left">请求的URI过长（URI通常为网址），服务器无法处理</td>
+</tr>
+<tr>
+<td style="text-align:left">415</td>
+<td style="text-align:left">Unsupported Media Type</td>
+<td style="text-align:left">服务器无法处理请求附带的媒体格式</td>
+</tr>
+<tr>
+<td style="text-align:left">416</td>
+<td style="text-align:left">Requested range not satisfiable</td>
+<td style="text-align:left">客户端请求的范围无效</td>
+</tr>
+<tr>
+<td style="text-align:left">417</td>
+<td style="text-align:left">Expectation Failed</td>
+<td style="text-align:left">服务器无法满足Expect的请求头信息</td>
+</tr>
+<tr>
+<td style="text-align:left">500</td>
+<td style="text-align:left">Internal Server Error</td>
+<td style="text-align:left">服务器内部错误，无法完成请求</td>
+</tr>
+<tr>
+<td style="text-align:left">501</td>
+<td style="text-align:left">Not Implemented</td>
+<td style="text-align:left">服务器不支持请求的功能，无法完成请求</td>
+</tr>
+<tr>
+<td style="text-align:left">502</td>
+<td style="text-align:left">Bad Gateway</td>
+<td style="text-align:left">作为网关或者代理工作的服务器尝试执行请求时，从远程服务器接收到了一个无效的响应</td>
+</tr>
+<tr>
+<td style="text-align:left">503</td>
+<td style="text-align:left">Service Unavailabe</td>
+<td style="text-align:left">由于超载或系统维护，服务器暂时的无法处理客户端的请求。延时的长度可包含在服务器的Retry-After头信息中</td>
+</tr>
+<tr>
+<td style="text-align:left">504</td>
+<td style="text-align:left">Gateway Time-out</td>
+<td style="text-align:left">充当网关或代理的服务器，未及时从远端服务器获取请求</td>
+</tr>
+<tr>
+<td style="text-align:left">505</td>
+<td style="text-align:left">HTTP Version not supported</td>
+<td style="text-align:left">服务器不支持请求的HTTP协议的版本，无法完成处理</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="什么是RIP-Routing-Information-Protocol-距离矢量路由协议-算法是什么？"><a href="#什么是RIP-Routing-Information-Protocol-距离矢量路由协议-算法是什么？" class="headerlink" title="什么是RIP (Routing Information Protocol, 距离矢量路由协议)? 算法是什么？"></a>什么是RIP (Routing Information Protocol, 距离矢量路由协议)? 算法是什么？</h2><p>每个路由器维护一张表，记录该路由器到其它网络的”跳数“，路由器到与其直接连接的网络的跳数是1，每多经过一个路由器跳数就加1；更新该表时和相邻路由器交换路由信息；路由器允许一个路径最多包含15个路由器，如果跳数为16，则不可达。交付数据报时优先选取距离最短的路径。<br>（PS：RIP是应用层协议：<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/19645407">https://www.zhihu.com/question/19645407</a> ）</p>
+<p><strong>优缺点</strong></p>
+<ul>
+<li>实现简单，开销小</li>
+<li>随着网络规模扩大开销也会增大；</li>
+<li>最大距离为15，限制了网络的规模；</li>
+<li>当网络出现故障时，要经过较长的时间才能将此信息传递到所有路由器</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%85%AB%E8%82%A1%E6%96%87/" rel="tag"># 八股文</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/02/20/%E3%80%90%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E3%80%91%E4%BC%A0%E8%BE%93%E5%B1%82%EF%BC%9ATCP%E5%92%8CUDP/" rel="prev" title="【计算机网络】传输层：TCP和UDP">
+      <i class="fa fa-chevron-left"></i> 【计算机网络】传输层：TCP和UDP
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/02/20/%E3%80%90LeetCode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0%E3%80%9195-%E4%B8%8D%E5%90%8C%E7%9A%84%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/" rel="next" title="【LeetCode刷题笔记】95.不同的二叉搜索树">
+      【LeetCode刷题笔记】95.不同的二叉搜索树 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP%E5%8D%8F%E8%AE%AE%E7%9A%84%E7%89%B9%E7%82%B9"><span class="nav-number">1.</span> <span class="nav-text">HTTP协议的特点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP%E8%AF%B7%E6%B1%82%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">HTTP请求方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP%E5%92%8CHTTPS%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">HTTP和HTTPS有什么区别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Https%E7%9A%84%E8%BF%9E%E6%8E%A5%E8%BF%87%E7%A8%8B%EF%BC%88%E5%8D%B3SSL%E5%BB%BA%E7%AB%8B%E8%BF%9E%E6%8E%A5%E8%BF%87%E7%A8%8B%EF%BC%89%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">Https的连接过程（即SSL建立连接过程）？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E7%A1%AE%E5%AE%9A%E7%94%A8HTTP%E8%BF%98%E6%98%AFHTTPS%EF%BC%9F%E4%BD%A0%E8%AE%BF%E9%97%AE%E7%9A%84%E7%BD%91%E7%AB%99%E6%98%AF%E5%A6%82%E4%BD%95%E8%87%AA%E5%8A%A8%E5%88%87%E6%8D%A2%E5%88%B0-HTTPS-%E7%9A%84%EF%BC%9F"><span class="nav-number">4.</span> <span class="nav-text">怎么确定用HTTP还是HTTPS？你访问的网站是如何自动切换到 HTTPS 的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTPS%E8%BF%9E%E6%8E%A5%E7%9A%84%E6%97%B6%E5%80%99%EF%BC%8C%E6%80%8E%E4%B9%88%E7%A1%AE%E5%AE%9A%E6%94%B6%E5%88%B0%E7%9A%84%E5%8C%85%E6%98%AF%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8F%91%E6%9D%A5%E7%9A%84%EF%BC%88%E4%B8%AD%E9%97%B4%E4%BA%BA%E6%94%BB%E5%87%BB%EF%BC%89%EF%BC%9F"><span class="nav-number">5.</span> <span class="nav-text">HTTPS连接的时候，怎么确定收到的包是服务器发来的（中间人攻击）？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E3%80%81%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%EF%BC%9F%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">6.</span> <span class="nav-text">什么是对称加密、非对称加密？区别是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%E3%80%81%E6%8A%A5%E6%96%87%E6%91%98%E8%A6%81%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">7.</span> <span class="nav-text">数字签名、报文摘要的原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GET%E4%B8%8EPOST%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">8.</span> <span class="nav-text">GET与POST的区别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Get%E5%92%8CHead%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">9.</span> <span class="nav-text">Get和Head的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Session%E4%B8%8ECookie%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">10.</span> <span class="nav-text">Session与Cookie的区别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E8%BE%93%E5%85%A5%E7%BD%91%E5%9D%80%E5%88%B0%E8%8E%B7%E5%BE%97%E9%A1%B5%E9%9D%A2%E7%9A%84%E8%BF%87%E7%A8%8B-%E5%8C%85%E6%8B%ACDNS%E5%A6%82%E4%BD%95%E8%A7%A3%E6%9E%90%E6%88%90IP-%EF%BC%9F"><span class="nav-number">11.</span> <span class="nav-text">从输入网址到获得页面的过程 (包括DNS如何解析成IP)？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A8%E7%90%83%E4%B8%80%E5%85%B1%E6%9C%89%E5%A4%9A%E5%B0%91%E5%8F%B0%E6%A0%B9%E5%9F%9F%E5%90%8D%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%9F"><span class="nav-number">12.</span> <span class="nav-text">全球一共有多少台根域名服务器？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP%E8%AF%B7%E6%B1%82%E6%9C%89%E5%93%AA%E4%BA%9B%E5%B8%B8%E8%A7%81%E7%8A%B6%E6%80%81%E7%A0%81%EF%BC%9F"><span class="nav-number">13.</span> <span class="nav-text">HTTP请求有哪些常见状态码？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFRIP-Routing-Information-Protocol-%E8%B7%9D%E7%A6%BB%E7%9F%A2%E9%87%8F%E8%B7%AF%E7%94%B1%E5%8D%8F%E8%AE%AE-%E7%AE%97%E6%B3%95%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">14.</span> <span class="nav-text">什么是RIP (Routing Information Protocol, 距离矢量路由协议)? 算法是什么？</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="王天阳"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">王天阳</p>
+  <div class="site-description" itemprop="description">学习｜记录｜心情</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+
+
+
+  <div class="links-of-blogroll motion-element links-of-blogroll-block">
+    <div class="links-of-blogroll-title">
+      <!-- modify icon to fire by szw -->
+      <i class="fa fa-history fa-" aria-hidden="true"></i>
+      近期文章
+    </div>
+    <ul class="links-of-blogroll-list">
+      
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">王天阳</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">447k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">6:47</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'dPQ0eYKJKl0nx6N1Qv9srFwG-gzGzoHsz',
+      appKey     : 'SsmzAdYldap25VnTu0wf1AlJ',
+      placeholder: "你说，我在听",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+  <script src="/js/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+  
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/assets/hijiki.model.json"},"display":{"position":"right","width":145,"height":315},"mobile":{"show":true,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.8},"log":false});</script></body>
+</html>

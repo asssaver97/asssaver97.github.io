@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/w-solid.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/w-solid.svg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/w-solid.svg">
+  <link rel="mask-icon" href="/images/w-solid.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wangtianyang.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="设计数据密集型应用-中文翻译 数据系统的基石可靠性、可扩展性、可维护性数据密集型应用通常由标准组件构建而成，标准组件提供了很多通用的功能；例如，许多应用程序都需要：  存储数据，以便自己或其他应用程序之后能再次找到 ——数据库（database） 记住开销昂贵操作的结果，加快读取速度——缓存（cache） 允许用户按关键字搜索数据，或以各种方式对数据进行过滤——搜索索引（search indexe">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【读书笔记】设计数据密集型应用">
+<meta property="og:url" content="http://wangtianyang.com/2022/09/02/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E8%AE%BE%E8%AE%A1%E6%95%B0%E6%8D%AE%E5%AF%86%E9%9B%86%E5%9E%8B%E5%BA%94%E7%94%A8/index.html">
+<meta property="og:site_name" content="王天阳的个人博客">
+<meta property="og:description" content="设计数据密集型应用-中文翻译 数据系统的基石可靠性、可扩展性、可维护性数据密集型应用通常由标准组件构建而成，标准组件提供了很多通用的功能；例如，许多应用程序都需要：  存储数据，以便自己或其他应用程序之后能再次找到 ——数据库（database） 记住开销昂贵操作的结果，加快读取速度——缓存（cache） 允许用户按关键字搜索数据，或以各种方式对数据进行过滤——搜索索引（search indexe">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-09-02T06:05:07.000Z">
+<meta property="article:modified_time" content="2023-01-05T08:03:47.032Z">
+<meta property="article:author" content="王天阳">
+<meta property="article:tag" content="读书笔记">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://wangtianyang.com/2022/09/02/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E8%AE%BE%E8%AE%A1%E6%95%B0%E6%8D%AE%E5%AF%86%E9%9B%86%E5%9E%8B%E5%BA%94%E7%94%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>【读书笔记】设计数据密集型应用 | 王天阳的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">王天阳的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-movies">
+
+    <a href="/movies/" rel="section"><i class="fa fa-film fa-fw"></i>观影</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://wangtianyang.com/2022/09/02/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E8%AE%BE%E8%AE%A1%E6%95%B0%E6%8D%AE%E5%AF%86%E9%9B%86%E5%9E%8B%E5%BA%94%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="王天阳">
+      <meta itemprop="description" content="学习｜记录｜心情">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王天阳的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【读书笔记】设计数据密集型应用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-09-02 14:05:07" itemprop="dateCreated datePublished" datetime="2022-09-02T14:05:07+08:00">2022-09-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-01-05 16:03:47" itemprop="dateModified" datetime="2023-01-05T16:03:47+08:00">2023-01-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/09/02/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E8%AE%BE%E8%AE%A1%E6%95%B0%E6%8D%AE%E5%AF%86%E9%9B%86%E5%9E%8B%E5%BA%94%E7%94%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/09/02/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E8%AE%BE%E8%AE%A1%E6%95%B0%E6%8D%AE%E5%AF%86%E9%9B%86%E5%9E%8B%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p><a target="_blank" rel="noopener" href="https://vonng.gitbooks.io/ddia-cn/content/">设计数据密集型应用-中文翻译</a></p>
+<h2 id="数据系统的基石"><a href="#数据系统的基石" class="headerlink" title="数据系统的基石"></a>数据系统的基石</h2><h3 id="可靠性、可扩展性、可维护性"><a href="#可靠性、可扩展性、可维护性" class="headerlink" title="可靠性、可扩展性、可维护性"></a>可靠性、可扩展性、可维护性</h3><p>数据密集型应用通常由标准组件构建而成，标准组件提供了很多通用的功能；例如，许多应用程序都需要：</p>
+<ul>
+<li>存储数据，以便自己或其他应用程序之后能再次找到 <strong><em>——数据库（database）</em></strong></li>
+<li>记住开销昂贵操作的结果，加快读取速度<strong><em>——缓存（cache）</em></strong></li>
+<li>允许用户按关键字搜索数据，或以各种方式对数据进行过滤<strong><em>——搜索索引（search indexes）</em></strong></li>
+<li>向其他进程发送消息，进行异步处理<strong><em>——流处理（stream processing）</em></strong></li>
+<li>定期处理累积的大批量数据<strong><em>——批处理（batch processing）</em></strong></li>
+</ul>
+<p>数据系统（data system）分为<strong>数据库、消息队列、缓存</strong>等，但是近年来边界越来越模糊，数据存储可以被当成消息队列用（Redis），消息队列则带有类似数据库的持久保证（Apache Kafka）。</p>
+<p>数据系统设计三大指标：</p>
+<ul>
+<li><p><strong>可靠性（Reliability）</strong></p>
+<p>系统在困境（adversity）（硬件故障、软件故障、人为错误）中仍可正常工作（正确完成功能，并能达到期望的性能水准）。</p>
+</li>
+<li><p><strong>可扩展性（Scalability）</strong></p>
+<p>有合理的办法应对系统的增长（数据量、流量、复杂性）。</p>
+</li>
+<li><p><strong>可维护性（Maintainability）</strong></p>
+<p>许多不同的人（工程师、运维）在不同的生命周期，都能高效地在系统上工作（使系统保持现有行为，并适应新的应用场景）。</p>
+<span id="more"></span>
+</li>
+</ul>
+<h4 id="可靠性"><a href="#可靠性" class="headerlink" title="可靠性"></a>可靠性</h4><p>人们对可靠软件的典型期望包括：</p>
+<ul>
+<li>应用程序表现出用户所期望的功能。</li>
+<li>允许用户犯错，允许用户以出乎意料的方式使用软件。</li>
+<li>在预期的负载和数据量下，性能满足要求。</li>
+<li>系统能防止未经授权的访问和滥用。</li>
+</ul>
+<h5 id="硬件故障"><a href="#硬件故障" class="headerlink" title="硬件故障"></a>硬件故障</h5><p>硬盘的平均无故障时间（MTTF mean time to failure） 约为10到50年。因此从数学期望上讲，在拥有10000个磁盘的存储集群上，平均每天会有1个磁盘出故障。</p>
+<p>为了减少系统的故障率，第一反应通常都是增加单个硬件的冗余度，例如：磁盘可以组建RAID，服务器可能有双路电源和热插拔CPU，数据中心可能有电池和柴油发电机作为后备电源，某个组件挂掉时冗余组件可以立刻接管。</p>
+<p>但是随着数据量和应用计算需求的增加，越来越多的应用开始大量使用机器，这会相应地增加硬件故障率。此外在一些云平台（如亚马逊网络服务（AWS, Amazon Web Services））中，虚拟机实例不可用却没有任何警告也是很常见的，<strong>因为云平台的设计就是优先考虑灵活性（flexibility）和弹性（elasticity），而不是单机可靠性</strong>。</p>
+<h5 id="软件错误"><a href="#软件错误" class="headerlink" title="软件错误"></a>软件错误</h5><p>包括：</p>
+<ul>
+<li>接受特定的错误输入，便导致所有应用服务器实例崩溃的BUG。例如2012年6月30日的闰秒，由于Linux内核中的一个错误，许多应用同时挂掉了。</li>
+<li>失控进程会占用一些共享资源，包括CPU时间、内存、磁盘空间或网络带宽。</li>
+<li>系统依赖的服务变慢，没有响应，或者开始返回错误的响应。</li>
+<li>级联故障，一个组件中的小故障触发另一个组件中的故障，进而触发更多的故障。</li>
+</ul>
+<p>解决方案：</p>
+<ul>
+<li>仔细考虑系统中的假设和交互；</li>
+<li>彻底的测试；</li>
+<li>进程隔离；</li>
+<li>允许进程崩溃并重启；</li>
+<li>测量、监控并分析生产环境中的系统行为。如果系统能够提供一些保证（例如在一个消息队列中，进入与发出的消息数量相等），那么系统就可以在运行时不断自检，并在出现差异（discrepancy）时报警。</li>
+</ul>
+<h5 id="人为错误"><a href="#人为错误" class="headerlink" title="人为错误"></a>人为错误</h5><p>一项关于大型互联网服务的研究发现，运维配置错误是导致服务中断的首要原因，而硬件故障（服务器或网络）仅导致了10-25％的服务中断。</p>
+<p>办法：</p>
+<ul>
+<li>以最小化犯错机会的方式设计系统。例如，精心设计的抽象、API和管理后台使做对事情更容易，搞砸事情更困难。但如果接口限制太多，人们就会忽略它们的好处而想办法绕开，很难正确把握这种微妙的平衡。</li>
+<li>将人们最容易犯错的地方与可能导致失效的地方解耦（decouple）。特别是提供一个功能齐全的非生产环境沙箱（sandbox），使人们可以在不影响真实用户的情况下，使用真实数据安全地探索和实验。</li>
+<li>在各个层次进行彻底的测试，从单元测试、全系统集成测试到手动测试。自动化测试易于理解，已经被广泛使用，特别适合用来覆盖正常情况中少见的边缘场景（corner case）。</li>
+<li>允许从人为错误中简单快速地恢复，以最大限度地减少失效情况带来的影响。 例如，快速回滚配置变更，分批发布新代码（以便任何意外错误只影响一小部分用户），并提供数据重算工具（以备旧的计算出错）。<br>配置详细和明确的监控，比如性能指标和错误率。 在其他工程学科中这指的是遥测（telemetry）。 （一旦火箭离开了地面，遥测技术对于跟踪发生的事情和理解失败是至关重要的。）监控可以向我们发出预警信号，并允许我们检查是否有任何地方违反了假设和约束。当出现问题时，指标数据对于问题诊断是非常宝贵的。</li>
+<li>良好的管理实践与充分的培训——一个复杂而重要的方面，但超出了本书的范围。</li>
+</ul>
+<h4 id="可扩展性"><a href="#可扩展性" class="headerlink" title="可扩展性"></a>可扩展性</h4><h5 id="描述负载"><a href="#描述负载" class="headerlink" title="描述负载"></a>描述负载</h5><p>负载可以用一些称为 负载参数（load parameters） 的数字来描述。参数的最佳选择取决于系统架构，它可能是每秒向Web服务器发出的请求、数据库中的读写比率、聊天室中同时活跃的用户数量、缓存命中率或其他东西。</p>
+<p>以推特为例。推特的两个主要业务是：</p>
+<ul>
+<li><p>发布推文</p>
+<p>用户可以向其粉丝发布新消息（平均 4.6k请求/秒，峰值超过 12k请求/秒）。</p>
+</li>
+<li><p>主页时间线</p>
+<p>用户可以查阅他们关注的人发布的推文（300k请求/秒）。</p>
+</li>
+</ul>
+<p>处理每秒12,000次写入（发推文的速率峰值）还是很简单的。然而推特的扩展性挑战并不是主要来自推特量，而是来自扇出<sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="扇出：从电子工程学中借用的术语，它描述了输入连接到另一个门输出的逻辑门数量。 输出需要提供足够的电流来驱动所有连接的输入。 在事务处理系统中，我们使用它来描述为了服务一个传入请求而需要执行其他服务的请求数量。 ">[1]</span></a></sup>（fan-out）——每个用户关注了很多人，也被很多人关注。</p>
+<p>大体上讲，这一对操作有两种实现方式。</p>
+<ol>
+<li>发布推文时，只需将新推文插入全局推文集合即可。当一个用户请求自己的主页时间线时，首先查找他关注的所有人，查询这些被关注用户发布的推文并按时间顺序合并。</li>
+<li>为每个用户的主页时间线维护一个缓存，就像每个用户的推文收件箱。 当一个用户发布推文时，查找所有关注该用户的人，并将新的推文插入到每个主页时间线缓存中。 因此读取主页时间线的请求开销很小，因为结果已经提前计算好了。</li>
+</ol>
+<p>推特现行方案是2+1：名流发推走1，普通用户发推走2。</p>
+<h5 id="描述性能"><a href="#描述性能" class="headerlink" title="描述性能"></a>描述性能</h5><p>一旦系统的负载被描述好，就可以研究当负载增加会发生什么。我们可以从两种角度来看：</p>
+<ul>
+<li>增加负载参数并保持系统资源（CPU、内存、网络带宽等）不变时，系统性能将受到什么影响？</li>
+<li>增加负载参数并希望保持性能不变时，需要增加多少系统资源？</li>
+</ul>
+<p>如何描述系统性能：</p>
+<p>对于Hadoop这样的批处理系统，通常关心的是<strong>吞吐量（throughput）</strong>，即每秒可以处理的记录数量，或者在特定规模数据集上运行作业的总时间iii。对于在线系统，通常更重要的是服务的<strong>响应时间（response time）</strong>，即客户端发送请求到接收响应之间的时间。</p>
+<p>对于响应时间，通常来说，比起平均值，我们用**百分位点（percentiles）会更好。​ 为了弄清异常值有多糟糕，可以看看更高的百分位点，例如第95、99和99.9百分位点（缩写为p95，p99和p999）。它们意味着95％，99％或99.9％的请求响应时间要比该阈值快，例如：如果第95百分位点响应时间是1.5秒，则意味着100个请求中的95个响应时间快于1.5秒，而100个请求中的5个响应时间超过1.5秒。</p>
+<p>响应时间的高百分位点（也称为<strong>尾部延迟（tail latencies）</strong>）非常重要，因为它们直接影响用户的服务体验。例如亚马逊在描述内部服务的响应时间要求时以99.9百分位点为准，即使它只影响一千个请求中的一个。这是因为请求响应最慢的客户往往也是数据最多的客户，也可以说是最有价值的客户 —— 因为他们掏钱了。</p>
+<h5 id="应对负载的方法"><a href="#应对负载的方法" class="headerlink" title="应对负载的方法"></a>应对负载的方法</h5><ul>
+<li><strong>纵向扩展（scaling up），也称垂直扩展（vertical scaling）</strong>：转向更强大的机器</li>
+<li><strong>横向扩展（scaling out），也称水平扩展（horizontal scaling）</strong>：将负载分布到多台小机器上</li>
+</ul>
+<h4 id="可维护性"><a href="#可维护性" class="headerlink" title="可维护性"></a>可维护性</h4><p>我们将特别关注软件系统的三个设计原则：</p>
+<ul>
+<li><p><strong>可操作性（Operability）</strong></p>
+<p>便于运维团队保持系统平稳运行。</p>
+</li>
+<li><p><strong>简单性（Simplicity）</strong></p>
+<p>从系统中消除尽可能多的复杂度（complexity），使新工程师也能轻松理解系统。（注意这和用户接口的简单性不一样。）</p>
+</li>
+<li><p><strong>可演化性（evolability）</strong></p>
+<p>使工程师在未来能轻松地对系统进行更改，当需求变化时为新应用场景做适配。也称为可扩展性（extensibility），可修改性（modifiability）或可塑性（plasticity）。</p>
+</li>
+</ul>
+<h4 id="本章小结"><a href="#本章小结" class="headerlink" title="本章小结"></a>本章小结</h4><p>可靠性（Reliability）意味着即使发生故障，系统也能正常工作。故障可能发生在硬件（通常是随机的和不相关的），软件（通常是系统性的Bug，很难处理），和人类（不可避免地时不时出错）。 容错技术 可以对终端用户隐藏某些类型的故障。</p>
+<p>​可扩展性（Scalability）意味着即使在负载增加的情况下也有保持性能的策略。为了讨论可扩展性，我们首先需要定量描述负载和性能的方法。我们简要了解了推特主页时间线的例子，介绍描述负载的方法，并将响应时间百分位点作为衡量性能的一种方式。在可扩展的系统中可以添加 处理容量（processing capacity） 以在高负载下保持可靠。</p>
+<p>​可维护性（Maintainability）有许多方面，但实质上是关于工程师和运维团队的生活质量的。良好的抽象可以帮助降低复杂度，并使系统易于修改和适应新的应用场景。良好的可操作性意味着对系统的健康状态具有良好的可见性，并拥有有效的管理手段。</p>
+<h3 id="数据模型与查询语言"><a href="#数据模型与查询语言" class="headerlink" title="数据模型与查询语言"></a>数据模型与查询语言</h3><h4 id="关系模型与文档模型"><a href="#关系模型与文档模型" class="headerlink" title="关系模型与文档模型"></a>关系模型与文档模型</h4><p>SQL基于Edgar Codd在1970年提出的关系模型：数据被组织成<strong>关系</strong>（SQL中称作<strong>表</strong>），其中每个关系是<strong>元组</strong>（SQL中称作<strong>行</strong>)的无序集合。</p>
+<h5 id="NoSQL的诞生"><a href="#NoSQL的诞生" class="headerlink" title="NoSQL的诞生"></a>NoSQL的诞生</h5><blockquote>
+<p>最初“NoSQL”只是一个醒目的Twitter标签，不涉及任何特定的技术，后来才被追述性地重新解释为Not Only SQL。</p>
+</blockquote>
+<p>采用NoSQL数据库的背后有几个驱动因素，其中包括：</p>
+<ul>
+<li>需要比关系数据库更好的可扩展性，包括非常大的数据集或非常高的写入吞吐量。</li>
+<li>相比商业数据库产品，免费和开源软件更受偏爱。</li>
+<li>关系模型不能很好地支持一些特殊的查询操作。</li>
+<li>受挫于关系模型的限制性，渴望一种更具多动态性与表现力的数据模型</li>
+</ul>
+<p>在可预见的未来，关系数据库似乎可能会继续与各种非关系数据库一起使用 - 这种想法有时也被称为<strong>混合持久化（polyglot persistence）</strong>。</p>
+<h5 id="对象关系不匹配"><a href="#对象关系不匹配" class="headerlink" title="对象关系不匹配"></a>对象关系不匹配</h5><p>目前大多数应用程序开发都使用面向对象的编程语言来开发，这导致了对SQL数据模型的普遍批评：如果数据存储在关系表中，那么需要一个笨拙的转换层，处于应用程序代码中的对象和表，行，列的数据库模型之间。模型之间的不连贯有时被称为<strong>阻抗不匹配（impedance mismatch）</strong><sup id="fnref:2"><a href="#fn:2" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="一个从电子学借用的术语。每个电路的输入和输出都有一定的阻抗（交流电阻）。当你将一个电路的输出连接到另一个电路的输入时，如果两个电路的输出和输入阻抗匹配，则连接上的功率传输将被最大化。阻抗不匹配会导致信号反射及其他问题">[2]</span></a></sup>。</p>
+<p>像ActiveRecord和Hibernate这样的<strong>对象关系映射（ORM object-relational mapping）</strong>框架可以减少这个转换层所需的样板代码的数量，但是它们不能完全隐藏这两个模型之间的差异。</p>
+<p>对于一个像简历这样自包含文档的数据结构而言，JSON表示是非常合适的。JSON比XML更简单。面向文档的数据库（如<strong>MongoDB</strong>，<strong>RethinkDB</strong>，<strong>CouchDB</strong>和<strong>Espresso</strong>）支持这种数据模型。</p>
+<h5 id="多对一和多对多的关系"><a href="#多对一和多对多的关系" class="headerlink" title="多对一和多对多的关系"></a>多对一和多对多的关系</h5><p>使用ID的好处是，ID对人类没有任何意义，因而永远不需要改变：ID可以保持不变，即使它标识的信息发生变化。任何对人类有意义的东西都可能需要在将来某个时候改变——如果这些信息被复制，所有的冗余副本都需要更新。这会导致写入开销，也存在不一致的风险（一些副本被更新了，还有些副本没有被更新）。去除此类重复是数据库<strong>规范化（normalization）</strong><sup id="fnref:3"><a href="#fn:3" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="关于关系模型的文献区分了几种不同的规范形式，但这些区别几乎没有实际意义。一个经验法则是，如果重复存储了可以存储在一个地方的值，则模式就不是规范化（normalized）的。">[3]</span></a></sup>的关键思想。</p>
+<p>不幸的是，对这些数据进行规范化需要多对一的关系（许多人生活在一个特定的地区，许多人在一个特定的行业工作），这与文档模型不太吻合。在关系数据库中，通过ID来引用其他表中的行是正常的，因为连接很容易。在文档数据库中，一对多树结构没有必要用连接，对连接的支持通常很弱。</p>
+<h4 id="文档数据库是否在重蹈覆辙？"><a href="#文档数据库是否在重蹈覆辙？" class="headerlink" title="文档数据库是否在重蹈覆辙？"></a>文档数据库是否在重蹈覆辙？</h4><p>如何最好地在数据库中表示多对多关系。有一个类似文档数据库而又古老的数据模型，称为<strong>层次模型（hierarchical model）</strong>，他也同文档数据库一样能良好处理一对多的关系，但是很难应对多对多的关系，并且不支持连接。当时人们提出了两种解决方案，分别是<strong>关系模型（relational model）（它变成了SQL，统治了世界）</strong>和<strong>网络模型（network model）</strong>（最初很受关注，但最终变得冷门）。</p>
+<h5 id="网络模型"><a href="#网络模型" class="headerlink" title="网络模型"></a>网络模型</h5><p>网络模型由一个称为数据系统语言会议（CODASYL）的委员会进行了标准化，并被数个不同的数据库商实现；它也被称为CODASYL模型。</p>
+<p>CODASYL模型是层次模型的推广。在层次模型的树结构中，每条记录只有一个父节点；在网络模式中，每条记录可能有多个父节点。</p>
+<p>网络模型中记录之间的链接不是外键，而更像编程语言中的指针（同时仍然存储在磁盘上）。访问记录的唯一方法是跟随从根记录起沿这些链路所形成的路径。这被称为<strong>访问路径（access path）</strong>。</p>
+<p>最简单的情况下，访问路径类似遍历链表：从列表头开始，每次查看一条记录，直到找到所需的记录。但在多对多关系的情况中，数条不同的路径可以到达相同的记录，网络模型的程序员必须跟踪这些不同的访问路径。</p>
+<h5 id="关系模型"><a href="#关系模型" class="headerlink" title="关系模型"></a>关系模型</h5><p>相比之下，关系模型做的就是将所有的数据放在光天化日之下：一个<strong>关系（表）</strong>只是一个<strong>元组（行）</strong>的集合，仅此而已。如果你想读取数据，它没有迷宫似的嵌套结构，也没有复杂的访问路径。你可以选中符合任意条件的行，读取表中的任何或所有行。你可以通过指定某些列作为匹配关键字来读取特定行。你可以在任何表中插入一个新的行，而不必担心与其他表的外键关系。</p>
+<h5 id="与文档数据库相比"><a href="#与文档数据库相比" class="headerlink" title="与文档数据库相比"></a>与文档数据库相比</h5><p>在一个方面，文档数据库还原为层次模型：在其父记录中存储嵌套记录，即一对多关系，而不是在单独的表中。</p>
+<p>但是，在表示多对一和多对多的关系时，关系数据库和文档数据库并没有根本的不同：在这两种情况下，相关项目都被一个唯一的标识符引用，这个标识符在关系模型中被称为外键，在文档模型中称为文档引用。该标识符在读取时通过连接或后续查询来解析。迄今为止，文档数据库没有走CODASYL的老路。</p>
+<h4 id="关系型数据库与文档数据库在今日的对比"><a href="#关系型数据库与文档数据库在今日的对比" class="headerlink" title="关系型数据库与文档数据库在今日的对比"></a>关系型数据库与文档数据库在今日的对比</h4><p>支持文档数据模型的主要论据是架构灵活性，因局部性而拥有更好的性能，以及对于某些应用程序而言更接近于应用程序使用的数据结构。关系模型通过为连接提供更好的支持以及支持多对一和多对多的关系来反击。</p>
+<h5 id="哪个数据模型更方便写代码？"><a href="#哪个数据模型更方便写代码？" class="headerlink" title="哪个数据模型更方便写代码？"></a>哪个数据模型更方便写代码？</h5><p>取决于业务需求是一对多还是多对多</p>
+<h5 id="文档模型中的架构灵活性"><a href="#文档模型中的架构灵活性" class="headerlink" title="文档模型中的架构灵活性"></a>文档模型中的架构灵活性</h5><p>文档数据库有时称为<strong>无模式（schemaless）</strong>，但这具有误导性，因为读取数据的代码通常假定某种结构——即存在隐式模式，但不由数据库强制执行。一个更精确的术语是<strong>读时模式（schema-on-read）</strong>（数据的结构是隐含的，只有在数据被读取时才被解释），相应的是<strong>写时模式（schema-on-write）</strong>（传统的关系数据库方法中，模式明确，且数据库确保所有的数据都符合其模式）。</p>
+<p>读时模式类似于编程语言中的动态（运行时）类型检查，而写时模式类似于静态（编译时）类型检查。就像静态和动态类型检查的相对优点具有很大的争议性一样【22】，数据库中模式的强制性是一个具有争议的话题，一般来说没有正确或错误的答案。</p>
+<h5 id="查询的数据局部性"><a href="#查询的数据局部性" class="headerlink" title="查询的数据局部性"></a>查询的数据局部性</h5><p>文档通常以单个连续字符串形式进行存储，编码为JSON，XML或其二进制变体（如MongoDB的BSON）。如果应用程序经常需要访问整个文档（例如，将其渲染至网页），那么存储局部性会带来性能优势。</p>
+<h5 id="文档和关系数据库的融合"><a href="#文档和关系数据库的融合" class="headerlink" title="文档和关系数据库的融合"></a>文档和关系数据库的融合</h5><p>自2000年代中期以来，大多数关系数据库系统（MySQL除外）都已支持XML。这包括对XML文档进行本地修改的功能，以及在XML文档中进行索引和查询的功能。这允许应用程序使用那种与文档数据库应当使用的非常类似的数据模型。</p>
+<p>从9.3版本开始的PostgreSQL，从5.7版本开始的MySQL以及从版本10.5开始的IBM DB2 [30]也对JSON文档提供了类似的支持级别。鉴于用在Web APIs的JSON流行趋势，其他关系数据库很可能会跟随他们的脚步并添加JSON支持。</p>
+<p>在文档数据库中，RethinkDB在其查询语言中支持类似关系的连接，一些MongoDB驱动程序可以自动解析数据库引用（有效地执行客户端连接，尽管这可能比在数据库中执行的连接慢，需要额外的网络往返，并且优化更少）。</p>
+<h4 id="数据查询语言"><a href="#数据查询语言" class="headerlink" title="数据查询语言"></a>数据查询语言</h4><p>SQL是一种 <strong>声明式</strong> 查询语言，而IMS和CODASYL使用 <strong>命令式</strong> 代码来查询数据库。</p>
+<p>很多编程语言都是命令式语言，命令式语言需要关心查询的实现方式，而声明式语言只需要给出想要查询的数据需要满足的条件，而不必在乎实现细节。</p>
+<h5 id="MapReduce查询"><a href="#MapReduce查询" class="headerlink" title="MapReduce查询"></a>MapReduce查询</h5><p>MapReduce既不是一个声明式的查询语言，也不是一个完全命令式的查询API，而是处于两者之间：查询的逻辑用代码片断来表示，这些代码片段会被处理框架重复性调用。它基于map（也称为collect）和reduce（也称为fold或inject）函数，两个函数存在于许多函数式编程语言中。</p>
+<div id="footnotes"><hr><div id="footnotelist"><ol style="list-style: none; padding-left: 0; margin-left: 40px"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">1.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">扇出：从电子工程学中借用的术语，它描述了输入连接到另一个门输出的逻辑门数量。 输出需要提供足够的电流来驱动所有连接的输入。 在事务处理系统中，我们使用它来描述为了服务一个传入请求而需要执行其他服务的请求数量。<a href="#fnref:1" rev="footnote"> ↩</a></span></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">2.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">一个从电子学借用的术语。每个电路的输入和输出都有一定的阻抗（交流电阻）。当你将一个电路的输出连接到另一个电路的输入时，如果两个电路的输出和输入阻抗匹配，则连接上的功率传输将被最大化。阻抗不匹配会导致信号反射及其他问题<a href="#fnref:2" rev="footnote"> ↩</a></span></li><li id="fn:3"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">3.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">关于关系模型的文献区分了几种不同的规范形式，但这些区别几乎没有实际意义。一个经验法则是，如果重复存储了可以存储在一个地方的值，则模式就不是规范化（normalized）的。<a href="#fnref:3" rev="footnote"> ↩</a></span></li></ol></div></div>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag"># 读书笔记</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/05/23/%E3%80%90Golang%E3%80%91%E8%AF%AD%E8%A8%80%E7%89%B9%E6%80%A7/" rel="prev" title="【Golang】语言特性">
+      <i class="fa fa-chevron-left"></i> 【Golang】语言特性
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/09/02/%E3%80%90C-%E3%80%91%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8/" rel="next" title="【C++】右值引用">
+      【C++】右值引用 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%9F%BA%E7%9F%B3"><span class="nav-number">1.</span> <span class="nav-text">数据系统的基石</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E9%9D%A0%E6%80%A7%E3%80%81%E5%8F%AF%E6%89%A9%E5%B1%95%E6%80%A7%E3%80%81%E5%8F%AF%E7%BB%B4%E6%8A%A4%E6%80%A7"><span class="nav-number">1.1.</span> <span class="nav-text">可靠性、可扩展性、可维护性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%AF%E9%9D%A0%E6%80%A7"><span class="nav-number">1.1.1.</span> <span class="nav-text">可靠性</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E6%95%85%E9%9A%9C"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">硬件故障</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E9%94%99%E8%AF%AF"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">软件错误</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BA%BA%E4%B8%BA%E9%94%99%E8%AF%AF"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">人为错误</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%AF%E6%89%A9%E5%B1%95%E6%80%A7"><span class="nav-number">1.1.2.</span> <span class="nav-text">可扩展性</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8F%8F%E8%BF%B0%E8%B4%9F%E8%BD%BD"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">描述负载</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8F%8F%E8%BF%B0%E6%80%A7%E8%83%BD"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">描述性能</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BA%94%E5%AF%B9%E8%B4%9F%E8%BD%BD%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">应对负载的方法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%AF%E7%BB%B4%E6%8A%A4%E6%80%A7"><span class="nav-number">1.1.3.</span> <span class="nav-text">可维护性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%AC%E7%AB%A0%E5%B0%8F%E7%BB%93"><span class="nav-number">1.1.4.</span> <span class="nav-text">本章小结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B%E4%B8%8E%E6%9F%A5%E8%AF%A2%E8%AF%AD%E8%A8%80"><span class="nav-number">1.2.</span> <span class="nav-text">数据模型与查询语言</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B8%8E%E6%96%87%E6%A1%A3%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.1.</span> <span class="nav-text">关系模型与文档模型</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#NoSQL%E7%9A%84%E8%AF%9E%E7%94%9F"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">NoSQL的诞生</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1%E5%85%B3%E7%B3%BB%E4%B8%8D%E5%8C%B9%E9%85%8D"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">对象关系不匹配</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A4%9A%E5%AF%B9%E4%B8%80%E5%92%8C%E5%A4%9A%E5%AF%B9%E5%A4%9A%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">多对一和多对多的关系</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E6%A1%A3%E6%95%B0%E6%8D%AE%E5%BA%93%E6%98%AF%E5%90%A6%E5%9C%A8%E9%87%8D%E8%B9%88%E8%A6%86%E8%BE%99%EF%BC%9F"><span class="nav-number">1.2.2.</span> <span class="nav-text">文档数据库是否在重蹈覆辙？</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">网络模型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">关系模型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%8E%E6%96%87%E6%A1%A3%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E6%AF%94"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">与文档数据库相比</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8E%E6%96%87%E6%A1%A3%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9C%A8%E4%BB%8A%E6%97%A5%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="nav-number">1.2.3.</span> <span class="nav-text">关系型数据库与文档数据库在今日的对比</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%93%AA%E4%B8%AA%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B%E6%9B%B4%E6%96%B9%E4%BE%BF%E5%86%99%E4%BB%A3%E7%A0%81%EF%BC%9F"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">哪个数据模型更方便写代码？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%87%E6%A1%A3%E6%A8%A1%E5%9E%8B%E4%B8%AD%E7%9A%84%E6%9E%B6%E6%9E%84%E7%81%B5%E6%B4%BB%E6%80%A7"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">文档模型中的架构灵活性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E7%9A%84%E6%95%B0%E6%8D%AE%E5%B1%80%E9%83%A8%E6%80%A7"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">查询的数据局部性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%87%E6%A1%A3%E5%92%8C%E5%85%B3%E7%B3%BB%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E8%9E%8D%E5%90%88"><span class="nav-number">1.2.3.4.</span> <span class="nav-text">文档和关系数据库的融合</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%9F%A5%E8%AF%A2%E8%AF%AD%E8%A8%80"><span class="nav-number">1.2.4.</span> <span class="nav-text">数据查询语言</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#MapReduce%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">MapReduce查询</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="王天阳"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">王天阳</p>
+  <div class="site-description" itemprop="description">学习｜记录｜心情</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+
+
+
+  <div class="links-of-blogroll motion-element links-of-blogroll-block">
+    <div class="links-of-blogroll-title">
+      <!-- modify icon to fire by szw -->
+      <i class="fa fa-history fa-" aria-hidden="true"></i>
+      近期文章
+    </div>
+    <ul class="links-of-blogroll-list">
+      
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">王天阳</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">447k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">6:47</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'dPQ0eYKJKl0nx6N1Qv9srFwG-gzGzoHsz',
+      appKey     : 'SsmzAdYldap25VnTu0wf1AlJ',
+      placeholder: "你说，我在听",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+  <script src="/js/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+  
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/assets/hijiki.model.json"},"display":{"position":"right","width":145,"height":315},"mobile":{"show":true,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.8},"log":false});</script></body>
+</html>

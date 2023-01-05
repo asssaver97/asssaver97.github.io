@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/w-solid.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/w-solid.svg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/w-solid.svg">
+  <link rel="mask-icon" href="/images/w-solid.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wangtianyang.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="为什么需要数据库？数据库之前常用存储数据方式：  数组、集合 等数据结构，即存在内存中 缺点：内存具有易失性，比如一断电数据就会丢失  文件 缺点：不好查询   数据库的优点：  数据持久化 统一管理，易于查询  数据库的两种类型关系型 &amp; 非关系型 关系型： 表 非关系型： 文档 事务的概念和特性？概念：数据库事务(transaction)是访问并可能操作各种数据项的一个数据库操作序列，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【数据库】数据库基础">
+<meta property="og:url" content="http://wangtianyang.com/2022/03/06/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="王天阳的个人博客">
+<meta property="og:description" content="为什么需要数据库？数据库之前常用存储数据方式：  数组、集合 等数据结构，即存在内存中 缺点：内存具有易失性，比如一断电数据就会丢失  文件 缺点：不好查询   数据库的优点：  数据持久化 统一管理，易于查询  数据库的两种类型关系型 &amp; 非关系型 关系型： 表 非关系型： 文档 事务的概念和特性？概念：数据库事务(transaction)是访问并可能操作各种数据项的一个数据库操作序列，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%801.png">
+<meta property="og:image" content="http://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%802.png">
+<meta property="og:image" content="http://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%803.png">
+<meta property="og:image" content="http://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%804.png">
+<meta property="og:image" content="http://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%805.png">
+<meta property="og:image" content="http://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%806.png">
+<meta property="og:image" content="http://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%807.png">
+<meta property="og:image" content="http://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%808.png">
+<meta property="article:published_time" content="2022-03-06T07:46:27.000Z">
+<meta property="article:modified_time" content="2023-01-05T08:03:47.029Z">
+<meta property="article:author" content="王天阳">
+<meta property="article:tag" content="八股文">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%801.png">
+
+<link rel="canonical" href="http://wangtianyang.com/2022/03/06/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%80/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>【数据库】数据库基础 | 王天阳的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">王天阳的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-movies">
+
+    <a href="/movies/" rel="section"><i class="fa fa-film fa-fw"></i>观影</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://wangtianyang.com/2022/03/06/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="王天阳">
+      <meta itemprop="description" content="学习｜记录｜心情">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王天阳的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【数据库】数据库基础
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-06 15:46:27" itemprop="dateCreated datePublished" datetime="2022-03-06T15:46:27+08:00">2022-03-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-01-05 16:03:47" itemprop="dateModified" datetime="2023-01-05T16:03:47+08:00">2023-01-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/03/06/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%80/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/03/06/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%80/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="为什么需要数据库？"><a href="#为什么需要数据库？" class="headerlink" title="为什么需要数据库？"></a>为什么需要数据库？</h2><p>数据库之前常用存储数据方式：</p>
+<ol>
+<li><p>数组、集合 等数据结构，即存在<strong>内存</strong>中</p>
+<p>缺点：内存具有易失性，比如一断电数据就会丢失</p>
+</li>
+<li><p>文件</p>
+<p>缺点：不好查询</p>
+</li>
+</ol>
+<p>数据库的优点：</p>
+<ol>
+<li>数据持久化</li>
+<li>统一管理，易于查询</li>
+</ol>
+<h2 id="数据库的两种类型"><a href="#数据库的两种类型" class="headerlink" title="数据库的两种类型"></a>数据库的两种类型</h2><p>关系型 &amp; 非关系型</p>
+<p>关系型： 表</p>
+<p>非关系型： 文档</p>
+<h2 id="事务的概念和特性？"><a href="#事务的概念和特性？" class="headerlink" title="事务的概念和特性？"></a>事务的概念和特性？</h2><p>概念：数据库事务(transaction)是访问并可能操作各种数据项的一个数据库操作序列，这些操作要么全部执行，要么全部不执行，是一个不可分割的工作单位。事务由事务开始与事务结束之间执行的全部数据库操作组成。以BEGIN TRANSACTION开始，以ROLLBACK/COMMIT结束</p>
+<p>特性（ACID）：</p>
+<ul>
+<li><strong>原子性</strong>（Atomicity）：逻辑上是不可分割的操作单元，事务的所有操作要么全部提交成功，要么全部失败回滚（用回滚日志实现，反向执行日志中的操作）；</li>
+<li><strong>一致性</strong>（Consistency）：事务的执行必须使数据库保持一致性状态。在一致性状态下，所有事务对一个数据的读取结果都是相同的；</li>
+<li><strong>隔离性</strong>（Isolation）：一个事务所做的修改在最终提交以前，对其它事务是不可见的（并发执行的事务之间不能相互影响）；</li>
+<li><strong>持久性</strong>（Durability）：一旦事务提交成功，对数据的修改是永久性的<span id="more"></span>
+</li>
+</ul>
+<h2 id="会出现哪些并发一致性问题？"><a href="#会出现哪些并发一致性问题？" class="headerlink" title="会出现哪些并发一致性问题？"></a>会出现哪些并发一致性问题？</h2><ul>
+<li><strong>丢失修改</strong>：一个事务对数据进行了修改，在事务提交之前，另一个事务对同一个数据进行了修改，覆盖了之前的修改；</li>
+<li><strong>脏读</strong>（Dirty Read）：一个事务读取了被另一个事务修改、但未提交（进行了回滚）的数据，造成两个事务得到的数据不一致；</li>
+<li><strong>不可重复读</strong>（Nonrepeatable Read）：在同一个事务中，某查询操作在一个时间读取某一行数据和之后一个时间读取该行数据，发现数据已经发生修改（针对update操作）；</li>
+<li><strong>幻读</strong>（Phantom Read）：当同一查询多次执行时，由于其它事务在这个数据范围内执行了插入操作，会导致每次返回不同的结果集（和不可重复读的区别：针对的是一个数据整体/范围；并且针对insert/delete操作）</li>
+</ul>
+<h2 id="数据库的四种隔离级别？"><a href="#数据库的四种隔离级别？" class="headerlink" title="数据库的四种隔离级别？"></a>数据库的四种隔离级别？</h2><ul>
+<li><strong>未提交读</strong>（Read Uncommited）：在一个事务提交之前，它的执行结果对其它事务也是可见的。会导致脏读、不可重复读、幻读；</li>
+<li><strong>提交读</strong>（Read Commited）：一个事务只能看见已经提交的事务所作的改变。可避免脏读问题；</li>
+<li><strong>可重复读</strong>（Repeatable Read）：可以确保同一个事务在多次读取同样的数据时得到相同的结果。（MySQL的默认隔离级别）。可避免不可重复读；</li>
+<li><strong>可串行化</strong>（Serializable）：强制事务串行执行，使之不可能相互冲突，从而解决幻读问题。可能导致大量的超时现象和锁竞争，实际很少使用。</li>
+</ul>
+<h2 id="什么是乐观锁和悲观锁？"><a href="#什么是乐观锁和悲观锁？" class="headerlink" title="什么是乐观锁和悲观锁？"></a>什么是乐观锁和悲观锁？</h2><ul>
+<li><strong>悲观锁：</strong>认为数据随时会被修改，因此每次读取数据之前都会上锁，防止其它事务读取或修改数据；应用于<strong>数据更新比较频繁</strong>的场景；</li>
+<li><strong>乐观锁：</strong>操作数据时不会上锁，但是更新时会判断在此期间有没有别的事务更新这个数据，若被更新过，则失败重试；适用于<strong>读多写少</strong>的场景。乐观锁的实现方式有：<ul>
+<li>加一个版本号或者时间戳字段，每次数据更新时同时更新这个字段；</li>
+<li>先读取想要更新的字段或者所有字段，更新的时候比较一下，只有字段没有变化才进行更新</li>
+</ul>
+</li>
+</ul>
+<h2 id="常见的封锁类型？"><a href="#常见的封锁类型？" class="headerlink" title="常见的封锁类型？"></a>常见的封锁类型？</h2><p>意向锁是<code>InnoDB</code><sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="InnoDB，是MySQL和MariaDB的数据库引擎之一，最初由MySQL AB发行。InnoDB由Innobase Oy公司所开发，2006年五月时由甲骨文公司并购。与传统的ISAM与MyISAM相比，InnoDB的最大特色就是支持了ACID兼容的事务（Transaction）功能，类似于PostgreSQL。">[1]</span></a></sup>自动加的， 不需用户干预。对于<code>UPDATE</code>、<code>DELETE</code>和<code>INSERT</code>语句，<code>InnoDB</code>会自动给涉及数据集加排他锁（X)； 对于普通<code>SELECT</code>语句，<code>InnoDB</code>不会加任何锁；事务可以通过以下语句显式给记录集加共享锁或排他锁：共享锁（S）：<code>SELECT * FROM table_name WHERE ... LOCK IN SHARE MODE</code>。其他 session 仍然可以查询记录，并也可以对该记录加 share mode 的共享锁。但是如果当前事务需要对该记录进行更新操作，则很有可能造成死锁。 排他锁（X)：<code>SELECT * FROM table_name WHERE ... FOR UPDATE</code>。其他 session 可以查询该记录，但是不能对该记录加共享锁或排他锁，而是等待获得锁</p>
+<ul>
+<li><strong>排它锁</strong>（Exclusive Lock）/ X锁：事务对数据加上X锁时，只允许此事务读取和修改此数据，并且其它事务不能对该数据加任何锁；</li>
+<li><strong>共享锁</strong>（Shared Lock）/ S锁：加了S锁后，该事务只能对数据进行读取而不能修改，并且其它事务只能加S锁，不能加X锁</li>
+<li><strong>意向锁</strong>（Intention Locks）：<ul>
+<li>一个事务在获得某个数据行对象的 S 锁之前，必须先获得整个表的 IS 锁或更强的锁；</li>
+<li>一个事务在获得某个数据行对象的 X 锁之前，必须先获得整个表的 IX 锁；</li>
+<li>IS/IX 锁之间都是兼容的；</li>
+<li>好处：如果一个事务想要对整个表加X锁，就需要先检测是否有其它事务对该表或者该表中的某一行加了锁，这种检测非常耗时。有了意向锁之后，只需要检测整个表是否存在IX/IS/X/S锁就行了<br><img src="/images/数据库基础1.png" alt=""><br>锁的作用：用于管理对共享资源的并发访问，保证数据库的完整性和一致性</li>
+</ul>
+</li>
+</ul>
+<ol>
+<li>意向锁相互兼容，因为IX、IS只是表明申请更低层次级别元素（比如 page、记录）的X、S操作。</li>
+<li>表级S锁和X、IX锁不兼容：因为上了表级S锁后，不允许其他事务再加X锁。</li>
+<li>表级X锁和 IS、IX、S、X不兼容：因为上了表级X锁后，会修改数据，所以即使是行级排他锁，因为表级锁定的行肯定包括行级锁定的行，所以表级X和IX、X都不兼容。：上了行级X锁后，行级X锁不会因为有别的事务上了IX而堵塞，一个mysql是允许多个行级X锁同时存在的，只要他们不是针对相同的数据行。</li>
+</ol>
+<h2 id="封锁粒度的概念"><a href="#封锁粒度的概念" class="headerlink" title="封锁粒度的概念"></a>封锁粒度的概念</h2><p>MySQL 中提供了两种封锁粒度：<strong>行级锁</strong>以及<strong>表级锁</strong>。</p>
+<p>封锁粒度小：</p>
+<ul>
+<li>好处：锁定的数据量越少，发生锁争用的可能就越小，系统的并发程度就越高；</li>
+<li>坏处：系统开销大（加锁、释放锁、检查锁的状态都需要消耗资源）</li>
+</ul>
+<p>MySQL加锁<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT ... LOCK In SHARE MODE;  //S</span><br><span class="line">SELECT ... FOR UPDATE;			//X</span><br></pre></td></tr></table></figure></p>
+<h2 id="什么是三级封锁协议？"><a href="#什么是三级封锁协议？" class="headerlink" title="什么是三级封锁协议？"></a>什么是三级封锁协议？</h2><ul>
+<li>一级封锁协议：事务在修改数据之前必须先对其加X锁，直到事务结束才释放。可以解决丢失修改问题（两个事务不能同时对一个数据加X锁，避免了修改被覆盖）；</li>
+<li>二级封锁协议：在一级的基础上，事务在读取数据之前必须先加S锁，读完后释放。可以解决脏读问题（如果已经有事务在修改数据，就意味着已经加了X锁，此时想要读取数据的事务并不能加S锁，也就无法进行读取，避免了读取脏数据）；</li>
+<li>三级封锁协议：在二级的基础上，事务在读取数据之前必须先加S锁，直到事务结束才能释放。可以解决不可重复读问题（避免了在事务结束前其它事务对数据加X锁进行修改，保证了事务期间数据不会被其它事务更新）</li>
+</ul>
+<h2 id="什么是两段锁协议？"><a href="#什么是两段锁协议？" class="headerlink" title="什么是两段锁协议？"></a>什么是两段锁协议？</h2><p>事务必须严格分为两个阶段对数据进行<strong>加锁和解锁</strong>的操作，第一阶段加锁，第二阶段解锁。也就是说一个事务中一旦释放了锁，就不能再申请新锁了。</p>
+<p><strong>可串行化调度</strong>是指，通过并发控制，使得并发执行的事务结果与某个串行执行的事务结果相同。事务遵循两段锁协议是保证可串行化调度的充分条件。</p>
+<blockquote>
+<p>计算机系统对并发事务中并发操作的调度是随机的，而不同的调度可能会产生不同的结果。在计算机中，多个事务的并发执行是正确的，当且仅当其结果与按某一次序串行地执行它们时的结果相同，我们称这种调度策略为可串行化（Serializable）调度。</p>
+</blockquote>
+<p>并发事务都<strong>遵守两段锁协议</strong>，则对这些事务的<strong>任何并发调度策略</strong>都是可串行化的 。</p>
+<p>并发事务的一个调度是可串行化的，不一定所有事务都符合两段锁协议 。</p>
+<h2 id="什么是-MVCC？"><a href="#什么是-MVCC？" class="headerlink" title="什么是 MVCC？"></a>什么是 MVCC？</h2><p>多版本并发控制（Multi-Version Concurrency Control, MVCC），MVCC在每行记录后面都保存有两个隐藏的列，用来存储<strong>创建版本号</strong>和<strong>删除版本号</strong>。</p>
+<ul>
+<li><strong>创建版本号：</strong>创建一个数据行时的事务版本号（<em>事务版本号：</em>事务开始时的系统版本号；<em>系统版本号：</em>每开始一个新的事务，系统版本号就会自动递增）；</li>
+<li><strong>删除版本号：</strong>删除操作时的事务版本号；</li>
+<li>各种操作：<ul>
+<li>插入操作时，记录创建版本号；</li>
+<li>删除操作时，记录删除版本号；</li>
+<li>更新操作时，先记录删除版本号，再新增一行记录创建版本号；</li>
+<li>查询操作时，要符合以下条件才能被查询出来：删除版本号未定义或大于当前事务版本号（删除操作是在当前事务启动之后做的）；创建版本号小于或等于当前事务版本号（创建操作是事务完成或者在事务启动之前完成）</li>
+</ul>
+</li>
+</ul>
+<h3 id="版本链"><a href="#版本链" class="headerlink" title="版本链"></a>版本链</h3><p>我们先来理解一下版本链的概念。在InnoDB引擎表中，它的聚簇索引记录中有两个必要的隐藏列：</p>
+<p>trx_id这个id用来存储的每次对某条聚簇索引记录进行修改的时候的事务id。</p>
+<p>roll_pointer每次对哪条聚簇索引记录有修改的时候，都会把老版本写入undo日志中。这个roll_pointer就是存了一个指针，它指向这条聚簇索引记录的上一个版本的位置，通过它来获得上一个版本的记录信息。(注意插入操作的undo日志没有这个属性，因为它没有老版本)<br><img src="/images/数据库基础2.png" alt=""></p>
+<h3 id="ReadView"><a href="#ReadView" class="headerlink" title="ReadView"></a>ReadView</h3><p>说了版本链我们再来看看ReadView。<strong>已提交读和可重复读的区别就在于它们生成ReadView的策略不同。</strong></p>
+<p>通过版本号减少了锁的争用，<strong>提高了系统性能；</strong>可以实现<strong>提交读</strong>和<strong>可重复读</strong>两种隔离级别，未提交读无需使用MVCC。</p>
+<p>ReadView中主要就是有个列表来存储我们系统中当前活跃着的读写事务，也就是begin了还未提交的事务。通过这个列表来判断记录的某个版本是否对当前事务可见。假设当前列表里的事务id为[80,100]。</p>
+<p>如果你要访问的记录版本的事务id为50，比当前列表最小的id80小，那说明这个事务在之前就提交了，所以对当前活动的事务来说是可访问的。如果你要访问的记录版本的事务id为70,发现此事务在列表id最大值和最小值之间，那就再判断一下是否在列表内，如果在那就说明此事务还未提交，所以版本不能被访问。如果不在那说明事务已经提交，所以版本可以被访问。如果你要访问的记录版本的事务id为110，那比事务列表最大id100都大，那说明这个版本是在ReadView生成之后才发生的，所以不能被访问。</p>
+<p>举个例子 ，在已提交读隔离级别下：</p>
+<p>比如此时有一个事务id为100的事务，修改了name,使得的name等于小明2，但是事务还没提交。则此时的版本链是<br><img src="/images/数据库基础3.png" alt=""><br>那此时另一个事务发起了select 语句要查询id为1的记录，那此时生成的ReadView 列表只有[100]。那就去版本链去找了，首先肯定找最近的一条，发现trx_id是100,也就是name为小明2的那条记录，发现在列表内，所以不能访问。 这时候就通过指针继续找下一条，name为小明1的记录，发现trx_id是60，小于列表中的最小id,所以可以访问，直接访问结果为小明1。</p>
+<p>那这时候我们把事务id为100的事务提交了，并且新建了一个事务id为110也修改id为1的记录，并且不提交事务<br><img src="/images/数据库基础4.png" alt=""><br>这时候版本链就是<br><img src="/images/数据库基础5.png" alt=""><br>这时候之前那个select事务又执行了一次查询,又要查询id为1的记录。</p>
+<p><strong>这个时候关键的地方来了</strong></p>
+<p>如果你是<strong>已提交读隔离级别，这时候你会重新一个ReadView，</strong>那你的活动事务列表中的值就变了，变成了[110]。</p>
+<p>按照上的说法，你去版本链通过trx_id对比查找到合适的结果就是小明2。</p>
+<p>如果你是<strong>可重复读隔离级别，这时候你的ReadView还是第一次select时候生成的ReadView,</strong>也就是列表的值还是[100]。所以select的结果是小明1。所以第二次select结果和第一次一样，所以叫可重复读！</p>
+<p><strong>也就是说已提交读隔离级别下的事务在每次查询的开始都会生成一个独立的ReadView,而可重复读隔离级别则在第一次读的时候生成一个ReadView，之后的读都复用之前的ReadView。</strong></p>
+<h2 id="快照读与当前读"><a href="#快照读与当前读" class="headerlink" title="快照读与当前读"></a>快照读与当前读</h2><h3 id="快照读-snapshot-read"><a href="#快照读-snapshot-read" class="headerlink" title="快照读(snapshot read)"></a>快照读(snapshot read)</h3><p>使用 MVCC 读取的是快照中的数据，这样可以减少加锁所带来的开销：</p>
+<p>简单的select操作(不包括 select … lock in share mode, select … for update)<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from table ...;</span><br></pre></td></tr></table></figure></p>
+<h3 id="当前读-current-read"><a href="#当前读-current-read" class="headerlink" title="当前读(current read)"></a>当前读(current read)</h3><p>更新数据时，都是先读后写，而这个读，就是当前读。当前读读取的是最新的数据，需要加锁。以下第一个语句需要加 S 锁，其它都需要加 X 锁：</p>
+<pre><code class="lang-`">select * from table where ? lock in share mode;
+select * from table where ? for update;
+insert;
+update;
+delete;
+</code></pre>
+<h2 id="数据库的范式？"><a href="#数据库的范式？" class="headerlink" title="数据库的范式？"></a>数据库的范式？</h2><ul>
+<li><strong>第一范式</strong>（1NF，Normal Form）：<strong>属性不应该是可分的</strong>。举例：如果将“电话”作为一个属性（一列），是不符合1NF的，因为电话这个属性可以分解为家庭电话和移动电话…如果将“移动电话”作为一个属性，就符合1NF；</li>
+<li><strong>第二范式</strong> 2NF：每个非主属性<strong>完全依赖</strong>于主属性集（候选键集）；<ul>
+<li>B完全依赖于A，就是说A中的所有属性唯一决定B，属性少了就不能唯一决定，属性多了则有冗余（叫依赖不叫完全依赖）。举例：（学号，课程名）这个主属性集可以唯一决定成绩，但是对于学生姓名这个属性，（学号，课程名）这个属性集就是冗余的，所以学生姓名不完全依赖于（学号，课程名）这一属性集；</li>
+<li>主属性集/候选码集：某一组属性能够唯一确定其它的属性（主键就是从候选键集中选的一个键），而其子集不能，这样的属性组中的属性就是主属性；不在候选码集中的属性成为非主属性；</li>
+<li>可以通过分解来满足 2NF：将（学号，课程名，成绩）做成一张表；（学号，学生姓名）做成另一张表，避免大量的数据冗余； 满足1NF后，要求表中的所有列，都必须依赖于主键，而不能有任何一列与主键没有关系，也就是说一个表只描述一件事情；</li>
+</ul>
+</li>
+<li><strong>第三范式</strong> 3NF：在 2NF 的基础上，非主属性不传递依赖于主属性<ul>
+<li>传递依赖：如果C依赖于B，B依赖于A，那么C传递依赖于A；</li>
+<li>3NF在2NF的基础上，消除了非主属性之间的依赖；比如一个表中，主属性有（学号），非主属性有（姓名，院系，院长名），可以看到院长名这个非主属性依赖于院系，传递依赖于学号。消除的办法是分解。 必须先满足第二范式（2NF），要求：表中的每一列只与主键直接相关而不是间接相关，（表中的每一列只能依赖于主键）；</li>
+</ul>
+</li>
+</ul>
+<h3 id="不符合范式会出现哪些异常？"><a href="#不符合范式会出现哪些异常？" class="headerlink" title="不符合范式会出现哪些异常？"></a>不符合范式会出现哪些异常？</h3><ul>
+<li>冗余数据：某些同样的数据多次出现（如学生姓名）；</li>
+<li>修改异常：修改了一个记录中的信息，另一个记录中相同的信息却没有修改；</li>
+<li>删除异常：删除一个信息，那么也会丢失其它信息（删除一个课程，丢失了一个学生的信息）；</li>
+<li>插入异常：无法插入（插入一个还没有课程信息的学生）</li>
+</ul>
+<h2 id="列举几种表连接方式？"><a href="#列举几种表连接方式？" class="headerlink" title="列举几种表连接方式？"></a>列举几种表连接方式？</h2><p><img src="/images/数据库基础6.png" alt=""></p>
+<ul>
+<li><strong>内连接</strong>（Inner Join）：仅将两个表中满足连接条件的行组合起来作为结果集<ul>
+<li><em>自然连接：</em>只考虑属性相同的元组对；</li>
+<li><em>等值连接：</em>给定条件进行查询</li>
+</ul>
+</li>
+<li><strong>外连接</strong>（Outer Join）<ul>
+<li><em>左连接：</em>左边表的所有数据都有显示出来，右边的表数据只显示共同有的那部分，没有对应的部分补NULL；</li>
+<li><em>右连接：</em>和左连接相反；</li>
+<li><em>全外连接</em>（Full Outer Join）：查询出左表和右表所有数据，但是去除两表的重复数据</li>
+</ul>
+</li>
+<li><strong>交叉连接</strong>（Cross Join）：返回两表的笛卡尔积（对于所含数据分别为m、n的表，返回m*n的结果）</li>
+</ul>
+<h2 id="什么是存储过程？有哪些优缺点？"><a href="#什么是存储过程？有哪些优缺点？" class="headerlink" title="什么是存储过程？有哪些优缺点？"></a>什么是存储过程？有哪些优缺点？</h2><p>存储过程是事先经过编译并存储在数据库中的一段SQL语句的集合。想要实现相应的功能时，只需要调用这个存储过程就行了（类似于函数，输入具有输出参数）。</p>
+<p>优点：</p>
+<ul>
+<li>预先编译，而不需要每次运行时编译，<strong>提高了数据库执行效率；</strong></li>
+<li>封装了一系列操作，对于一些数据交互比较多的操作，相比于单独执行SQL语句，可以<strong>减少网络通信量；</strong></li>
+<li>具有<strong>可复用性</strong>，减少了数据库开发的工作量；</li>
+<li><strong>安全性高</strong>，可以让没有权限的用户通过存储过程间接操作数据库；</li>
+<li><strong>更易于维护</strong></li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li><strong>可移植性差，</strong>存储过程将应用程序绑定到了数据库上；</li>
+<li><strong>开发调试复杂：</strong>没有好的IDE；</li>
+<li><strong>修改复杂，</strong>需要重新编译，有时还需要更新程序中的代码以更新调用</li>
+</ul>
+<h2 id="Drop-Delete-Truncate的区别？"><a href="#Drop-Delete-Truncate的区别？" class="headerlink" title="Drop/Delete/Truncate的区别？"></a>Drop/Delete/Truncate的区别？</h2><ul>
+<li><strong>Delete</strong>用来删除表的全部或者部分数据，执行delete之后，用户<strong>需要提交</strong>之后才会执行，会触发表上的DELETE<strong>触发器</strong>（包含一个OLD的虚拟表，可以只读访问被删除的数据），DELETE之后表结构还在，删除很慢，一行一行地删，因为会记录日志，可以利用日志还原数据；</li>
+<li><strong>Truncate</strong>删除表中的所有数据，这个操作<strong>不能回滚</strong>，也不会触发这个表上的触发器。操作比DELETE快很多（直接把表drop掉，再创建一个新表，删除的数据不能找回）。如果表中有自增（AUTO_INCREMENT）列，则重置为1；</li>
+<li><strong>Drop</strong>命令从数据库中<strong>删除表</strong>，所有的数据行，索引和约束都会被删除；<strong>不能回滚，不会触发触发器；</strong></li>
+</ul>
+<h2 id="什么是触发器？"><a href="#什么是触发器？" class="headerlink" title="什么是触发器？"></a>什么是触发器？</h2><p>触发器（TRIGGER）是由事件（比如INSERT/UPDATE/DELETE）来触发运行的操作（不能被直接调用，不能接收参数）。在数据库里以独立的对象存储，用于<strong>保证数据完整性</strong>（比如可以检验或转换数据）。</p>
+<h2 id="有哪些约束类型？"><a href="#有哪些约束类型？" class="headerlink" title="有哪些约束类型？"></a>有哪些约束类型？</h2><p>约束（Constraint）类型：主键（Primary Key）约束，唯一约束（Unique），检查约束，非空约束，外键（Foreign Key）约束。</p>
+<h2 id="什么是视图？什么是游标？"><a href="#什么是视图？什么是游标？" class="headerlink" title="什么是视图？什么是游标？"></a>什么是视图？什么是游标？</h2><ul>
+<li>视图：从数据库的基本表中通过查询选取出来的数据组成的虚拟表（数据库中存放视图的定义）。可以对其进行增/删/改/查等操作。视图是对若干张基本表的引用，一张虚表，查询语句执行的结果，不存储具体的数据（基本表数据发生了改变，视图也会跟着改变）；可以跟基本表一样，进行增删改查操作(ps:增删改操作有条件限制)；如连表查询产生的视图无法进行，对视图的增删改会影响原表的数据。好处：<ul>
+<li>通过只给用户访问视图的权限，保证数据的<strong>安全性</strong>；</li>
+<li><strong>简化</strong>复杂的SQL操作，隐藏数据的复杂性（比如复杂的连接）；</li>
+</ul>
+</li>
+<li>游标（Cursor）：用于定位在查询返回的<strong>结果集的特定行</strong>，以对特定行进行操作。使用游标可以方便地对结果集进行移动遍历，根据需要滚动或对浏览/修改任意行中的数据。主要用于交互式应用。</li>
+</ul>
+<h2 id="三级模式-二级映像"><a href="#三级模式-二级映像" class="headerlink" title="三级模式/二级映像"></a>三级模式/二级映像</h2><p><img src="/images/数据库基础7.png" alt=""><br><img src="/images/数据库基础8.png" alt=""></p>
+<div id="footnotes"><hr><div id="footnotelist"><ol style="list-style: none; padding-left: 0; margin-left: 40px"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">1.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">InnoDB，是MySQL和MariaDB的数据库引擎之一，最初由MySQL AB发行。InnoDB由Innobase Oy公司所开发，2006年五月时由甲骨文公司并购。与传统的ISAM与MyISAM相比，InnoDB的最大特色就是支持了ACID兼容的事务（Transaction）功能，类似于PostgreSQL。<a href="#fnref:1" rev="footnote"> ↩</a></span></li></ol></div></div>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%85%AB%E8%82%A1%E6%96%87/" rel="tag"># 八股文</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/06/%E3%80%90C-%E3%80%91%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="prev" title="【C++】设计模式">
+      <i class="fa fa-chevron-left"></i> 【C++】设计模式
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/03/06/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91MySQL/" rel="next" title="【数据库】MySQL">
+      【数据库】MySQL <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">为什么需要数据库？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%B8%A4%E7%A7%8D%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">数据库的两种类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E7%9A%84%E6%A6%82%E5%BF%B5%E5%92%8C%E7%89%B9%E6%80%A7%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">事务的概念和特性？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%9A%E5%87%BA%E7%8E%B0%E5%93%AA%E4%BA%9B%E5%B9%B6%E5%8F%91%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="nav-number">4.</span> <span class="nav-text">会出现哪些并发一致性问题？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%9B%9B%E7%A7%8D%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%EF%BC%9F"><span class="nav-number">5.</span> <span class="nav-text">数据库的四种隔离级别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%B9%90%E8%A7%82%E9%94%81%E5%92%8C%E6%82%B2%E8%A7%82%E9%94%81%EF%BC%9F"><span class="nav-number">6.</span> <span class="nav-text">什么是乐观锁和悲观锁？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E5%B0%81%E9%94%81%E7%B1%BB%E5%9E%8B%EF%BC%9F"><span class="nav-number">7.</span> <span class="nav-text">常见的封锁类型？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%81%E9%94%81%E7%B2%92%E5%BA%A6%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-number">8.</span> <span class="nav-text">封锁粒度的概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%89%E7%BA%A7%E5%B0%81%E9%94%81%E5%8D%8F%E8%AE%AE%EF%BC%9F"><span class="nav-number">9.</span> <span class="nav-text">什么是三级封锁协议？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%A4%E6%AE%B5%E9%94%81%E5%8D%8F%E8%AE%AE%EF%BC%9F"><span class="nav-number">10.</span> <span class="nav-text">什么是两段锁协议？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-MVCC%EF%BC%9F"><span class="nav-number">11.</span> <span class="nav-text">什么是 MVCC？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%88%E6%9C%AC%E9%93%BE"><span class="nav-number">11.1.</span> <span class="nav-text">版本链</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ReadView"><span class="nav-number">11.2.</span> <span class="nav-text">ReadView</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%AB%E7%85%A7%E8%AF%BB%E4%B8%8E%E5%BD%93%E5%89%8D%E8%AF%BB"><span class="nav-number">12.</span> <span class="nav-text">快照读与当前读</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%AB%E7%85%A7%E8%AF%BB-snapshot-read"><span class="nav-number">12.1.</span> <span class="nav-text">快照读(snapshot read)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%93%E5%89%8D%E8%AF%BB-current-read"><span class="nav-number">12.2.</span> <span class="nav-text">当前读(current read)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E8%8C%83%E5%BC%8F%EF%BC%9F"><span class="nav-number">13.</span> <span class="nav-text">数据库的范式？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E7%AC%A6%E5%90%88%E8%8C%83%E5%BC%8F%E4%BC%9A%E5%87%BA%E7%8E%B0%E5%93%AA%E4%BA%9B%E5%BC%82%E5%B8%B8%EF%BC%9F"><span class="nav-number">13.1.</span> <span class="nav-text">不符合范式会出现哪些异常？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%97%E4%B8%BE%E5%87%A0%E7%A7%8D%E8%A1%A8%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F%EF%BC%9F"><span class="nav-number">14.</span> <span class="nav-text">列举几种表连接方式？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%EF%BC%9F%E6%9C%89%E5%93%AA%E4%BA%9B%E4%BC%98%E7%BC%BA%E7%82%B9%EF%BC%9F"><span class="nav-number">15.</span> <span class="nav-text">什么是存储过程？有哪些优缺点？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Drop-Delete-Truncate%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">16.</span> <span class="nav-text">Drop&#x2F;Delete&#x2F;Truncate的区别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E8%A7%A6%E5%8F%91%E5%99%A8%EF%BC%9F"><span class="nav-number">17.</span> <span class="nav-text">什么是触发器？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%89%E5%93%AA%E4%BA%9B%E7%BA%A6%E6%9D%9F%E7%B1%BB%E5%9E%8B%EF%BC%9F"><span class="nav-number">18.</span> <span class="nav-text">有哪些约束类型？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E8%A7%86%E5%9B%BE%EF%BC%9F%E4%BB%80%E4%B9%88%E6%98%AF%E6%B8%B8%E6%A0%87%EF%BC%9F"><span class="nav-number">19.</span> <span class="nav-text">什么是视图？什么是游标？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E7%BA%A7%E6%A8%A1%E5%BC%8F-%E4%BA%8C%E7%BA%A7%E6%98%A0%E5%83%8F"><span class="nav-number">20.</span> <span class="nav-text">三级模式&#x2F;二级映像</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="王天阳"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">王天阳</p>
+  <div class="site-description" itemprop="description">学习｜记录｜心情</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+
+
+
+  <div class="links-of-blogroll motion-element links-of-blogroll-block">
+    <div class="links-of-blogroll-title">
+      <!-- modify icon to fire by szw -->
+      <i class="fa fa-history fa-" aria-hidden="true"></i>
+      近期文章
+    </div>
+    <ul class="links-of-blogroll-list">
+      
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">王天阳</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">447k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">6:47</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'dPQ0eYKJKl0nx6N1Qv9srFwG-gzGzoHsz',
+      appKey     : 'SsmzAdYldap25VnTu0wf1AlJ',
+      placeholder: "你说，我在听",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+  <script src="/js/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+  
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/assets/hijiki.model.json"},"display":{"position":"right","width":145,"height":315},"mobile":{"show":true,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.8},"log":false});</script></body>
+</html>

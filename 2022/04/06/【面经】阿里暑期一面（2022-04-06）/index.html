@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/w-solid.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/w-solid.svg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/w-solid.svg">
+  <link rel="mask-icon" href="/images/w-solid.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wangtianyang.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="一、堆和栈哪个更快？  栈是由编译器自动分配内存，所以更快；堆是程序员动态分配内存，相对更慢 栈使用的是一级缓存， 他们通常都是被调用时处于存储空间中，调用完毕立即释放；堆则是存放在二级缓存中，生命周期由虚拟机的垃圾回收算法来决定（并不是一旦成为孤儿对象就能被回收）。所以调用这些对象的速度要相对来得低一些。  二、什么是一级缓存、什么是二级缓存？  一级缓存一般内置在内核旁边，是与CPU结合最为紧">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【面经】阿里暑期一面（2022&#x2F;04&#x2F;06）">
+<meta property="og:url" content="http://wangtianyang.com/2022/04/06/%E3%80%90%E9%9D%A2%E7%BB%8F%E3%80%91%E9%98%BF%E9%87%8C%E6%9A%91%E6%9C%9F%E4%B8%80%E9%9D%A2%EF%BC%882022-04-06%EF%BC%89/index.html">
+<meta property="og:site_name" content="王天阳的个人博客">
+<meta property="og:description" content="一、堆和栈哪个更快？  栈是由编译器自动分配内存，所以更快；堆是程序员动态分配内存，相对更慢 栈使用的是一级缓存， 他们通常都是被调用时处于存储空间中，调用完毕立即释放；堆则是存放在二级缓存中，生命周期由虚拟机的垃圾回收算法来决定（并不是一旦成为孤儿对象就能被回收）。所以调用这些对象的速度要相对来得低一些。  二、什么是一级缓存、什么是二级缓存？  一级缓存一般内置在内核旁边，是与CPU结合最为紧">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-04-06T13:25:32.000Z">
+<meta property="article:modified_time" content="2023-01-05T08:03:47.033Z">
+<meta property="article:author" content="王天阳">
+<meta property="article:tag" content="面经">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://wangtianyang.com/2022/04/06/%E3%80%90%E9%9D%A2%E7%BB%8F%E3%80%91%E9%98%BF%E9%87%8C%E6%9A%91%E6%9C%9F%E4%B8%80%E9%9D%A2%EF%BC%882022-04-06%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>【面经】阿里暑期一面（2022/04/06） | 王天阳的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">王天阳的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-movies">
+
+    <a href="/movies/" rel="section"><i class="fa fa-film fa-fw"></i>观影</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://wangtianyang.com/2022/04/06/%E3%80%90%E9%9D%A2%E7%BB%8F%E3%80%91%E9%98%BF%E9%87%8C%E6%9A%91%E6%9C%9F%E4%B8%80%E9%9D%A2%EF%BC%882022-04-06%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="王天阳">
+      <meta itemprop="description" content="学习｜记录｜心情">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王天阳的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【面经】阿里暑期一面（2022/04/06）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-04-06 21:25:32" itemprop="dateCreated datePublished" datetime="2022-04-06T21:25:32+08:00">2022-04-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-01-05 16:03:47" itemprop="dateModified" datetime="2023-01-05T16:03:47+08:00">2023-01-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/04/06/%E3%80%90%E9%9D%A2%E7%BB%8F%E3%80%91%E9%98%BF%E9%87%8C%E6%9A%91%E6%9C%9F%E4%B8%80%E9%9D%A2%EF%BC%882022-04-06%EF%BC%89/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/04/06/%E3%80%90%E9%9D%A2%E7%BB%8F%E3%80%91%E9%98%BF%E9%87%8C%E6%9A%91%E6%9C%9F%E4%B8%80%E9%9D%A2%EF%BC%882022-04-06%EF%BC%89/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p>一、堆和栈哪个更快？</p>
+<ol>
+<li>栈是由编译器自动分配内存，所以更快；堆是程序员动态分配内存，相对更慢</li>
+<li>栈使用的是一级缓存， 他们通常都是被调用时处于存储空间中，调用完毕立即释放；堆则是存放在二级缓存中，生命周期由虚拟机的垃圾回收算法来决定（并不是一旦成为孤儿对象就能被回收）。所以调用这些对象的速度要相对来得低一些。</li>
+</ol>
+<p>二、什么是一级缓存、什么是二级缓存？</p>
+<ul>
+<li>一级缓存一般内置在内核旁边，是与CPU结合最为紧密的高速缓存，可以有效的提高CPU的运行效率。一级缓存越大，CPU的运行效率越高，但受到成本限制，一级缓存的容量都很小。</li>
+<li>L2（就是二级）缓存是在独立芯片（有可能是在一个扩展卡上），它的访问速度能比大的主存要快得多。通常一个二级缓存的大小为1024Kb（1Mb）。</li>
+</ul>
+<p>三、 栈的具体调用过程、怎么压入弹出的？</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/prokgtfy9n18/article/details/70231640">C语言下程序的堆栈调用（详细，图示）</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/yu97271486/article/details/80425089">EBP 和 ESP 详解</a></p>
+<p>四、free的时候怎么确定要释放多少内存？</p>
+<p>先是pop（弹出堆栈）edi,esi,ebx这三个寄存器，然后将ebp给esp，也就是说把刚刚上面开辟的空间收回，然后经过ret跳回至刚刚在main函数处调用函数那儿（现场保护）。（见上面第一个链接）</p>
+<p>五、C++14 string实现？如果是不够就申请空间的话</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/187499607">第14篇:C++的string-两手抓的内存分配</a></p>
+<p>六、http用的是tcp还是udp？</p>
+<p>tcp。追求可靠。</p>
+<p>七、tcp接收方收到乱序的包时，对这个包怎么处理？</p>
+<ul>
+<li>在缓存区里，不会丢弃，直到有序了以后直接排序。</li>
+<li>主机每次发送数据时，TCP就给每个数据包分配一个序列号并且在一个特定的时间内等待接收主机 对分配的这个序列号进行确认，如果发送主机在一个特定时间内没有收到接收主机的确认，则发送 主机会重传此数据包。接收主机利用序列号对接收的数据进行确认，以便检测对方发送的数据是否 有丢失或者乱序等，接收主机一旦收到已经顺序化的数据，它就将这些数据按正确的顺序重组成数 据流并传递到高层进行处理。</li>
+<li>具体步骤如下:</li>
+</ul>
+<ol>
+<li>为了保证数据包的可靠传递，发送方必须把已发送的数据包保留在缓冲区;</li>
+<li>并为每个已发送的数据包启动一个超时定时器;</li>
+<li>如在定时器超时之前收到了对方发来的应答信息(可能是对本包的应答，也可以是对本包后 续包的应答)，则释放该数据包占用的缓冲区;</li>
+<li>否则，重传该数据包，直到收到应答或重传次数超过规定的最大次数为止。</li>
+<li>接收方收到数据包后，先进行CRC校验，如果正确则把数据交给上层协议，然后给发送方发 送一个累计应答包，表明该数据已收到，如果接收方正好也有数据要发给发送方，应答包也可方在 数据包中捎带过去。</li>
+</ol>
+<p>八、怎么从tcp中解出http？</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u010088405/article/details/52396813">如何从TCP中提取HTTP报文</a></p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/news/717465">从一个HTTP请求来读懂HTTP、TCP协议</a></p>
+<p>九、http1.0和http1.1区别？1.1的header里多了什么？</p>
+<ul>
+<li>http/1.0 : <ol>
+<li>默认不支持长连接，需要设置keep-alive参数指定</li>
+<li>强缓存expired、协商缓存last-modified\if-modified-since 有一定的缺陷</li>
+</ol>
+</li>
+<li>http 1.1 :<ol>
+<li>默认长连接(keep-alive)，http请求可以复用Tcp连接，但是同一时间只能对应一个http请求(http请 求在一个Tcp中是串行的)</li>
+<li>增加了强缓存cache-control、协商缓存etag\if-none-match 是对http/1 缓存的优化</li>
+</ol>
+</li>
+</ul>
+<p>十、有多个服务器时，怎么确保是正确的服务器接收到了消息？</p>
+<p>十一、muduo用的是什么单例模式？</p>
+<p>十二、epoll水平触发和边缘触发？</p>
+<p>十三、怎么根据有几个核来确定设置几个线程？怎么确定cpu有多少核？</p>
+<ul>
+<li>线程数量和哪些因素有关:CPU，IO、并行、并发</li>
+<li>如果是CPU密集型应用，则线程池大小设置为:CPU数目+1 </li>
+<li>如果是IO密集型应用，则线程池大小设置为:2*CPU数目+1 </li>
+<li>最佳线程数目 = (线程等待时间与线程CPU时间之比 + 1)* CPU数目</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 总核数 = 物理CPU个数 X 每颗物理CPU的核数 </span><br><span class="line"># 总逻辑CPU数 = 物理CPU个数 X 每颗物理CPU的核数 X 超线程数</span><br><span class="line"></span><br><span class="line"># 查看物理CPU个数</span><br><span class="line">cat /proc/cpuinfo| grep &quot;physical id&quot;| sort| uniq| wc -l</span><br><span class="line"></span><br><span class="line"># 查看每个物理CPU中core的个数(即核数)</span><br><span class="line">cat /proc/cpuinfo| grep &quot;cpu cores&quot;| uniq</span><br><span class="line"></span><br><span class="line"># 查看逻辑CPU的个数</span><br><span class="line">cat /proc/cpuinfo| grep &quot;processor&quot;| wc -l</span><br></pre></td></tr></table></figure>
+<p>十四、linux在哪里查看日志？有几种方法进入插入模式？怎么查找？怎么跳到第一行？怎么跳到最后一行？怎么复制一行？</p>
+<ul>
+<li>/var/log</li>
+<li>插入模式 <ul>
+<li>按「i」切换进入插入模式「insert mode」，按”i”进入插入模式后是从光标当前位置开始输入文件；</li>
+<li>按「a」进入插入模式后，是从目前光标所在位置的下一个位置开始输入文字； </li>
+<li>按「o」进入插入模式后，是插入新的一行，从行首开始输入文字。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">--递归查找目录下含有该字符串的所有文件</span><br><span class="line">grep -rn &quot;data_chushou_pay_info&quot;  /home/hadoop/nisj/automationDemand/</span><br><span class="line"> </span><br><span class="line">--查找当前目录下后缀名过滤的文件</span><br><span class="line">grep -Rn &quot;data_chushou_pay_info&quot; *.py</span><br><span class="line"> </span><br><span class="line">--当前目录及设定子目录下的符合条件的文件</span><br><span class="line">grep -Rn &quot;data_chushou_pay_info&quot; /home/hadoop/nisj/automationDemand/ *.py</span><br><span class="line"> </span><br><span class="line">--结合find命令过滤目录及文件名后缀</span><br><span class="line">find /home/hadoop/nisj/automationDemand/ -type f -name &#x27;*.py&#x27;|xargs grep -n &#x27;data_chushou_pay_info&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>跳到文本的最后一行：按“G”,即“shift+g”</li>
+<li>跳到第一行的第一个字符：先按两次“g”</li>
+<li>复制一行数据数据： 把光标放到要复制的行行首，然后按两下yy字母键； 然后把光标放到要复制到的地方去，按键盘的p字母键</li>
+</ul>
+<p>十五、开放题：怎么在http服务端设计一个用户注册系统？</p>
+<p>十六、算法题：LRU</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%9D%A2%E7%BB%8F/" rel="tag"># 面经</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/04/05/%E3%80%90LeetCode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0%E3%80%911792-%E6%9C%80%E5%A4%A7%E5%B9%B3%E5%9D%87%E9%80%9A%E8%BF%87%E7%8E%87/" rel="prev" title="【LeetCode刷题笔记】1792.最大平均通过率">
+      <i class="fa fa-chevron-left"></i> 【LeetCode刷题笔记】1792.最大平均通过率
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/04/07/%E3%80%90%E9%9D%A2%E7%BB%8F%E3%80%91%E9%98%BF%E9%87%8C%E6%9A%91%E6%9C%9F%E4%BA%8C%E9%9D%A2%EF%BC%882022-04-07%EF%BC%89/" rel="next" title="【面经】阿里暑期二面（2022/04/07）">
+      【面经】阿里暑期二面（2022/04/07） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="王天阳"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">王天阳</p>
+  <div class="site-description" itemprop="description">学习｜记录｜心情</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+
+
+
+  <div class="links-of-blogroll motion-element links-of-blogroll-block">
+    <div class="links-of-blogroll-title">
+      <!-- modify icon to fire by szw -->
+      <i class="fa fa-history fa-" aria-hidden="true"></i>
+      近期文章
+    </div>
+    <ul class="links-of-blogroll-list">
+      
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+        <li class="recent_posts_li">
+          <a href="/" title="" target="_blank"></a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">王天阳</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">447k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">6:47</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'dPQ0eYKJKl0nx6N1Qv9srFwG-gzGzoHsz',
+      appKey     : 'SsmzAdYldap25VnTu0wf1AlJ',
+      placeholder: "你说，我在听",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+  <script src="/js/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+  
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/assets/hijiki.model.json"},"display":{"position":"right","width":145,"height":315},"mobile":{"show":true,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.8},"log":false});</script></body>
+</html>
