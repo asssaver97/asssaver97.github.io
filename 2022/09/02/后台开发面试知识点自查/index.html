@@ -18,100 +18,100 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"wangtianyang.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+    var CONFIG = {"hostname":"wangtianyang.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
   <meta name="description" content="C++C和C++的区别是什么？Answer网上最常用的两种说法是：C++是C的超集，或者说C是C++的子集、C++面向对象而C面向过程，但我认为这种抽象的说法并不对，C和C++的区别只能从更具体的方向阐述。C++提供了更强大的标准库STL，还有许多纷繁复杂的特性，比如模板、引用、智能指针、auto变量等。 误区一：C是C++的子集 网上这么说是因为C能实现的C++都能实现，而C++支持的C却未必能">
 <meta property="og:type" content="article">
 <meta property="og:title" content="后台开发面试知识点自查">
-<meta property="og:url" content="http://wangtianyang.com/2022/09/02/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E9%9D%A2%E8%AF%95%E7%9F%A5%E8%AF%86%E7%82%B9%E8%87%AA%E6%9F%A5/index.html">
+<meta property="og:url" content="https://wangtianyang.com/2022/09/02/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E9%9D%A2%E8%AF%95%E7%9F%A5%E8%AF%86%E7%82%B9%E8%87%AA%E6%9F%A5/index.html">
 <meta property="og:site_name" content="王天阳的个人博客">
 <meta property="og:description" content="C++C和C++的区别是什么？Answer网上最常用的两种说法是：C++是C的超集，或者说C是C++的子集、C++面向对象而C面向过程，但我认为这种抽象的说法并不对，C和C++的区别只能从更具体的方向阐述。C++提供了更强大的标准库STL，还有许多纷繁复杂的特性，比如模板、引用、智能指针、auto变量等。 误区一：C是C++的子集 网上这么说是因为C能实现的C++都能实现，而C++支持的C却未必能">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://wangtianyang.com/images/%E5%BC%BA%E5%BC%B1%E9%9D%99%E6%80%81%E5%8A%A8%E6%80%81%E7%B1%BB%E5%9E%8B.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E7%A8%8B%E5%BA%8F%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80.jpeg">
-<meta property="og:image" content="http://wangtianyang.com/images/%E5%9F%BA%E7%B1%BB%E8%99%9A%E5%87%BD%E6%95%B0%E8%A1%A8.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E6%B4%BE%E7%94%9F%E7%B1%BB%E8%99%9A%E5%87%BD%E6%95%B0%E8%A1%A8.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E5%9F%BA%E7%B1%BB%E5%92%8C%E6%B4%BE%E7%94%9F%E7%B1%BB%E7%9A%84%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E5%9F%BA%E7%B1%BB%E7%9A%84%E8%99%9A%E5%87%BD%E6%95%B0%E8%A1%A8.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E6%B4%BE%E7%94%9F%E7%B1%BB%E7%9A%84%E8%99%9A%E5%87%BD%E6%95%B0%E8%A1%A8.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E7%B1%BB%E7%9B%B8%E5%85%B3%E5%9B%BE4.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E7%B1%BB%E7%9B%B8%E5%85%B3%E5%9B%BE5.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E7%B1%BB%E7%9B%B8%E5%85%B3%E5%9B%BE6.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E7%B1%BB%E7%9B%B8%E5%85%B3%E5%9B%BE7.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E7%B1%BB%E7%9B%B8%E5%85%B3%E5%9B%BE8.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E7%B1%BB%E7%9B%B8%E5%85%B3%E5%9B%BE9.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E7%B1%BB%E7%9B%B8%E5%85%B3%E5%9B%BE10.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E7%B1%BB%E7%9B%B8%E5%85%B3%E5%9B%BE11.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E7%B1%BB%E7%9B%B8%E5%85%B312.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E7%B1%BB%E7%9B%B8%E5%85%B313.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E8%BF%9B%E7%A8%8B%E7%8A%B6%E6%80%81.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E8%AE%A1%E7%BD%91%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.png">
-<meta property="og:image" content="http://wangtianyang.com/images/IP%E5%9C%B0%E5%9D%80%E5%88%86%E7%B1%BB.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.png">
-<meta property="og:image" content="http://wangtianyang.com/images/TCP%E7%AA%97%E5%8F%A3%E5%AD%97%E6%AE%B51.png">
-<meta property="og:image" content="http://wangtianyang.com/images/TCP%E7%AA%97%E5%8F%A3%E5%AD%97%E6%AE%B52.png">
-<meta property="og:image" content="http://wangtianyang.com/images/TCP%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B61.png">
-<meta property="og:image" content="http://wangtianyang.com/images/TCP%E6%85%A2%E5%90%AF%E5%8A%A8.png">
-<meta property="og:image" content="http://wangtianyang.com/2022/09/02/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E9%9D%A2%E8%AF%95%E7%9F%A5%E8%AF%86%E7%82%B9%E8%87%AA%E6%9F%A5/TCP%E5%BF%AB%E9%87%8D%E4%BC%A0.png">
-<meta property="og:image" content="http://wangtianyang.com/2022/09/02/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E9%9D%A2%E8%AF%95%E7%9F%A5%E8%AF%86%E7%82%B9%E8%87%AA%E6%9F%A5/TCP%E5%BF%AB%E6%81%A2%E5%A4%8D.png">
-<meta property="og:image" content="http://wangtianyang.com/images/UDP%E5%A4%B4%E7%BB%93%E6%9E%84.png">
-<meta property="og:image" content="http://wangtianyang.com/images/TCP%E5%A4%B4%E7%BB%93%E6%9E%84.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E8%99%9A%E7%94%B5%E8%B7%AF%E6%95%B0%E6%8D%AE%E5%8C%85%E6%9C%8D%E5%8A%A1%E5%8C%BA%E5%88%AB.png">
-<meta property="og:image" content="http://wangtianyang.com/images/http%E7%BB%93%E6%9E%84.png">
-<meta property="og:image" content="http://wangtianyang.com/images/https%E5%BB%BA%E7%AB%8B%E8%BF%87%E7%A8%8B.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%A4%84%E7%90%86%E8%AF%B7%E6%B1%82.jpeg">
-<meta property="og:image" content="http://wangtianyang.com/images/dns%E9%80%92%E5%BD%92%E6%9F%A5%E8%AF%A2.jpeg">
-<meta property="og:image" content="http://wangtianyang.com/images/dns%E8%BF%AD%E4%BB%A3%E6%9F%A5%E8%AF%A2.jpeg">
-<meta property="og:image" content="http://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%801.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%802.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%803.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%804.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%805.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E7%AC%AC%E4%B8%80%E8%8C%83%E5%BC%8F%E4%BE%8B%E5%AD%90.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E7%AC%AC%E4%BA%8C%E8%8C%83%E5%BC%8F%E5%9B%BE1.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E7%AC%AC%E4%BA%8C%E8%8C%83%E5%BC%8F%E5%9B%BE2.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E7%AC%AC%E4%B8%89%E8%8C%83%E5%BC%8F%E5%9B%BE.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%806.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%807.png">
-<meta property="og:image" content="http://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%808.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql_Binsert1.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql_Binsert2.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql_Binsert3.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql_Binsert4.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql_Binsert5.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bremove1.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bremove2.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bremove3.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bremove4.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bremove5.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bremove6.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bremove7.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bremove8.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bremove9.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bplus.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bplusinsert1.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bplusinsert2.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bplusinsert3.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bplusinsert4.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bplusremove1.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bplusremove2.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bplusremove3.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql_Bplusremove4.png">
-<meta property="og:image" content="http://wangtianyang.com/images/mysql5.png">
-<meta property="og:image" content="http://wangtianyang.com/images/socket%E6%8A%BD%E8%B1%A1%E5%B1%82.png">
-<meta property="og:image" content="http://wangtianyang.com/images/socket%E8%BF%9E%E6%8E%A5%E8%BF%87%E7%A8%8B.png">
-<meta property="og:image" content="http://wangtianyang.com/images/socket%E8%BF%9E%E6%8E%A5%E8%BF%87%E7%A8%8B1.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E5%BC%BA%E5%BC%B1%E9%9D%99%E6%80%81%E5%8A%A8%E6%80%81%E7%B1%BB%E5%9E%8B.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E7%A8%8B%E5%BA%8F%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80.jpeg">
+<meta property="og:image" content="https://wangtianyang.com/images/%E5%9F%BA%E7%B1%BB%E8%99%9A%E5%87%BD%E6%95%B0%E8%A1%A8.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E6%B4%BE%E7%94%9F%E7%B1%BB%E8%99%9A%E5%87%BD%E6%95%B0%E8%A1%A8.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E5%9F%BA%E7%B1%BB%E5%92%8C%E6%B4%BE%E7%94%9F%E7%B1%BB%E7%9A%84%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E5%9F%BA%E7%B1%BB%E7%9A%84%E8%99%9A%E5%87%BD%E6%95%B0%E8%A1%A8.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E6%B4%BE%E7%94%9F%E7%B1%BB%E7%9A%84%E8%99%9A%E5%87%BD%E6%95%B0%E8%A1%A8.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E7%B1%BB%E7%9B%B8%E5%85%B3%E5%9B%BE4.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E7%B1%BB%E7%9B%B8%E5%85%B3%E5%9B%BE5.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E7%B1%BB%E7%9B%B8%E5%85%B3%E5%9B%BE6.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E7%B1%BB%E7%9B%B8%E5%85%B3%E5%9B%BE7.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E7%B1%BB%E7%9B%B8%E5%85%B3%E5%9B%BE8.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E7%B1%BB%E7%9B%B8%E5%85%B3%E5%9B%BE9.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E7%B1%BB%E7%9B%B8%E5%85%B3%E5%9B%BE10.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E7%B1%BB%E7%9B%B8%E5%85%B3%E5%9B%BE11.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E7%B1%BB%E7%9B%B8%E5%85%B312.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E7%B1%BB%E7%9B%B8%E5%85%B313.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E8%BF%9B%E7%A8%8B%E7%8A%B6%E6%80%81.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E8%AE%A1%E7%BD%91%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="https://wangtianyang.com/images/IP%E5%9C%B0%E5%9D%80%E5%88%86%E7%B1%BB.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.png">
+<meta property="og:image" content="https://wangtianyang.com/images/TCP%E7%AA%97%E5%8F%A3%E5%AD%97%E6%AE%B51.png">
+<meta property="og:image" content="https://wangtianyang.com/images/TCP%E7%AA%97%E5%8F%A3%E5%AD%97%E6%AE%B52.png">
+<meta property="og:image" content="https://wangtianyang.com/images/TCP%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B61.png">
+<meta property="og:image" content="https://wangtianyang.com/images/TCP%E6%85%A2%E5%90%AF%E5%8A%A8.png">
+<meta property="og:image" content="https://wangtianyang.com/2022/09/02/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E9%9D%A2%E8%AF%95%E7%9F%A5%E8%AF%86%E7%82%B9%E8%87%AA%E6%9F%A5/TCP%E5%BF%AB%E9%87%8D%E4%BC%A0.png">
+<meta property="og:image" content="https://wangtianyang.com/2022/09/02/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E9%9D%A2%E8%AF%95%E7%9F%A5%E8%AF%86%E7%82%B9%E8%87%AA%E6%9F%A5/TCP%E5%BF%AB%E6%81%A2%E5%A4%8D.png">
+<meta property="og:image" content="https://wangtianyang.com/images/UDP%E5%A4%B4%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="https://wangtianyang.com/images/TCP%E5%A4%B4%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E8%99%9A%E7%94%B5%E8%B7%AF%E6%95%B0%E6%8D%AE%E5%8C%85%E6%9C%8D%E5%8A%A1%E5%8C%BA%E5%88%AB.png">
+<meta property="og:image" content="https://wangtianyang.com/images/http%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="https://wangtianyang.com/images/https%E5%BB%BA%E7%AB%8B%E8%BF%87%E7%A8%8B.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%A4%84%E7%90%86%E8%AF%B7%E6%B1%82.jpeg">
+<meta property="og:image" content="https://wangtianyang.com/images/dns%E9%80%92%E5%BD%92%E6%9F%A5%E8%AF%A2.jpeg">
+<meta property="og:image" content="https://wangtianyang.com/images/dns%E8%BF%AD%E4%BB%A3%E6%9F%A5%E8%AF%A2.jpeg">
+<meta property="og:image" content="https://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%801.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%802.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%803.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%804.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%805.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E7%AC%AC%E4%B8%80%E8%8C%83%E5%BC%8F%E4%BE%8B%E5%AD%90.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E7%AC%AC%E4%BA%8C%E8%8C%83%E5%BC%8F%E5%9B%BE1.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E7%AC%AC%E4%BA%8C%E8%8C%83%E5%BC%8F%E5%9B%BE2.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E7%AC%AC%E4%B8%89%E8%8C%83%E5%BC%8F%E5%9B%BE.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%806.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%807.png">
+<meta property="og:image" content="https://wangtianyang.com/images/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%808.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql_Binsert1.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql_Binsert2.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql_Binsert3.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql_Binsert4.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql_Binsert5.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql_Bremove1.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql_Bremove2.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql_Bremove3.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql_Bremove4.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql_Bremove5.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql_Bremove6.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql_Bremove7.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql_Bremove8.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql_Bremove9.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql_Bplus.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql_Bplusinsert1.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql_Bplusinsert2.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql_Bplusinsert3.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql_Bplusinsert4.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql_Bplusremove1.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql_Bplusremove2.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql_Bplusremove3.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql_Bplusremove4.png">
+<meta property="og:image" content="https://wangtianyang.com/images/mysql5.png">
+<meta property="og:image" content="https://wangtianyang.com/images/socket%E6%8A%BD%E8%B1%A1%E5%B1%82.png">
+<meta property="og:image" content="https://wangtianyang.com/images/socket%E8%BF%9E%E6%8E%A5%E8%BF%87%E7%A8%8B.png">
+<meta property="og:image" content="https://wangtianyang.com/images/socket%E8%BF%9E%E6%8E%A5%E8%BF%87%E7%A8%8B1.png">
 <meta property="article:published_time" content="2022-09-02T12:20:51.000Z">
 <meta property="article:modified_time" content="2023-01-05T08:03:47.034Z">
 <meta property="article:author" content="王天阳">
 <meta property="article:tag" content="八股文">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://wangtianyang.com/images/%E5%BC%BA%E5%BC%B1%E9%9D%99%E6%80%81%E5%8A%A8%E6%80%81%E7%B1%BB%E5%9E%8B.png">
+<meta name="twitter:image" content="https://wangtianyang.com/images/%E5%BC%BA%E5%BC%B1%E9%9D%99%E6%80%81%E5%8A%A8%E6%80%81%E7%B1%BB%E5%9E%8B.png">
 
-<link rel="canonical" href="http://wangtianyang.com/2022/09/02/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E9%9D%A2%E8%AF%95%E7%9F%A5%E8%AF%86%E7%82%B9%E8%87%AA%E6%9F%A5/">
+<link rel="canonical" href="https://wangtianyang.com/2022/09/02/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E9%9D%A2%E8%AF%95%E7%9F%A5%E8%AF%86%E7%82%B9%E8%87%AA%E6%9F%A5/">
 
 
 <script id="page-configurations">
@@ -203,17 +203,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">7</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">13</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">75</span></a>
 
   </li>
         <li class="menu-item menu-item-movies">
@@ -281,7 +281,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://wangtianyang.com/2022/09/02/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E9%9D%A2%E8%AF%95%E7%9F%A5%E8%AF%86%E7%82%B9%E8%87%AA%E6%9F%A5/">
+    <link itemprop="mainEntityOfPage" href="https://wangtianyang.com/2022/09/02/%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E9%9D%A2%E8%AF%95%E7%9F%A5%E8%AF%86%E7%82%B9%E8%87%AA%E6%9F%A5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -3333,11 +3333,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
+      <span class="post-meta-item-text">站点总字数：</span>
     <span title="站点总字数">447k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
     <span title="站点阅读时长">6:47</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
