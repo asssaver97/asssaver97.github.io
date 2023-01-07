@@ -123,17 +123,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">12</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">13</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">6</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">7</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">75</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">76</span></a>
 
   </li>
         <li class="menu-item menu-item-movies">
@@ -201,6 +201,121 @@
 
           <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wangtianyang.com/2023/01/07/Hexo-NeXT-css-js%E6%96%87%E4%BB%B6%E9%83%A8%E7%BD%B2%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="王天阳">
+      <meta itemprop="description" content="学习｜记录｜心情">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王天阳的个人博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/01/07/Hexo-NeXT-css-js%E6%96%87%E4%BB%B6%E9%83%A8%E7%BD%B2%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">Hexo-NeXT 自定义静态页面部署问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-01-07 12:39:39" itemprop="dateCreated datePublished" datetime="2023-01-07T12:39:39+08:00">2023-01-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-01-08 00:06:47" itemprop="dateModified" datetime="2023-01-08T00:06:47+08:00">2023-01-08</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Issues/" itemprop="url" rel="index"><span itemprop="name">Issues</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/01/07/Hexo-NeXT-css-js%E6%96%87%E4%BB%B6%E9%83%A8%E7%BD%B2%E9%97%AE%E9%A2%98/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/01/07/Hexo-NeXT-css-js%E6%96%87%E4%BB%B6%E9%83%A8%E7%BD%B2%E9%97%AE%E9%A2%98/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>632</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题定位"><a href="#问题定位" class="headerlink" title="问题定位"></a>问题定位</h2><p>NexT 主题下部署自定义静态页面时（比如本站 love page），写好的 html 达不到想要的效果。</p>
+<p>预期效果：</p>
+<p><img src="/images/20230107/预期效果.gif" alt=""></p>
+<p>经过排查可以分为下面两个子问题：</p>
+<ol>
+<li>自定义 html 不能作为一个独立的静态页面展示，而是作为NexT框架下的一个组件，如普通博文一般；<br><img src="/images/20230107/q1.gif" alt=""></li>
+<li>CSS 和 JS 文件的渲染没有起效。<br><img src="/images/20230107/q2.png" alt="">
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/01/07/Hexo-NeXT-css-js%E6%96%87%E4%BB%B6%E9%83%A8%E7%BD%B2%E9%97%AE%E9%A2%98/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -1213,256 +1328,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wangtianyang.com/2022/04/07/%E3%80%90%E9%9D%A2%E7%BB%8F%E3%80%91%E9%98%BF%E9%87%8C%E6%9A%91%E6%9C%9F%E4%BA%8C%E9%9D%A2%EF%BC%882022-04-07%EF%BC%89/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="王天阳">
-      <meta itemprop="description" content="学习｜记录｜心情">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="王天阳的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/04/07/%E3%80%90%E9%9D%A2%E7%BB%8F%E3%80%91%E9%98%BF%E9%87%8C%E6%9A%91%E6%9C%9F%E4%BA%8C%E9%9D%A2%EF%BC%882022-04-07%EF%BC%89/" class="post-title-link" itemprop="url">【面经】阿里暑期二面（2022/04/07）</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-04-07 16:54:00" itemprop="dateCreated datePublished" datetime="2022-04-07T16:54:00+08:00">2022-04-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-01-06 21:50:18" itemprop="dateModified" datetime="2023-01-06T21:50:18+08:00">2023-01-06</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%9D%A2%E7%BB%8F/" itemprop="url" rel="index"><span itemprop="name">面经</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/04/07/%E3%80%90%E9%9D%A2%E7%BB%8F%E3%80%91%E9%98%BF%E9%87%8C%E6%9A%91%E6%9C%9F%E4%BA%8C%E9%9D%A2%EF%BC%882022-04-07%EF%BC%89/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/04/07/%E3%80%90%E9%9D%A2%E7%BB%8F%E3%80%91%E9%98%BF%E9%87%8C%E6%9A%91%E6%9C%9F%E4%BA%8C%E9%9D%A2%EF%BC%882022-04-07%EF%BC%89/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p>一、在linux上用python移动文件时，用的什么方法？（<em>我回答了有时候用shell命令有时候用自带的库</em>）什么时候用shell的命令，什么时候用python的库？</p>
-<ul>
-<li>python自带的库也就是shutil，shell命令也就是os.system()；</li>
-<li>以shutil.move和os.rename举例：<ul>
-<li>如果源路径和目标路径位于不同的文件系统或驱动器上，操作系统模块可能无法移动文件，但是shutil.move 会检查源路径和目标路径是否在同一个文件系统上。</li>
-<li>检查源路径和目标路径后，如果发现它们不在同一个文件系统中，shutil.move 会先将文件复制到目标。然后它将从源文件中删除该文件。因此，当源路径和目标路径不在同一驱动器或文件系统上时，我们可以说shutil.move 是一种在Python 中移动文件的更智能的方法。</li>
-<li>shutil.move 适用于高级函数，而 os.rename 适用于低级函数。</li>
-</ul>
-</li>
-</ul>
-<p>二、进程、线程和协程的区别？什么情况下用协程什么情况下用线程？为什么python更喜欢用多协程？</p>
-<ul>
-<li>略</li>
-<li>线程和协程的区别：<ul>
-<li>一个线程可以多个协程，一个进程也可以单独拥有多个协程。</li>
-<li>线程进程都是同步机制，而协程则是异步。</li>
-<li>协程能保留上一次调用时的状态，每次过程重入时，就相当于进入上一次调用的状态。</li>
-<li>线程是抢占式，而协程是非抢占式的，所以需要用户自己释放使用权来切换到其他协程，因此同一时间其实只有一个协程拥有运行权，相当于单线程的能力。</li>
-<li>协程并不是取代线程, 而且抽象于线程之上, 线程是被分割的CPU资源, 协程是组织好的代码流程, 协程需要线程来承载运行, 线程是协程的资源, 但协程不会直接使用线程, 协程直接利用的是执行器(Interceptor), 执行器可以关联任意线程或线程池, 可以使当前线程, UI线程, 或新建线程.。</li>
-<li>线程是协程的资源。协程通过Interceptor来间接使用线程这个资源。</li>
-</ul>
-</li>
-<li>什么时候用协程：<ul>
-<li>在传统的J2EE系统中都是基于每个请求占用一个线程去完成完整的业务逻辑（包括事务）。所以系统的吞吐能力取决于每个线程的操作耗时。如果遇到很耗时的I/O行为，则整个系统的吞吐立刻下降，因为这个时候线程一直处于阻塞状态，如果线程很多的时候，会存在很多线程处于空闲状态（等待该线程执行完才能执行），造成了资源应用不彻底。</li>
-<li>协程的目的就是当出现长时间的I/O操作时，通过让出目前的协程调度，执行下一个任务的方式，来消除上下文上的开销。</li>
-</ul>
-</li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/You_are_my_dream/article/details/56316826">为什么在Python里推荐使用多进程而不是多线程？</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/lambert310/article/details/51162634">python中多进程+协程的使用以及为什么要用它</a></li>
-</ul>
-<p>三、自己对数据库三大范式的理解？什么情况下用哪种范式？</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/linjiqin/archive/2012/04/01/2428695.html">数据库设计三大范式</a></li>
-</ul>
-<p>四、知道哪些数据结构？什么情况下用数组什么情况下用链表？</p>
-<ul>
-<li>如果你的应用场景是插入/删除很少，查询非常多，用数组； 如果你的应用场景是插入/删除频繁，查询少，用链表。</li>
-</ul>
-<p>五、知道哪些排序算法？快排的时间复杂度是多少？最坏情况下时间复杂度和最好情况下时间复杂度分别是多少？快排空间复杂度是多少？快排是稳定的吗？</p>
-<p><a target="_blank" rel="noopener" href="https://www.runoob.com/w3cnote/ten-sorting-algorithm.html">十大经典排序算法</a></p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th style="text-align:left">排序算法</th>
-<th style="text-align:left">平均时间复杂度</th>
-<th style="text-align:left">最好情况</th>
-<th style="text-align:left">最坏情况</th>
-<th style="text-align:left">空间复杂度</th>
-<th style="text-align:left">排序方式</th>
-<th style="text-align:left">稳定性</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">冒泡排序</td>
-<td style="text-align:left">O(n^2)</td>
-<td style="text-align:left">O(n)</td>
-<td style="text-align:left">O(n^2)</td>
-<td style="text-align:left">O(1)</td>
-<td style="text-align:left">内存</td>
-<td style="text-align:left">稳定</td>
-</tr>
-<tr>
-<td style="text-align:left">选择排序</td>
-<td style="text-align:left">O(n^2)</td>
-<td style="text-align:left">O(n^2)</td>
-<td style="text-align:left">O(n^2)</td>
-<td style="text-align:left">O(1)</td>
-<td style="text-align:left">内存</td>
-<td style="text-align:left">不稳定</td>
-</tr>
-<tr>
-<td style="text-align:left">插入排序</td>
-<td style="text-align:left">O(n^2)</td>
-<td style="text-align:left">O(n)</td>
-<td style="text-align:left">O(n^2)</td>
-<td style="text-align:left">O(1)</td>
-<td style="text-align:left">内存</td>
-<td style="text-align:left">稳定</td>
-</tr>
-<tr>
-<td style="text-align:left">希尔排序</td>
-<td style="text-align:left">O(nlogn)</td>
-<td style="text-align:left">O(nlogn)</td>
-<td style="text-align:left">O(n^2)</td>
-<td style="text-align:left">O(1)</td>
-<td style="text-align:left">内存</td>
-<td style="text-align:left">不稳定</td>
-</tr>
-<tr>
-<td style="text-align:left">归并排序</td>
-<td style="text-align:left">O(nlogn)</td>
-<td style="text-align:left">O(nlogn)</td>
-<td style="text-align:left">O(nlogn)</td>
-<td style="text-align:left">O(n)</td>
-<td style="text-align:left">外存</td>
-<td style="text-align:left">稳定</td>
-</tr>
-<tr>
-<td style="text-align:left">快速排序</td>
-<td style="text-align:left">O(nlogn)</td>
-<td style="text-align:left">O(nlogn)</td>
-<td style="text-align:left">O(n^2)</td>
-<td style="text-align:left">O(logn)</td>
-<td style="text-align:left">内存</td>
-<td style="text-align:left">不稳定</td>
-</tr>
-<tr>
-<td style="text-align:left">堆排序</td>
-<td style="text-align:left">O(nlogn)</td>
-<td style="text-align:left">O(nlogn)</td>
-<td style="text-align:left">O(nlogn)</td>
-<td style="text-align:left">O(1)</td>
-<td style="text-align:left">内存</td>
-<td style="text-align:left">不稳定</td>
-</tr>
-<tr>
-<td style="text-align:left">计数排序</td>
-<td style="text-align:left">O(n+k)</td>
-<td style="text-align:left">O(n+k)</td>
-<td style="text-align:left">O(n+k)</td>
-<td style="text-align:left">O(k)</td>
-<td style="text-align:left">外存</td>
-<td style="text-align:left">稳定</td>
-</tr>
-<tr>
-<td style="text-align:left">桶排序</td>
-<td style="text-align:left">O(n+k)</td>
-<td style="text-align:left">O(n+k)</td>
-<td style="text-align:left">O(n^2)</td>
-<td style="text-align:left">O(n+k)</td>
-<td style="text-align:left">外存</td>
-<td style="text-align:left">稳定</td>
-</tr>
-<tr>
-<td style="text-align:left">基数排序</td>
-<td style="text-align:left">O(nk)</td>
-<td style="text-align:left">O(nk)</td>
-<td style="text-align:left">O(nk)</td>
-<td style="text-align:left">O(n+k)</td>
-<td style="text-align:left">外存</td>
-<td style="text-align:left">稳定</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>六、两端锁协议？解决什么问题？</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/yky__xukai/article/details/104864221">数据库原理 两段锁协议</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1534,20 +1399,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-count">76</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1563,8 +1428,8 @@
 	    <h5 class="widget-title">标签云</h5>
 	    <div id="myCanvasContainer" class="widget tagcloud">
 	        <canvas width="250" height="250" id="resCanvas" style="width=100%">
-	            <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/" rel="tag">JavaScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Markdown/" rel="tag">Markdown</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E5%AD%A6/" rel="tag">数学</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" rel="tag">网络安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag">计算机网络</a><span class="tag-list-count">5</span></li></ul>
-	            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%85%AB%E8%82%A1%E6%96%87/">八股文</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0/">刷题笔记</a><span class="category-list-count">28</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A7%91%E7%A0%94%E7%AC%94%E8%AE%B0/">科研笔记</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AC%94%E7%BB%8F/">笔经</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E7%BB%8F/">面经</a><span class="category-list-count">7</span></li></ul>
+	            <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/" rel="tag">JavaScript</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Markdown/" rel="tag">Markdown</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E5%AD%A6/" rel="tag">数学</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" rel="tag">网络安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag">计算机网络</a><span class="tag-list-count">5</span></li></ul>
+	            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Issues/">Issues</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%85%AB%E8%82%A1%E6%96%87/">八股文</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0/">刷题笔记</a><span class="category-list-count">28</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A7%91%E7%A0%94%E7%AC%94%E8%AE%B0/">科研笔记</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AC%94%E7%BB%8F/">笔经</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E7%BB%8F/">面经</a><span class="category-list-count">7</span></li></ul>
 	        </canvas>
 	    </div>
 	</div>
@@ -1582,6 +1447,10 @@
       
       
         <li class="recent_posts_li">
+          <a href="/2023/01/07/Hexo-NeXT-css-js%E6%96%87%E4%BB%B6%E9%83%A8%E7%BD%B2%E9%97%AE%E9%A2%98/" title="Hexo-NeXT 自定义静态页面部署问题" target="_blank">Hexo-NeXT 自定义静态页面部署问题</a>
+        </li>
+      
+        <li class="recent_posts_li">
           <a href="/2022/12/22/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E3%80%8AJAVA%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E5%8D%B7I%E3%80%8B/" title="【读书笔记】《JAVA核心技术卷I》" target="_blank">【读书笔记】《JAVA核心技术卷I》</a>
         </li>
       
@@ -1595,10 +1464,6 @@
       
         <li class="recent_posts_li">
           <a href="/2022/09/02/%E3%80%90C-%E3%80%91%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8/" title="【C++】右值引用" target="_blank">【C++】右值引用</a>
-        </li>
-      
-        <li class="recent_posts_li">
-          <a href="/2022/09/02/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E8%AE%BE%E8%AE%A1%E6%95%B0%E6%8D%AE%E5%AF%86%E9%9B%86%E5%9E%8B%E5%BA%94%E7%94%A8/" title="【读书笔记】《设计数据密集型应用》" target="_blank">【读书笔记】《设计数据密集型应用》</a>
         </li>
       
     </ul>
@@ -1634,13 +1499,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">448k</span>
+    <span title="站点总字数">449k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">6:47</span>
+    <span title="站点阅读时长">6:48</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
