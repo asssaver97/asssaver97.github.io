@@ -21,15 +21,15 @@
     var CONFIG = {"hostname":"wangtianyang.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="Java的基本程序设计结构位运算符 p43  位运算符包括： 1234567&amp;  &#x2F;&#x2F; 与|  &#x2F;&#x2F; 或^  &#x2F;&#x2F; 异或~  &#x2F;&#x2F; 非&gt;&gt;  &#x2F;&#x2F; 左移并用符号位填充高位&gt;&gt;&gt;  &#x2F;&#x2F; 左移并用 0 填充高位&lt;&lt;  &#x2F;&#x2F; 右移， 并不存在 &lt;&lt;&lt; 运算符">
+  <meta name="description" content="Java 在线 API 文档 Java的基本程序设计结构数据类型char 类型 p32  char 类型原本用于表示单个字符，不过现在不一样了。如今，有些 Unicode 字符可以用一个 char 值描述，而另外一些 Unicode 字符则需要两个 char 值。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【读书笔记】《JAVA核心技术卷I》">
 <meta property="og:url" content="https://wangtianyang.com/2022/12/22/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%E3%80%8AJAVA%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E5%8D%B7I%E3%80%8B/index.html">
 <meta property="og:site_name" content="王天阳的个人博客">
-<meta property="og:description" content="Java的基本程序设计结构位运算符 p43  位运算符包括： 1234567&amp;  &#x2F;&#x2F; 与|  &#x2F;&#x2F; 或^  &#x2F;&#x2F; 异或~  &#x2F;&#x2F; 非&gt;&gt;  &#x2F;&#x2F; 左移并用符号位填充高位&gt;&gt;&gt;  &#x2F;&#x2F; 左移并用 0 填充高位&lt;&lt;  &#x2F;&#x2F; 右移， 并不存在 &lt;&lt;&lt; 运算符">
+<meta property="og:description" content="Java 在线 API 文档 Java的基本程序设计结构数据类型char 类型 p32  char 类型原本用于表示单个字符，不过现在不一样了。如今，有些 Unicode 字符可以用一个 char 值描述，而另外一些 Unicode 字符则需要两个 char 值。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-12-22T01:57:27.000Z">
-<meta property="article:modified_time" content="2023-01-06T13:53:47.928Z">
+<meta property="article:modified_time" content="2023-01-08T12:33:16.753Z">
 <meta property="article:author" content="王天阳">
 <meta property="article:tag" content="Java">
 <meta name="twitter:card" content="summary">
@@ -239,7 +239,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-01-06 21:53:47" itemprop="dateModified" datetime="2023-01-06T21:53:47+08:00">2023-01-06</time>
+                <time title="修改时间：2023-01-08 20:33:16" itemprop="dateModified" datetime="2023-01-08T20:33:16+08:00">2023-01-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -271,14 +271,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>493</span>
+              <span>1.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -290,18 +290,22 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="Java的基本程序设计结构"><a href="#Java的基本程序设计结构" class="headerlink" title="Java的基本程序设计结构"></a>Java的基本程序设计结构</h2><h3 id="位运算符"><a href="#位运算符" class="headerlink" title="位运算符"></a>位运算符</h3><blockquote>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p><a target="_blank" rel="noopener" href="http://docs.oracle.com/javase/9/docs/api">Java 在线 API 文档</a></p>
+<h2 id="Java的基本程序设计结构"><a href="#Java的基本程序设计结构" class="headerlink" title="Java的基本程序设计结构"></a>Java的基本程序设计结构</h2><h3 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h3><h4 id="char-类型"><a href="#char-类型" class="headerlink" title="char 类型"></a>char 类型</h4><blockquote>
+<p>p32</p>
+</blockquote>
+<p>char 类型原本用于表示单个字符，<strong>不过现在不一样了</strong>。如今，有些 Unicode 字符可以用一个 char 值描述，而另外一些 Unicode 字符则需要两个 char 值。<br><span id="more"></span></p>
+<h3 id="运算符"><a href="#运算符" class="headerlink" title="运算符"></a>运算符</h3><h4 id="位运算符"><a href="#位运算符" class="headerlink" title="位运算符"></a>位运算符</h4><blockquote>
 <p>p43</p>
 </blockquote>
 <p>位运算符包括：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&amp;  <span class="comment">// 与</span></span><br><span class="line">|  <span class="comment">// 或</span></span><br><span class="line">^  <span class="comment">// 异或</span></span><br><span class="line">~  <span class="comment">// 非</span></span><br><span class="line">&gt;&gt;  <span class="comment">// 左移并用符号位填充高位</span></span><br><span class="line">&gt;&gt;&gt;  <span class="comment">// 左移并用 0 填充高位</span></span><br><span class="line">&lt;&lt;  <span class="comment">// 右移， 并不存在 &lt;&lt;&lt; 运算符</span></span><br></pre></td></tr></table></figure>
-<span id="more"></span>
 <p>例：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">fourthBitFromRight</span> <span class="operator">=</span> (n &amp; <span class="number">0b1000</span>) / <span class="number">0b1000</span>; </span><br><span class="line"><span class="comment">// 当二进制表示的 n 从右往左数第 4 位为 1 时，fourthBitFromRight 为 1，否则为 0。</span></span><br><span class="line"><span class="comment">// 上句代码等同于：</span></span><br><span class="line"><span class="type">int</span> <span class="variable">fourthBitFromRight</span> <span class="operator">=</span> (n &amp; (<span class="number">1</span> &lt;&lt; <span class="number">3</span>)) &gt;&gt; <span class="number">3</span>;</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>注：应用在 bool 值上时，<code>&amp;</code> 和 <code>|</code> 运算符也会得到一个 bool 值。这些运算符与 <code>&amp;&amp;</code> 和 <code>||</code> 运算符很类似，不过 <code>&amp;</code> 和 <code>|</code> 运算符不采用“短路”的方式来求值，也就是说，<strong>得到计算结果之前两个操作数都需要计算</strong>。</p>
 </blockquote>
-<h3 id="括号与运算符优先级"><a href="#括号与运算符优先级" class="headerlink" title="括号与运算符优先级"></a>括号与运算符优先级</h3><blockquote>
+<h4 id="括号与运算符优先级"><a href="#括号与运算符优先级" class="headerlink" title="括号与运算符优先级"></a>括号与运算符优先级</h4><blockquote>
 <p>p44</p>
 </blockquote>
 <p>因为 <code>+=</code> 是右结合运算符（详细运算符优先级见本书 p44），所以表达式</p>
@@ -309,6 +313,52 @@
 <p>等价于</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a += (b += c)</span><br></pre></td></tr></table></figure>
 <p>也就是将 <code>b += c</code> 的结果（加上 c 之后的 b）加到 a 上。</p>
+<h3 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h3><blockquote>
+<p>p44</p>
+</blockquote>
+<p>Java 没有内置的字符串类型，而是在标准 Java 类库中提供了一个预定类 String。String 类的常用方法见 p49～p51。</p>
+<h4 id="子串"><a href="#子串" class="headerlink" title="子串"></a>子串</h4><blockquote>
+<p>p45</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">a</span> <span class="operator">=</span> <span class="string">&quot;Hello&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">b</span> <span class="operator">=</span> a.substring(<span class="number">0</span>, <span class="number">3</span>);  <span class="comment">// b is &quot;Hel&quot;</span></span><br></pre></td></tr></table></figure>
+<h4 id="拼接"><a href="#拼接" class="headerlink" title="拼接"></a>拼接</h4><blockquote>
+<p>p45</p>
+</blockquote>
+<p>Java 允许 <code>+</code> 号拼接两个字符串。此外，在 Java 11 中，还提供了一个 <code>repeat</code> 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">repeated</span> <span class="operator">=</span> <span class="string">&quot;Java&quot;</span>.repeat(<span class="number">3</span>);  <span class="comment">// repeated is &quot;JavaJavaJava&quot;</span></span><br></pre></td></tr></table></figure>
+<h4 id="不可变字符串"><a href="#不可变字符串" class="headerlink" title="不可变字符串"></a>不可变字符串</h4><blockquote>
+<p>p46</p>
+</blockquote>
+<p><strong>Java 中的 String 类对象是不可变的，</strong>也就是说，不能修改字符串中的单个字符。不过可以修改字符串<em>变量</em>，让它指向另外一个字符串。</p>
+<p>从中可以看出，与 C++ 不同的是，Java 中的字符串并不是字符数组 <code>char[]</code>，而是 <code>char*</code> 指针。</p>
+<h4 id="检测字符串是否相等"><a href="#检测字符串是否相等" class="headerlink" title="检测字符串是否相等"></a>检测字符串是否相等</h4><blockquote>
+<p>p47</p>
+</blockquote>
+<p><strong>一定不要使用 <code>==</code> 运算符来检测两个字符串是否相等！</strong><code>==</code> 运算符比较的只是两个字符串的地址。(注：C++ 中重载了 string 类的 <code>==</code> 运算符，而 Java 没有。)</p>
+<p>检测两个字符串是否相等可以用 <code>equals</code> 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">s.equals(t)</span><br></pre></td></tr></table></figure>
+<p>其中 s 和 t 可以是字符串<em>变量</em>，也可以是字符串<em>字面量</em>。如果要比较两个字符串而不区分大小写，可以用 <code>equalsIgnoreCase</code> 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">s.equalsIgnoreCase(t)</span><br></pre></td></tr></table></figure>
+<h4 id="空串与-Null-串"><a href="#空串与-Null-串" class="headerlink" title="空串与 Null 串"></a>空串与 Null 串</h4><blockquote>
+<p>p48</p>
+</blockquote>
+<p>空串与 Null 串并不相同：</p>
+<ol>
+<li>空串是指长度为 0 的字符串，仍是一个 Java 对象；</li>
+<li>Null 串表示目前没有任何对象与该变量关联。</li>
+</ol>
+<h4 id="码点与代码单元"><a href="#码点与代码单元" class="headerlink" title="码点与代码单元"></a>码点与代码单元</h4><blockquote>
+<p>p48</p>
+</blockquote>
+<p>从 上一小章节 <a href="#char 类型">char 类型</a> 可以看到，char 数据类型是一个采用 UTF-16 编码表示 Unicode <em>码点</em>的<em>代码单元</em>。最常用的 Unicode 字符使用一个代码单元就可以表示，而辅助字符则需要一对代码单元来表示。</p>
+<p><code>str.length()</code> 方法只会返回字符串 <code>str</code> 的代码单元数量，而想要获取字符串的实际长度，即码点的数量，需要使用 <code>str.codePointCount(0, str.length())</code>。</p>
+<p>同样的，<code>str.charAt(i)</code> 只会返回位置 i 处的代码单元，而想要得到第 i 个码点，应该使用 <code>str.codePointAt(i)</code>。</p>
+<h4 id="构建字符串"><a href="#构建字符串" class="headerlink" title="构建字符串"></a>构建字符串</h4><blockquote>
+<p>p54</p>
+</blockquote>
+<p>StringBuilder 类可以避免拼接字符串时的时间与空间浪费：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">ch</span> <span class="operator">=</span> <span class="string">&quot;abc&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">str</span> <span class="operator">=</span> <span class="string">&quot;def&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">StringBuilder</span> <span class="variable">builder</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">builder.append(ch);</span><br><span class="line">builder.append(str);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 构建完成后调用 toString 方法，将可以得到一个 String 对象</span></span><br><span class="line"><span class="type">String</span> <span class="variable">completedString</span> <span class="operator">=</span> builder.toString();</span><br></pre></td></tr></table></figure>
+<p>其他 StringBuilder 的常用方法见 p54。</p>
 
     </div>
 
@@ -393,7 +443,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Java%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">Java的基本程序设计结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">1.1.</span> <span class="nav-text">位运算符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8B%AC%E5%8F%B7%E4%B8%8E%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7"><span class="nav-number">1.2.</span> <span class="nav-text">括号与运算符优先级</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Java%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">Java的基本程序设计结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#char-%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.1.1.</span> <span class="nav-text">char 类型</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">1.2.</span> <span class="nav-text">运算符</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">1.2.1.</span> <span class="nav-text">位运算符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%AC%E5%8F%B7%E4%B8%8E%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7"><span class="nav-number">1.2.2.</span> <span class="nav-text">括号与运算符优先级</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.3.</span> <span class="nav-text">字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%90%E4%B8%B2"><span class="nav-number">1.3.1.</span> <span class="nav-text">子串</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%BC%E6%8E%A5"><span class="nav-number">1.3.2.</span> <span class="nav-text">拼接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8D%E5%8F%AF%E5%8F%98%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.3.3.</span> <span class="nav-text">不可变字符串</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A3%80%E6%B5%8B%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%98%AF%E5%90%A6%E7%9B%B8%E7%AD%89"><span class="nav-number">1.3.4.</span> <span class="nav-text">检测字符串是否相等</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A9%BA%E4%B8%B2%E4%B8%8E-Null-%E4%B8%B2"><span class="nav-number">1.3.5.</span> <span class="nav-text">空串与 Null 串</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A0%81%E7%82%B9%E4%B8%8E%E4%BB%A3%E7%A0%81%E5%8D%95%E5%85%83"><span class="nav-number">1.3.6.</span> <span class="nav-text">码点与代码单元</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.3.7.</span> <span class="nav-text">构建字符串</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -509,13 +559,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">449k</span>
+    <span title="站点总字数">450k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">6:48</span>
+    <span title="站点阅读时长">6:49</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
